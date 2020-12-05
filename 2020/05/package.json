@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run index.js",
+    "run": "npm index.js",
     "test": "jest"
   },
   "author": "",
