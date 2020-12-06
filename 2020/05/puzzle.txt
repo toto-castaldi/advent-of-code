@@ -36,7 +36,7 @@ FFFBBBFRRR: row 14, column 7, seat ID 119.
 BBFFBBFRLL: row 102, column 4, seat ID 820.
 As a sanity check, look through your list of boarding passes. What is the highest seat ID on a boarding pass?
 
-Your puzzle answer was 963.
+Your puzzle answer was XXXXXXX.
 
 --- Part Two ---
 Ding! The "fasten seat belt" signs have turned on. Time to find your seat.
@@ -47,7 +47,7 @@ Your seat wasn't at the very front or back, though; the seats with IDs +1 and -1
 
 What is the ID of your seat?
 
-Your puzzle answer was 592.
+Your puzzle answer was XXXXXXX.
 
 Both parts of this puzzle are complete! They provide two gold stars: **
 
