@@ -37,7 +37,7 @@ fs.readFile('./input.txt', 'utf8', function (err, data) {
 
     console.log(`${two.a} + ${two.b} = ${two.a + two.b},`, `${two.a} * ${two.b} = ${two.a * two.b}`);
 
-    for (let i = expenses.length - 1; i >= 0; i++) {
+    while (expenses.length > 0) {
         const first = expenses.pop();
         const second = find(expenses, 2020 - first);
         if (second) {
