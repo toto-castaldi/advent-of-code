@@ -1,4 +1,4 @@
-const { rules, containsDirectly, containsIndirectly } = require("./bag");
+const { rules, contains, navigate } = require("./bag");
 
 test("challenge-input-1", () => {
     const rs = rules(`
@@ -12,14 +12,26 @@ test("challenge-input-1", () => {
     faded blue bags contain no other bags.
     dotted black bags contain no other bags.
     `);
-    expect(containsDirectly(rs,"shiny gold")).toHaveLength(2);
-    expect(containsIndirectly(rs,"shiny gold")).toHaveLength(2);
+    expect(contains(rs,"shiny gold")).toHaveLength(4);
+    
+});
+
+test("step-2", () => {
+    const rs = rules(`
+    shiny gold bags contain 2 dark red bags.
+    dark red bags contain 2 dark orange bags.
+    dark orange bags contain 2 dark yellow bags.
+    dark yellow bags contain 2 dark green bags.
+    dark green bags contain 2 dark blue bags.
+    dark blue bags contain 2 dark violet bags.
+    dark violet bags contain no other bags.
+    `);
+    expect(navigate(rs,"shiny gold")).toBe(127);
 });
 
 test("bug-hunt", () => {
     const rs = rules(`
     plaid indigo bags contain 4 dull lime bags, 3 faded violet bags.
     `);
-    expect(containsDirectly(rs,"faded violet")).toHaveLength(1);
-    expect(containsIndirectly(rs,"faded violet")).toHaveLength(0);
+    expect(contains(rs,"faded violet")).toHaveLength(1);
 });

@@ -21,24 +21,33 @@ const rules = (text) => {
     return result;
 }
 
-const containsDirectly = (rules, bag) => {
+const contains = (rules, bag) => {
     let result = [];
     for (let rule of rules) {
-        result = result.concat(rule.childs.filter(child => child.name === bag).length ? rule : []);
+        if (rule.childs.filter(child => child.name === bag).length > 0) {
+            result.push(rule);
+            result = result.concat(contains(rules, rule.name));
+        }
     }
+
     return [...new Set(result)];
 }
 
-const containsIndirectly = (rules, bag) => {
-    let result = [];
-    for (let parent of containsDirectly(rules, bag)) {
-        result = result.concat(containsDirectly(rules, parent.name));
+const navigate = (rules, bag) => {
+    let result = 0;
+    for (let rule of rules) {
+        if (rule.name === bag) {
+            result ++;
+            for (let child of rule.childs) {
+                result += child.count * navigate(rules, child.name);
+            }
+        }
     }
-    return [...new Set(result)];
+    return result;
 }
 
 module.exports = {
     rules,
-    containsDirectly,
-    containsIndirectly
+    contains,
+    navigate
 }
