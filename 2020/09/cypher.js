@@ -34,15 +34,7 @@ const findWeakness = (error, trx) => {
     let from = to - 1;
     let s = trx[from] + trx[to];
 
-    while (s !== error && from >= 0) {
-        if (s > error) { 
-            s -= trx[to]; 
-            to--; 
-        } else {
-            from--;
-            s += trx[from];
-        }
-    }
+    while (s !== error && from >= 0) if (s > error) s -= trx[to--]; else s += trx[--from];
 
     if (s === error) {
         const weakness = trx.slice(from, to);
