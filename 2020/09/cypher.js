@@ -30,22 +30,21 @@ const findWrongPacket = (preambleLen, trx) => {
 }
 
 const findWeakness = (error, trx) => {
-    let index = trx.indexOf(error);
-    let weaknessLen = index;
-    let sum = -1;
-    let startIndex = 0;
-    while (weaknessLen > 1 && sum !== error) {
-        startIndex = 0;
-        while (startIndex <= index - weaknessLen && sum !== error) {
-            sum = trx.slice(startIndex, startIndex + weaknessLen).reduce((prev, current, index) => prev + current, 0);
-            startIndex++;
+    let to = trx.indexOf(error);
+    let from = to - 1;
+    const theSum = () => trx.slice(from, to).reduce((prev, current) => prev + current, 0);
+
+    let s = theSum();
+    while (s !== error && from > 0) {
+        if (s > error) to--
+        else if (s < error) {
+            from--;
         }
-        weaknessLen--;
+        s = theSum();
     }
-    if (sum === error) {
-        startIndex--;
-        weaknessLen ++;
-        const weakness = trx.slice(startIndex, startIndex + weaknessLen);
+
+    if (s === error) {
+        const weakness = trx.slice(from, to);
         const ordered = [...weakness].sort((a, b) => a - b);
         return { weakness, min: ordered[0], max: ordered[ordered.length - 1] };
     }
