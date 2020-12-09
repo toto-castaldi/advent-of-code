@@ -32,15 +32,16 @@ const findWrongPacket = (preambleLen, trx) => {
 const findWeakness = (error, trx) => {
     let to = trx.indexOf(error);
     let from = to - 1;
-    const theSum = () => trx.slice(from, to).reduce((prev, current) => prev + current, 0);
+    let s = trx[from] + trx[to];
 
-    let s = theSum();
     while (s !== error && from > 0) {
-        if (s > error) to--
-        else if (s < error) {
+        if (s > error) { 
+            s -= trx[to]; 
+            to--; 
+        } else {
             from--;
+            s += trx[from];
         }
-        s = theSum();
     }
 
     if (s === error) {
