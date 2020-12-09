@@ -1,7 +1,7 @@
 const trasmission = (text) => text.trim().split("\n").map(packet => parseInt(packet.trim()));
 
-const addends = (numbers, sum) => {
-    numbers.sort((a, b) => a - b);
+const addends = (nums, sum) => {
+    let numbers = [...nums].sort((a, b) => a - b);
     let min = 0;
     let max = numbers.length - 1;
     while (min < max && numbers[min] + numbers[max] !== sum) {
@@ -34,7 +34,7 @@ const findWeakness = (error, trx) => {
     let from = to - 1;
     let s = trx[from] + trx[to];
 
-    while (s !== error && from > 0) {
+    while (s !== error && from >= 0) {
         if (s > error) { 
             s -= trx[to]; 
             to--; 
