@@ -17,7 +17,7 @@ const accumulator = (program) => {
         switch (program[index].operation) {
             case "acc":
                 acc += program[index].argument;
-                index ++;
+                index++;
                 break;
             case "jmp":
                 index += program[index].argument;
@@ -47,8 +47,4 @@ const fixAndRun = (prg) => {
     }
 }
 
-module.exports = {
-    program,
-    accumulator,
-    fixAndRun
-}
+module.exports = { program, accumulator, fixAndRun }
