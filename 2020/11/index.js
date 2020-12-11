@@ -1,13 +1,14 @@
-const { seats, stabilize, countSeats } = require("./ferry");
+const { seats, stabilize, countSeats, adjacent, sight } = require("./ferry");
 const fs = require("fs").promises;
 
 (async () => {
   const data = await fs.readFile("./input.txt", "utf8");
   const a = seats(data);
-  const stab = stabilize(a);
 
-  const count = countSeats(stab.seatMap, "#");
+  const stab1 = stabilize(a, adjacent, 4);
+  console.log(countSeats(stab1.seatMap, "#"));
 
-  console.log(stab.count, count);
+  const stab2 = stabilize(a, sight, 5);
+  console.log(countSeats(stab2.seatMap, "#"));
 
 })();
