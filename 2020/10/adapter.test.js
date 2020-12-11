@@ -17,8 +17,7 @@ test("challenge-input-1", () => {
     const as = arrangements(a.sequence);
     expect(a.distribution).toStrictEqual({ "1": 7, "3": 5 });
     expect(a.device).toBe(22);
-    console.table(as);
-    expect(as).toHaveLength(8);
+    expect(as.size).toBe(7);
 });
 
 test("challenge-input-2", () => {
@@ -57,5 +56,5 @@ test("challenge-input-2", () => {
     `));
     const as = arrangements(a.sequence);
     expect(a.distribution).toStrictEqual({ "1": 22, "3": 10 });
-    expect(as).toHaveLength(19208);
+    expect(as.size).toBe(19208);
 });

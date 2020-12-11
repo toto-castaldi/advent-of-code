@@ -18,17 +18,57 @@ const arrangement = (seatJolt, bag) => {
     return { distribution, device, seatJolt, sequence };
 }
 
-const arrangements = (abc) => {
+const arrangementsR = (abc) => {
     let result = [abc];
     let sequence = [...abc];
     for (let i = 0; i < sequence.length; i++) {
         if (sequence[i + 1] - sequence[i - 1] < 3) {
-            let newSeq =  [...sequence];
+            let newSeq = [...sequence];
             newSeq.splice(i, 1);
             result = result.concat(arrangements(newSeq));
         }
     }
     return result;
+}
+
+const arrangements = (sequence) => {
+    let step = 1;
+    let found = true;
+    let optionals = [];
+    while (found) {
+        let initialOptionalCount = optionals.length;
+        for (let i = 0; i < sequence.length; i++) {
+            if (sequence[i + step] - sequence[i - 1] <= 3) {
+                optionals.push(sequence.slice(i, i + step));
+            }
+        }
+        step ++;
+        found = initialOptionalCount !== optionals.length;
+    }
+    //console.log(sequence);
+    console.log(optionals);
+    let combinations = [];
+    for(let i = 0; i < optionals.length; i++) {
+        let base = optionals[i];
+        combinations.push(base);
+        for (let len = 1; len < optionals.length; len++) {
+            for (let j = i + 1; j <= optionals.length - len; j++) {
+                let added = optionals.slice(j, j + len).reduce((p,c) => p.concat(c), []);
+                combinations.push(base.concat(added));
+            }
+        }
+        
+    }
+    //console.log(combinations);
+    let a = new Set();
+    for (let comb of combinations) {
+        let uniq = [...new Set(comb)];
+        uniq.sort();
+        a.add(uniq.join("-"));
+    }
+    //console.table(combinations);
+    console.log(Math.pow(2,14));
+    return a;
 }
 
 module.exports = { arrangement, adaptersBag, arrangements }
