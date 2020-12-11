@@ -1,4 +1,4 @@
-const { seats, stabilize, countSeats } = require("./ferry");
+const { seats, stabilize, countSeats, adjacent } = require("./ferry");
 
 test("challenge-input-1", () => {
     const a = seats(`
@@ -13,6 +13,9 @@ test("challenge-input-1", () => {
     L.LLLLLL.L
     L.LLLLL.LL
     `);
+    expect(adjacent(-1,-1,0,0,a)).toBe(undefined);
+    expect(adjacent(-1,-1,1,1,a)).toBe("L");
+
     const stCount = stabilize(a);
     expect(countSeats(stCount.seatMap, "#")).toBe(37);
 });
