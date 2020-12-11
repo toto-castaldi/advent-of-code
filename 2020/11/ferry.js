@@ -1,5 +1,7 @@
 const seats = (text) => text.trim().split("\n").map(line => line.trim().split(""));
 
+const countSeats = (map, car) => map.reduce((prev, curr) => prev + curr.reduce((prev, curr) => prev + (curr === car ? 1 : 0), 0) , 0);
+
 const stabilize = (seatMap) => {
     let count = 0;
     let oldMap = [];
@@ -73,14 +75,5 @@ const stabilize = (seatMap) => {
     return { count, seatMap };
 }
 
-const countSeats = (map, car) => {
-    let count = 0;
-    for (let row of map) {
-        for (let col of row) {
-            if (col === car) count++;
-        }
-    }
-    return count;
-}
 
 module.exports = { seats, stabilize, countSeats }
