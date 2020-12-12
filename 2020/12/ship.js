@@ -2,18 +2,20 @@ const path = (text) => text.trim().split("\n").map(line => { return { instructio
 
 const manhattanDistance = (ship) => Math.abs(ship.x) + Math.abs(ship.y);
 
-const step = (_ship, step) => {
+const dirs = ["E", "N", "W", "S"];
+
+const step = (_ship, _step) => {
     const ship = Object.assign({}, _ship);
+    const step = Object.assign({}, _step);
+    if (step.instruction === "F") {
+        step.instruction = ship.dir;
+    }
     switch (step.instruction) {
-        case 'F':
-            ship.x += Math.round(step.instructionValue * Math.cos(ship.dir * Math.PI / 180));
-            ship.y += Math.round(step.instructionValue * Math.sin(ship.dir * Math.PI / 180))
-            break;
         case 'L':
-            ship.dir += step.instructionValue;
+            ship.dir = dirs[(dirs.indexOf(ship.dir) + step.instructionValue / 90) % dirs.length];
             break;
         case 'R':
-            ship.dir -= step.instructionValue;
+            ship.dir = dirs[(dirs.indexOf(ship.dir) + dirs.length - step.instructionValue / 90) % dirs.length];
             break;
         case 'N':
             ship.y += step.instructionValue;
