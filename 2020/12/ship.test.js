@@ -9,7 +9,7 @@ test("challenge-step-1", () => {
     F11
     `);
 
-    let ship = { x: 0, y: 0, dir: 0 };
+    let ship = { x: 0, y: 0, dir: "E" };
 
     for (let p of ps) ship = step(ship, p)
 
@@ -19,7 +19,7 @@ test("challenge-step-1", () => {
 });
 
 test("to-wp", () => {
-    let ship = { x: 0, y: 0, dir: 0 };
+    let ship = { x: 0, y: 0, dir: "E" };
     let wayPoint = { x: 10, y: 1 };
 
     ({ ship, wayPoint } = stepTowardsWayPoint(ship, wayPoint, { instruction: "F", instructionValue: 10 }));
