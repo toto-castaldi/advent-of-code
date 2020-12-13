@@ -1,12 +1,19 @@
-const { schedule, nextBus } = require("./notes");
+const { schedule, nextBus, earliestAllMatchesOffset } = require("./notes");
 const fs = require("fs").promises;
 
 (async () => {
-  const data = await fs.readFile("./input.txt", "utf8");
-  const s = schedule(data);
+    const data = await fs.readFile("./input.txt", "utf8");
+    let s = schedule(data);
+    s = schedule(`
+    1234
+    1789,37,47,1889
+    `);
+   
+    let nb = nextBus(s);
 
-  let nb = nextBus(s);
+    console.log(`${nb.id * (nb.time - s.earliest)}`);
 
-  console.log(`${nb.id * (nb.time - s.earliest)}`)
+    console.log(`${earliestAllMatchesOffset(s)}`);
+
 
 })();
