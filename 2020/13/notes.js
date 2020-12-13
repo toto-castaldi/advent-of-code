@@ -42,9 +42,11 @@ const earliestAllMatchesOffset = (sched) => {
     const max = sched.maxBusInfo;
 
     let tMax = sched.busService.reduce((p, c, i) => p * c.busId, 1);
+    let step = last.busId;
+    let off = last.offest;
     while (true && tMax > 0) {
-        if (allMatches(tMax - last.offest, sched.busService)) return tMax - last.offest;
-        tMax -= last.busId;
+        tMax -= step;
+        if (allMatches(tMax - off, sched.busService)) return tMax - off;
     }
 }
 
