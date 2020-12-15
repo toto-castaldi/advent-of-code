@@ -1,4 +1,15 @@
-const newMatch = (text) => { return { turnNumber: 0, sequence: text.trim().split(",").map(num => parseInt(num)), refs: {} } }
+const newMatch = (text) => {
+    const sequence = text.trim().split(",").map(num => parseInt(num));
+    const match = {
+        lastNum: sequence[sequence.length - 1],
+        refs: {},
+        seqLength: sequence.length
+    }
+    for (let t = 1; t <= sequence.length; t++) {
+        setRef(match, sequence[t - 1], t);
+    }
+    return match;
+}
 
 const setRef = (match, number, t) => {
     match.refs[number] = match.refs[number] || { first: 0, second: 0 };
@@ -6,27 +17,24 @@ const setRef = (match, number, t) => {
     match.refs[number].second = t;
 }
 
-const turn = (match) => {
-    let n;
-    let t = ++match.turnNumber;
-    if (t <= match.sequence.length) {
-        n = match.sequence[t - 1];
-    } else {
-        let last = match.sequence[t - 2];
-        n = match.refs[last].first == 0 ? 0 : match.refs[last].second - match.refs[last].first;
-        match.sequence.push(n);
+const turn = (match, t) => {
+    let last = match.lastNum;
+    let diff = 0;
+    if (match.refs[last].first !== 0) {
+        diff = match.refs[last].second - match.refs[last].first;
     }
-    setRef(match, n, t);
-    return n;
+    match.lastNum = diff;
+    setRef(match, diff, t);
+    return diff;
 }
 
 const run = (starting, times) => {
     let match = newMatch(starting);
-    let t;
-    for (let i = 0; i < times; i++) {
-        t = turn(match);
+    let res;
+    for (let i = match.seqLength + 1; i <= times; i++) {
+        res = turn(match, i);
     }
-    return t;
+    return res;
 }
 
 module.exports = {

@@ -1,4 +1,4 @@
-const { newMatch, turn, run } = require("./memory");
+const { run } = require("./memory");
 
 test("challenge-step-1", () => {
     expect(run("0,3,6", 2020)).toBe(436);
