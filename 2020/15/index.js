@@ -5,5 +5,6 @@ const fs = require("fs").promises;
     const data = await fs.readFile("./input.txt", "utf8");
 
     console.log(`${run(data, 2020)}`);
+    console.log(`${run(data, 30000000)}`);
 
 })();
