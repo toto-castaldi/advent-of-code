@@ -31,8 +31,7 @@ const applyMaskV2 = (mask, value) => {
         if (mask[i] === "1") valueBin = valueBin.replaceAt(i, "1");
         else if (mask[i] === "X") valueBin = valueBin.replaceAt(i, "X");
     }
-
-    return valueBin
+    return valueBin;
 }
 
 const floatings = (mask) => {
@@ -45,7 +44,6 @@ const floatings = (mask) => {
     for (let i = 0; i < combinationCount; i++) {
         let xCombination = Number(i).toString(2).split("");
         while (xCombination.length < xIndexes.length) xCombination.unshift("0");
-        //console.log(xCombination);
         for (let j = 0; j < xCombination.length; j++) {
             mask = mask.replaceAt(xIndexes[j], xCombination[j]);
         }

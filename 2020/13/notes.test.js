@@ -21,8 +21,6 @@ test("challenge-step-2.1", () => {
     17,x,13,19
     `);
 
-    //console.log(s);
-
     let nb = earliestAllMatchesOffset(s);
 
     expect(nb).toBe(3417);
