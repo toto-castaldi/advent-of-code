@@ -51,15 +51,10 @@ const fs = require("fs").promises;
     3
     `);
 
-
-
   const a = arrangement(0, adapters);
 
-  //console.log(a.sequence);
   const as = arrangements(a.sequence);
 
-
-  // console.log(a.distribution, `${a.distribution["1"] * a.distribution["3"]}`);
   console.table(as);
 
 })();

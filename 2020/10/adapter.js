@@ -6,7 +6,6 @@ const arrangement = (seatJolt, bag) => {
     let currentJoltLevel = seatJolt;
     let device = 0;
     for (adapter of sequence) {
-        //console.debug(adapter);
         let diff = adapter - currentJoltLevel;
         currentJoltLevel = adapter;
         if (distribution[diff] === undefined) distribution[diff] = 0;
@@ -45,8 +44,6 @@ const arrangements = (sequence) => {
         step ++;
         found = initialOptionalCount !== optionals.length;
     }
-    //console.log(sequence);
-    console.log(optionals);
     let combinations = [];
     for(let i = 0; i < optionals.length; i++) {
         let base = optionals[i];
@@ -59,15 +56,12 @@ const arrangements = (sequence) => {
         }
         
     }
-    //console.log(combinations);
     let a = new Set();
     for (let comb of combinations) {
         let uniq = [...new Set(comb)];
         uniq.sort();
         a.add(uniq.join("-"));
     }
-    //console.table(combinations);
-    console.log(Math.pow(2,14));
     return a;
 }
 

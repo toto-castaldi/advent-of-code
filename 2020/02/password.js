@@ -14,8 +14,6 @@ const isValidPartOne = (password) => {
 
     const count = (pass.split(character).length - 1);
 
-    //console.log(pass, character, count, from, to);
-
     return count >= from && count <= to;
 }
 
@@ -24,8 +22,6 @@ const isValidPartTwo = (password) => {
 
     const presentFrom = pass.charAt(from - 1) === character;
     const presentTo = pass.charAt(to - 1) === character;
-
-    //console.log(pass, character, presentFrom, presentTo, from, to);
 
     return presentFrom && !presentTo || !presentFrom && presentTo;
 }
