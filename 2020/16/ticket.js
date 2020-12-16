@@ -13,12 +13,13 @@ const rules = (_input) => {
             }
         };
     });
-    nearby = nearby.trim().split("\n").map(n => n.trim().split(",").map(v => parseInt(v.trim())));
-    return { fields, nearby };
+    const createTicket = n => n.trim().split(",").map(v => parseInt(v.trim()));
+    nearby = nearby.trim().split("\n").map(createTicket);
+    return { your: createTicket(your), fields, nearby, valid: [], notValid: [] };
 }
 
-const invalid = (rs) => {
-    const result = [];
+const control = (rs) => {
+    const invalidFields = [];
     for (let ticket of rs.nearby) {
         let inValidFields = [];
         for (let j = 0; j < ticket.length; j++) {
@@ -36,13 +37,71 @@ const invalid = (rs) => {
         }
 
         if (inValidFields.length > 0) {
-            result.push(inValidFields);
+            invalidFields.push(inValidFields);
+            rs.notValid.push(ticket);
+        } else {
+            rs.valid.push(ticket);
         }
+
     }
-    return result;
+    rs.invalidFields = invalidFields;
+
+    let noTable = [];
+
+    for (let i = 0; i < rs.valid[0].length; i++) {
+        const row = [];
+        for (let j = 0; j < rs.fields.length; j++) {
+            const rule = rs.fields[j].range;
+            let oneInvalid = false;
+            for (let k = 0; k < rs.valid.length && !oneInvalid; k++) {
+                const validTicket = rs.valid[k];
+                const tv = validTicket[i];
+                if (tv < rule.min || (tv > rule.iMin && tv < rule.iMax) || tv > rule.max) {
+                    oneInvalid = true;
+                }
+            }
+            if (oneInvalid) {
+                row.push("X");
+            } else {
+                row.push(" ");
+            }
+        }
+        noTable.push(row);
+    }
+
+    rs.steps = [];
+    rs.fieldColumns = {}
+    while (Object.keys(rs.fieldColumns).length < rs.fields.length) {
+        let rowIndex = undefined;
+        let ruleIndex = undefined;
+        let noTableCopy = [];
+        for (let i = 0; i < noTable.length && rowIndex === undefined; i++) {
+            let row = noTable[i];
+            const spaces = row.reduce((p, c, i) => { if (c === " ") { p.push(i); } return p; }, []);
+            if (spaces.length === 1) {
+                rowIndex = i;
+                ruleIndex = spaces[0];
+                row[spaces[0]] = "0";
+                for (let j = 0; j < noTable.length; j++) {
+                    if (j !== i) {
+                        noTable[j][spaces[0]] = "-";
+                        noTableCopy[j] = [...noTable[j]];
+                    }
+                }
+                rs.steps.push(noTableCopy);
+                
+            }
+        }
+        if (rowIndex !== undefined) {
+            rs.fieldColumns[rs.fields[ruleIndex].name] = rowIndex;
+        }
+
+    }
+
+    return rs;
 }
 
 module.exports = {
     rules,
-    invalid
+    control
 }
