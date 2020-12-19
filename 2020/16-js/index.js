@@ -1,8 +1,9 @@
 const { rules, control } = require("./ticket");
 const fs = require("fs").promises;
+const path = require("path");
 
 (async () => {
-    const data = await fs.readFile("./input.txt", "utf8");
+    const data = await fs.readFile(`${path.dirname(require.main.filename)}/input.txt`, "utf8");
     const rs = rules(data);
 
     const c = control(rs);

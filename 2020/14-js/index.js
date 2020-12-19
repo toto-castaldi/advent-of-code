@@ -1,8 +1,9 @@
 const { program, runV1, runV2 } = require("./docking");
 const fs = require("fs").promises;
+const path = require("path");
 
 (async () => {
-    const data = await fs.readFile("./input.txt", "utf8");
+    const data = await fs.readFile(`${path.dirname(require.main.filename)}/input.txt`, "utf8");
     let prg = program(data);
           
     let mem = runV1(prg);
