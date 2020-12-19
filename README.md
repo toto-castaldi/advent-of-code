@@ -10,7 +10,7 @@ Tanks to [Advent of Code](https://adventofcode.com/)
 
 ## JS solutions
 
-Developer with the [Node](https://nodejs.org/en/) runtime 
+Developed with the [Node](https://nodejs.org/en/) runtime 
 
 ```console
 //inside the solution folder
