@@ -19,7 +19,13 @@ node index.js
 node 2015/01-js/index.js
 ```
 
-## 2000.13.02
+## TOBE OPTIMIZED
+
+- 2020.15.2
+
+## Notes
+
+### 2000.13.02
 
 [Euclidean algorithm](https://en.wikipedia.org/wiki/Euclidean_algorithm)
 
