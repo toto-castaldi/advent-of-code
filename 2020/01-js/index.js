@@ -1,5 +1,5 @@
-const { exec } = require('child_process');
 const fs = require('fs');
+const path = require("path");
 
 const find = (expenses, sum) => {
     let min = 0;
@@ -17,7 +17,7 @@ const find = (expenses, sum) => {
     }
 }
 
-fs.readFile('./input.txt', 'utf8', function (err, data) {
+fs.readFile(`${path.dirname(require.main.filename)}/input.txt`, 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }

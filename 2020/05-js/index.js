@@ -1,5 +1,7 @@
 const {seat, id} = require('./seat');
 const fs = require('fs');
+const path = require("path");
+
 
 const plane = [];
 
@@ -11,7 +13,7 @@ for (let row = 0; row < 128; row++) {
     plane.push(planeRow);
 }
 
-fs.readFile('./input.txt', 'utf8', function (err, data) {
+fs.readFile(`${path.dirname(require.main.filename)}/input.txt`, 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }

@@ -1,8 +1,10 @@
 const fs = require('fs');
+const path = require("path");
+
 
 const { isValidOnRequiredFields, parsePassport, isValid } = require('./passport.js');
 
-fs.readFile('./input.txt', 'utf8', function (err, data) {
+fs.readFile(`${path.dirname(require.main.filename)}/input.txt`, 'utf8', function (err, data) {
     if (err) {
         return console.log(err);
     }
