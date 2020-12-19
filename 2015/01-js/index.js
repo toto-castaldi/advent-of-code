@@ -8,7 +8,7 @@ const path = require("path");
         const is = instructions(data);
         console.log(`${run(is)}`);
 
-        console.log(`${enterLevel( is, -1) }`)
+        console.log(`${enterLevel( is, -1).index }`)
 
     } catch (err) {
         console.log(err)
