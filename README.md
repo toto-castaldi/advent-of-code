@@ -3,14 +3,23 @@ ADVENT OF CODE SOLUTIONS
 
 Tanks to [Advent of Code](https://adventofcode.com/)
 
-![2020 Calendar](./2020-16.2-calendar.png?&raw=true "2020 Calendar")
 
-## MISSING
+![2015 Calendar](./2015.01-1-calendar.png?&raw=true "2015 Calendar")
 
-- [10.2](https://adventofcode.com/2020/day/10)
-- [13.2](https://adventofcode.com/2020/day/13)
+![2020 Calendar](./2020.16.2-calendar.png?&raw=true "2020 Calendar")
 
-## 2000-13.2
+## JS solutions
+
+Developer with the [Node](https://nodejs.org/en/) runtime 
+
+```console
+//inside the solution folder
+node index.js
+//from the root
+node 2015/01-js/index.js
+```
+
+## 2000.13.02
 
 [Euclidean algorithm](https://en.wikipedia.org/wiki/Euclidean_algorithm)
 

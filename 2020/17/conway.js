@@ -56,6 +56,7 @@ const actives = (spc) => {
 const isActive = (data, z, x, y) => data[z] && data[z][x] && data[z][x][y]
 
 const round = (spc) => {
+
     const newData = [];
     const acts = actives(spc);
     for (let a of acts) {
@@ -68,8 +69,17 @@ const round = (spc) => {
             store(newData, a[0], a[1], a[2]);
         }
     }
+    for (let z = 0; z < spc.dimension; z++) {
+        for (let x = 0; x < spc.dimension; x++) {
+            for (let y = 0; y < spc.dimension; y++) {
+                f(!isActive(spc.data))
+            }
+        }
+    }
+
+    spc.dimension += 2;
     spc.data = newData;
-    spc.dimension++;
+
 
     return spc;
 }
