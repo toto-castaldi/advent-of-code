@@ -5,15 +5,9 @@ const paper = (g) => {
     return 2 * g[0] * g[1] + 2 * g[0] * g[2] + 2 * g[1] * g[2] + minSurface[0] * minSurface[1];
 }
 
-const ribbon = (g) => {
-    const firstMin = Math.min(...g);
-    let gClone = [...g];
-    gClone.splice(gClone.indexOf(firstMin), 1);
-    const secondMin = Math.min(...gClone);
-    return firstMin * 2 + secondMin * 2 + g[0] * g[1] * g[2];
-}
+const ribbon = (g) => Math.min(...g) * 2 + Math.min(...g.slice(0, g.indexOf(Math.min(...g))).concat(g.slice(g.indexOf(Math.min(...g)) + 1, g.length))) * 2 + g[0] * g[1] * g[2]
 
-const totalOf = (gs, f) => gs.reduce((p, n) => p + f(n), 0);
+const totalOf = (gs, f) => gs.reduce((p, n) => p + f(n), 0)
 
 module.exports = {
     totalOf,
