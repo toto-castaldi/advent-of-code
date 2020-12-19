@@ -1,93 +1,83 @@
-const space = (text) => [text.trim().split("\n").map(line => line.trim().split(""))]
+const store = (data, z, x, y) => {
+    if (data[z] === undefined) data[z] = [];
+    const dataZ = data[z];
+    if (dataZ[x] === undefined) dataZ[x] = [];
+    const dataX = dataZ[x];
+    dataX[y] = "#";
+}
 
-const layer = (spc, z) => spc[parseInt(spc.length / 2) + z]
+const space = (text) => {
+    const data = [];
+    const rawData = text.trim().split("\n").map(line => line.trim().split(""));
+    for (let x = 0; x < rawData[0].length; x++) {
+        const row = rawData[x];
+        for (let y = 0; y < row.length; y++) {
+            const el = row[y];
+            if (el === "#") {
+                store(data, 0, x, y);
+            }
+        }
+    }
+    return {
+        data,
+        dimension: rawData[0].length
+    }
 
-const plane = (length, el) => el.repeat(length).split("").map(r => el.repeat(length).split(""))
+}
 
-const sumIf = (char) => (p, c, i) => p + (c === char ? 1 : 0)
-const sum = (p, c, i) => p + c
-
-const count = (spc, zEl, xEl, yEl, maxCount, char) => {
-    let result = 0;
-    for (let z = (zEl > 0 ? zEl - 1 : 0); z < (zEl < 3 ? zEl + 1 : zEl); z++) {
-        for (let x = (xEl > 0 ? xEl - 1 : 0); x < (xEl < 3 ? xEl + 1 : xEl); x++) {
-            for (let y = (yEl > 0 ? yEl - 1 : 0); y < (yEl < 3 ? yEl + 1 : yEl); y++) {
-                //console.log(z, x, y, spc[z][x][y]);
-                if (z - zEl + x + xEl + y - yEl !== 0) {
-                    result += spc[z][x][y] === char ? 1 : 0;
-                    if (result >= maxCount) return result;
+const navigate = (zI, xI, yI) => {
+    let result = [];
+    for (let z = -1; z <= +1; z++) {
+        for (let x = -1; x <= +1; x++) {
+            for (let y = -1; y <= +1; y++) {
+                if (z !== 0 && x !== 0 && y !== 0) {
+                    result.push([z + zI, x + xI, y + yI]);
                 }
             }
         }
     }
     return result;
-
 }
+
+const actives = (spc) => {
+    let result = [];
+    for (let z = 0; z < spc.data.length; z++) {
+        for (let x = 0; x < spc.data[z].length; x++) {
+            for (let y = 0; y < spc.data[z][x].length; y++) {
+                if (isActive(spc.data, z, x, y)) {
+                    result.push([z, x, y]);
+                }
+            }
+        }
+    }
+    return result;
+}
+
+const isActive = (data, z, x, y) => data[z] && data[z][x] && data[z][x][y]
 
 const round = (spc) => {
-    let result = [];
-    let spaceEn = [];
-    let len = spc[0].length + 2;
-    for (let z of spc) {
-        let rX = [];
-        rX.push(".".repeat(len).split(""));
-        for (let x of z) {
-            const old = [...x];
-            old.unshift(".");
-            old.push(".");
-            rX.push(old);
+    const newData = [];
+    const acts = actives(spc);
+    for (let a of acts) {
+        let neigActive = 0;
+        let nav = navigate(a[0], a[1], a[2]);
+        for (let i = 0; i < nav.length && neigActive < 4; i++) {
+            if (isActive(spc.data, nav[i][0], nav[i][1], nav[i][2])) neigActive++;
         }
-        rX.push(".".repeat(len).split(""));
-        result.push([...rX]);
-        spaceEn.push([...rX]);
-    }
-    result.unshift(plane(len, "."));
-    result.push(plane(len, "."));
-    spaceEn.unshift(plane(len, "."));
-    spaceEn.push(plane(len, "."));
-
-    for (let z = 0; z < result.length; z++) {
-        for (let x = 0; x < result[z].length; x++) {
-            for (let y = 0; y < result[z][x].length; y++) {
-                const cube = spaceEn[z][x][y];
-
-                let c;
-                if (cube === "#") {
-                    console.log("COUNT", z, x, y, cube);
-                     c = count(spaceEn, z, x, y, 4, "#");
-                    console.log("COUNT ->", c);
-                } else {
-                    c = count(spaceEn, z, x, y, 4, "#");
-                }
-                switch (cube) {
-                    case "#":
-                        if (c === 2 || c === 3) {
-                            result[z][x][y] = "#";
-                        } else {
-                            result[z][x][y] = ".";
-                        }
-                        break;
-                    case ".":
-                        if (c === 3) {
-                            result[z][x][y] = "#";
-                        } else {
-                            result[z][x][y] = ".";
-                        }
-                        break;
-                    default:
-                        break;
-
-                }
-            }
+        if (neigActive == 2 || neigActive || 3) {
+            store(newData, a[0], a[1], a[2]);
         }
     }
-    return result;
+    spc.data = newData;
+    spc.dimension++;
+
+    return spc;
 }
+
 
 
 module.exports = {
     space,
-    round,
-    layer,
-    plane
+    actives,
+    round
 }
