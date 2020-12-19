@@ -1,8 +1,9 @@
 const { path, manhattanDistance, step, stepTowardsWayPoint } = require("./ship");
 const fs = require("fs").promises;
+const p = require("path");
 
 (async () => {
-  const data = await fs.readFile("./input.txt", "utf8");
+  const data = await fs.readFile(`${p.dirname(require.main.filename)}/input.txt`, "utf8");
   const ps = path(data);
 
   let ship = { x: 0, y: 0, dir: "E" };
