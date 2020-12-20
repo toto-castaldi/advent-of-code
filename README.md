@@ -4,13 +4,13 @@ ADVENT OF CODE SOLUTIONS
 Tanks to [Advent of Code](https://adventofcode.com/)
 
 
-![2015 Calendar](./2015.02.2-calendar.png?&raw=true "2015 Calendar")
+![2015 Calendar](./2015.03.1-calendar.png?&raw=true "2015 Calendar")
 
 ![2020 Calendar](./2020.16.2-calendar.png?&raw=true "2020 Calendar")
 
 ## JS solutions
 
-Developed with the [Node](https://nodejs.org/en/) runtime 
+Developed with the [Node](https://nodejs.org/en/) runtime . Tested with Node version v14.15.1
 
 ```console
 //inside the solution folder
@@ -18,6 +18,17 @@ node index.js
 //from the root
 node 2015/01-js/index.js
 ```
+
+## Python solutions
+
+Tested with Python version 3.8.3
+
+```console
+//inside the solution folder
+python puzzle.py
+//from the root
+python puzzle.py 2015/03-py/puzzle.py
+
 
 ## TOBE OPTIMIZED
 
