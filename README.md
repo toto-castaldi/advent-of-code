@@ -27,7 +27,7 @@ Tested with Python version 3.8.3
 //inside the solution folder
 python puzzle.py
 //from the root
-python puzzle.py 2015/03-py/puzzle.py
+python 2015/03-py/puzzle.py
 ```
 
 ## TOBE OPTIMIZED
