@@ -30,7 +30,7 @@ python puzzle.py
 python 2015/03-py/puzzle.py
 ```
 
-## TOBE OPTIMIZED
+## TO BE OPTIMIZED
 
 - 2020.15.2
 

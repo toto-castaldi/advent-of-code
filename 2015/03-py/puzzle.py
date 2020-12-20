@@ -1,4 +1,14 @@
 import os
+from functools import reduce
+
+
+def deliver(houses, position):
+    x_key = str(position[0])
+    y_key = str(position[1])
+    x = houses.get(x_key, {})
+    gift_count = x.get(y_key, 0)
+    x[str(y_key)] = gift_count + 1
+    houses[x_key] = x
 
 
 def main():
@@ -28,19 +38,9 @@ def main():
     for movement in path:
         position_santa[0] += rule[movement][0]
         position_santa[1] += rule[movement][1]
-        x_key = str(position_santa[0])
-        y_key = str(position_santa[1])
-        x = houses.get(x_key, {})
-        gift_count = x.get(y_key, 0)
-        x[str(y_key)] = gift_count + 1
-        houses[x_key] = x
+        deliver(houses, position_santa)
 
-    acc = 0
-    for _, x in houses.items():
-        for _, y in x.items():
-            acc += 1
-
-    print(acc)
+    print(reduce((lambda houses_x, value: houses_x + len(value)), houses.values(), 0))
 
     position_santa = [0, 0]
     position_robot = [0, 0]
@@ -55,27 +55,15 @@ def main():
         if santa_turn:
             position_santa[0] += rule[movement][0]
             position_santa[1] += rule[movement][1]
-            x_key = str(position_santa[0])
-            y_key = str(position_santa[1])
+            deliver(houses, position_santa)
         else:
             position_robot[0] += rule[movement][0]
             position_robot[1] += rule[movement][1]
-            x_key = str(position_robot[0])
-            y_key = str(position_robot[1])
+            deliver(houses, position_robot)
 
         santa_turn = not santa_turn
 
-        x = houses.get(x_key, {})
-        gift_count = x.get(y_key, 0)
-        x[str(y_key)] = gift_count + 1
-        houses[x_key] = x
-
-    acc = 0
-    for _, x in houses.items():
-        for _, y in x.items():
-            acc += 1
-
-    print(acc)
+    print(reduce((lambda houses_x, value: houses_x + len(value)), houses.values(), 0))
 
 
 if __name__ == "__main__":
