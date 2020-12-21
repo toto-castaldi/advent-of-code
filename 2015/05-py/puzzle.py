@@ -1,6 +1,16 @@
 import os
 
 
+def twice_count(string):
+    result = 0
+    for i in range(len(string)):
+        couple = string[i:i + 2]
+        if len(couple) == 2:
+            if couple[0] == couple[1]:
+                result += 1
+    return result
+
+
 def nice_first(string):
     if "ab" in string or "cd" in string or "pq" in string or "xy" in string:
         return False
@@ -15,46 +25,27 @@ def nice_first(string):
     if vowel_count < 3:
         return False
 
-    twice_count = 0
-    for i in range(len(string)):
-        couple = string[i:i+2]
-        if len(couple) == 2:
-            if couple[0] == couple[1]:
-                twice_count += 1
-    if twice_count < 1:
+    if twice_count(string) < 1:
         return False
 
     return True
 
 
-def count_pairs(string):
-    pair_count = 0
-    sequence = None
-
-    def do_check(seq):
-        if len(sequence) == 2:
-            return True
-
-    for c in string:
-        if sequence is None:
-            sequence = c
-        else:
-            if sequence[-1] == c:
-                sequence += c
-            else:
-                pair_count = pair_count + 1 if do_check(sequence) else pair_count
-                sequence = c
-
-    pair_count = pair_count + 1 if do_check(sequence) else pair_count
-
-    return pair_count
-
-
 def nice_second(string):
-    if count_pairs(string) < 1:
+    pairs = {}
+    for index in range(1, len(string)):
+        if index == 1 or not(string[index - 2] == string[index - 1] == string[index]):
+            current_count = pairs.get(string[index - 1:index + 1], 0)
+            current_count += 1
+            pairs[string[index - 1:index + 1]] = current_count
+    if len(pairs.values()) == 0:
         return False
-    if count_pairs(string[0::2]) < 1 and count_pairs(string[1::2]) < 1:
+    pairs_count = sorted(list(pairs.values()), reverse=True)
+    if pairs_count[0] == 1 or (len(pairs_count) > 1 and pairs_count[1] > 1):
         return False
+    if twice_count(string[0::2]) < 1 and twice_count(string[1::2]) < 1:
+        return False
+
     return True
 
 
@@ -69,6 +60,7 @@ def main():
     print("second", nice_second("uurcxstgmygtbstg"))
     print("second", nice_second("ieodomkazucvgmuy"))
 
+
     nice_first_count = 0
     nice_second_count = 0
     with open("./input.txt" if len(os.path.dirname(__file__)) == 0 else os.path.dirname(__file__) + "/input.txt",
@@ -81,6 +73,7 @@ def main():
                     nice_second_count += 1
 
     print(nice_first_count)
+    #172 too high
     print(nice_second_count)
 
 
