@@ -8,6 +8,8 @@ def main():
         x = 0
         y = 0
         dirindex = 0
+        locations = []
+        loc_twice = None
         for line in file:
             steps = line.split(", ")
             for step in steps:
@@ -28,6 +30,10 @@ def main():
                     x -= step_count
 
                 print(step, directions[dirindex], x, y)
+                git  = (x, y) if (x, y) in locations and loc_twice is None else loc_twice
+                locations.append((x, y))
+        print("first", x, y)
+        print("second", loc_twice)
 
 
 if __name__ == "__main__":
