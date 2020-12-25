@@ -2,16 +2,6 @@ import os
 import re
 
 
-def twice_count(string):
-    result = 0
-    for i in range(len(string)):
-        couple = string[i:i + 2]
-        if len(couple) == 2:
-            if couple[0] == couple[1]:
-                result += 1
-    return result
-
-
 def nice_first(string):
     if "ab" in string or "cd" in string or "pq" in string or "xy" in string:
         return False
@@ -26,7 +16,13 @@ def nice_first(string):
     if vowel_count < 3:
         return False
 
-    if twice_count(string) < 1:
+    twice_count = 0
+    for i in range(len(string)):
+        couple = string[i:i + 2]
+        if len(couple) == 2:
+            if couple[0] == couple[1]:
+                twice_count += 1
+    if twice_count < 1:
         return False
 
     return True
@@ -41,12 +37,11 @@ def nice_second(string):
 
 
 def main():
-
+    print("first", nice_first("ugknbfddgicrmopn"))
     print("first", nice_first("aaa"))
     print("first", nice_first("jchzalrnumimnmhp"))
     print("first", nice_first("haegwjzuvuyypxyu"))
     print("first", nice_first("dvszwmarrgswjxmb"))
-    print("first", nice_first("ugknbfddgicrmopn"))
     print("second", nice_second("qjhvhtzxzqqjkmpb"))
     print("second", nice_second("xxyxx"))
     print("second", nice_second("uurcxstgmygtbstg"))
