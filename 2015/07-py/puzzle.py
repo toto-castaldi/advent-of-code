@@ -69,7 +69,13 @@ def main():
     with open(f".{file_name}" if len(os.path.dirname(__file__)) == 0 else os.path.dirname(__file__) + file_name,
               'r') as file:
         connections = list(map(lambda x: x.strip(), file.readlines()))
-        print(value_at({}, connections, "a"))
+        step_1_a = value_at({}, connections, "a")
+        print(step_1_a)
+        memory = {
+            'b': step_1_a
+        }
+        step_2_a = value_at(memory, connections, "a")
+        print(step_2_a)
 
 
 if __name__ == "__main__":
