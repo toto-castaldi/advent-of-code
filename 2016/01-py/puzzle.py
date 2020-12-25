@@ -2,7 +2,8 @@ import os
 
 
 def main():
-    with open("./input.txt" if len(os.path.dirname(__file__)) == 0 else os.path.dirname(__file__) + "/input.txt",
+    input_file = "/input.txt"
+    with open(f".{input_file}" if len(os.path.dirname(__file__)) == 0 else os.path.dirname(__file__) + input_file,
               'r') as file:
         directions = ['N', 'O', 'S', 'E']
         x = 0
@@ -20,20 +21,23 @@ def main():
 
                 dirindex = dirindex % 4
                 step_count = int(step[1:])
-                if directions[dirindex] == 'N':
-                    y += step_count
-                if directions[dirindex] == 'S':
-                    y -= step_count
-                if directions[dirindex] == 'E':
-                    x += step_count
-                if directions[dirindex] == 'O':
-                    x -= step_count
+                for i in range(step_count):
+                    if directions[dirindex] == 'N':
+                        y += 1
+                    if directions[dirindex] == 'S':
+                        y -= 1
+                    if directions[dirindex] == 'E':
+                        x += 1
+                    if directions[dirindex] == 'O':
+                        x -= 1
 
-                print(step, directions[dirindex], x, y)
-                git  = (x, y) if (x, y) in locations and loc_twice is None else loc_twice
-                locations.append((x, y))
-        print("first", x, y)
-        print("second", loc_twice)
+                    print(step, directions[dirindex], x, y)
+
+                    loc_twice  = (x, y) if (x, y) in locations and loc_twice is None else loc_twice
+                    locations.append((x, y))
+
+        print("first",  abs(x) + abs(y), x, y)
+        print("second", abs(loc_twice[0]) + abs(loc_twice[1]), loc_twice)
 
 
 if __name__ == "__main__":

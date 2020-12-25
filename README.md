@@ -3,13 +3,6 @@ ADVENT OF CODE SOLUTIONS
 
 Tanks to [Advent of Code](https://adventofcode.com/)
 
-
-![2015 Calendar](./2015.06.2-calendar.png?&raw=true "2015 Calendar")
-
-![2016 Calendar](./2016.01.1-calendar.png?&raw=true "2016 Calendar")
-
-![2020 Calendar](./2020.16.2-calendar.png?&raw=true "2020 Calendar")
-
 ## JS solutions
 
 Developed with the [Node](https://nodejs.org/en/) runtime . Tested with Node version v14.15.1
@@ -47,3 +40,11 @@ python 2015/03-py/puzzle.py
 [Chinese remainder theorem](https://en.wikipedia.org/wiki/Chinese_remainder_theorem)
 
 [Congruence](https://en.wikipedia.org/wiki/Modular_arithmetic#Congruence)
+
+## Resolved
+
+![2015 Calendar](./2015.06.2-calendar.png?&raw=true "2015 Calendar")
+
+![2016 Calendar](./2016.01.2-calendar.png?&raw=true "2016 Calendar")
+
+![2020 Calendar](./2020.16.2-calendar.png?&raw=true "2020 Calendar")
