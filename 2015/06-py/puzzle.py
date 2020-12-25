@@ -10,6 +10,8 @@ def main():
         brightness_total = 0
         for line in file:
             matches = re.findall(r"(on|off|toggle) (\d+),(\d+) through (\d+),(\d+)", line)[0]
+            # cmd, x1, y1, x2, y2 = re.match(r'(.+) (\d+),(\d+) through (\d+),(\d+)', line).groups()
+
             for row in range(int(matches[1]), int(matches[3]) + 1):
                 for col in range(int(matches[2]), int(matches[4]) + 1):
                     prev = lights[row][col]
