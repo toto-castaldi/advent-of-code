@@ -1,4 +1,5 @@
 import os
+import re
 
 
 def twice_count(string):
@@ -32,34 +33,24 @@ def nice_first(string):
 
 
 def nice_second(string):
-    pairs = {}
-    for index in range(1, len(string)):
-        if index == 1 or not(string[index - 2] == string[index - 1] == string[index]):
-            current_count = pairs.get(string[index - 1:index + 1], 0)
-            current_count += 1
-            pairs[string[index - 1:index + 1]] = current_count
-    if len(pairs.values()) == 0:
-        return False
-    pairs_count = sorted(list(pairs.values()), reverse=True)
-    if pairs_count[0] == 1 or (len(pairs_count) > 1 and pairs_count[1] > 1):
-        return False
-    if twice_count(string[0::2]) < 1 and twice_count(string[1::2]) < 1:
-        return False
+    search_pair = re.search(r"([\w]{2}).*\1", string)
 
-    return True
+    search_between = re.search(r"(.)\w\1", string)
+
+    return (search_pair is not None) and (search_between is not None)
 
 
 def main():
-    print("first", nice_first("ugknbfddgicrmopn"))
+
     print("first", nice_first("aaa"))
     print("first", nice_first("jchzalrnumimnmhp"))
     print("first", nice_first("haegwjzuvuyypxyu"))
     print("first", nice_first("dvszwmarrgswjxmb"))
+    print("first", nice_first("ugknbfddgicrmopn"))
     print("second", nice_second("qjhvhtzxzqqjkmpb"))
     print("second", nice_second("xxyxx"))
     print("second", nice_second("uurcxstgmygtbstg"))
     print("second", nice_second("ieodomkazucvgmuy"))
-
 
     nice_first_count = 0
     nice_second_count = 0
@@ -73,7 +64,6 @@ def main():
                     nice_second_count += 1
 
     print(nice_first_count)
-    #172 too high
     print(nice_second_count)
 
 

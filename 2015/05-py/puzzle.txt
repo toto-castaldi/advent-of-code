@@ -15,9 +15,7 @@ haegwjzuvuyypxyu is naughty because it contains the string xy.
 dvszwmarrgswjxmb is naughty because it contains only one vowel.
 How many strings are nice?
 
-Your puzzle answer was XXXXXXXX.
-
-The first half of this puzzle is complete! It provides one gold star: *
+Your puzzle answer was XXXXXXXXXXX.
 
 --- Part Two ---
 Realizing the error of his ways, Santa has switched to a better model of determining whether a string is naughty or nice. None of the old rules apply, as they are all clearly ridiculous.
@@ -33,3 +31,5 @@ xxyxx is nice because it has a pair that appears twice and a letter that repeats
 uurcxstgmygtbstg is naughty because it has a pair (tg) but no repeat with a single letter between them.
 ieodomkazucvgmuy is naughty because it has a repeating letter with one between (odo), but no pair that appears twice.
 How many strings are nice under these new rules?
+
+Your puzzle answer was XXXXXXXXXXX.
