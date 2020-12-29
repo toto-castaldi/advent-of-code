@@ -21,17 +21,22 @@ def main():
         print(cities)
         print(distances)
         permutations = itertools.permutations(cities)
-        min_pem = None
+        min_perm = None
+        max_perm = None
         min_perm_val = 0
+        max_perm_val = 0
         for perm in permutations:
             total = 0
-            #print(perm, "->")
             for i in (range(len(perm) - 1)):
                 total += distances[(perm[i], perm[(i + 1)])]
             if (total < min_perm_val) or (min_perm_val == 0):
-                min_pem = perm
+                min_perm = perm
                 min_perm_val = total
-        print(min_pem, min_perm_val)
+            if (total > max_perm_val) or (max_perm_val == 0):
+                max_perm = perm
+                max_perm_val = total
+        print(min_perm, min_perm_val)
+        print(max_perm, max_perm_val)
 
 
 if __name__ == "__main__":
