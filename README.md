@@ -47,7 +47,7 @@ python 2015/03-py/puzzle.py
 
 ![2016 Calendar](./2016.03.2-calendar.png?&raw=true "2016 Calendar")
 
-![2017 Calendar](./2017.02.1-calendar.png?&raw=true "2017 Calendar")
+![2017 Calendar](./2017.02.2-calendar.png?&raw=true "2017 Calendar")
 
 ![2018 Calendar](./2018.01-calendar.png?&raw=true "2018 Calendar")
 
