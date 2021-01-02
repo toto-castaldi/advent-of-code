@@ -11,6 +11,15 @@ def exactly(string, times):
     return False
 
 
+def intersection(a, b):
+    result = ""
+    for index in range(len(a)):
+        if a[index] == b[index]:
+            result += a[index]
+    return result
+
+
+lines = []
 input_file = "/input.txt"
 with open(f".{input_file}" if len(os.path.dirname(__file__)) == 0 else os.path.dirname(__file__) + input_file,
           'r') as file:
@@ -23,7 +32,15 @@ with open(f".{input_file}" if len(os.path.dirname(__file__)) == 0 else os.path.d
             count_three += 1
         if fullmatch_two:
             count_two += 1
+        lines.append(line.strip())
 
     print("step1", count_two, count_three, count_two * count_three)
+
+    for first in lines:
+        for second in lines:
+            i = intersection(first, second)
+            if len(i) == len(first) - 1:
+                print("step2", i, first, second)
+
 
 
