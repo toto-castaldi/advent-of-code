@@ -36,3 +36,7 @@ pwd = "hepxcrrq"
 while not valid_password(pwd):
     pwd = next_pwd(pwd, 1)
 print(pwd)
+pwd = next_pwd(pwd, 1)
+while not valid_password(pwd):
+    pwd = next_pwd(pwd, 1)
+print(pwd)
