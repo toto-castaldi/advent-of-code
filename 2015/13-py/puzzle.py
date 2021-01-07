@@ -3,6 +3,22 @@ import re
 import itertools
 
 
+def compute_max_happines(people, weights):
+    print(people)
+    print(weights)
+    permutations = itertools.permutations(people)
+    max_perm_value = 0
+    for perm in permutations:
+        acc = 0
+        for i in range(len(perm) - 1):
+            acc += weights[perm[i]][perm[i + 1]]
+            acc += weights[perm[i + 1]][perm[i]]
+        acc += weights[perm[len(perm) - 1]][perm[0]]
+        acc += weights[perm[0]][perm[len(perm) - 1]]
+        max_perm_value = acc if acc > max_perm_value else max_perm_value
+    return max_perm_value
+
+
 file_name = "/input.txt"
 people = set()
 weights = {}
@@ -16,16 +32,12 @@ with open(f".{file_name}" if len(os.path.dirname(__file__)) == 0 else os.path.di
         person_weights = weights.get(person_from, {})
         person_weights[person_to] = int(amount) if lose_gain == "gain" else int(amount) * -1
         weights[person_from] = person_weights
-    print(people)
-    print(weights)
-    permutations = itertools.permutations(people)
-    max_perm_value = 0
-    for perm in permutations:
-        acc = 0
-        for i in range(len(perm) - 1):
-            acc += weights[perm[i]][perm[i + 1]]
-            acc += weights[perm[i + 1]][perm[i]]
-        acc += weights[perm[len(perm) - 1]][perm[0]]
-        acc += weights[perm[0]][perm[len(perm) - 1]]
-        max_perm_value = acc if acc > max_perm_value else max_perm_value
-    print(max_perm_value)
+    print("step_1", compute_max_happines(people, weights))
+    for w in weights.values():
+        w["me"] = 0
+    me_weights = {}
+    for p in people:
+        me_weights[p] = 0
+    weights["me"] = me_weights
+    people.add("me")
+    print("step_2", compute_max_happines(people, weights))
