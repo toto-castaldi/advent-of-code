@@ -30,26 +30,35 @@ with open(f".{file_name}" if len(os.path.dirname(__file__)) == 0 else os.path.di
 
     ingredients = list(properties.keys())
     permutations = hs(100, ingredients)
-    max_score = 0
-    the_max_p = None
+    max_score_step1 = 0
+    the_max_p_step1 = None
+    max_score_step2 = 0
+    the_max_p_step2 = None
     for p in permutations:
         capacity = 0
         durability = 0
         flavor = 0
         texture = 0
+        calories = 0
         for index, spoons in enumerate(p):
             capacity += spoons * properties[ingredients[index]]["capacity"]
             durability += spoons * properties[ingredients[index]]["durability"]
             flavor += spoons * properties[ingredients[index]]["flavor"]
             texture += spoons * properties[ingredients[index]]["texture"]
+            calories += spoons * properties[ingredients[index]]["calories"]
         capacity = 0 if capacity < 0 else capacity
         durability = 0 if durability < 0 else durability
         flavor = 0 if flavor < 0 else flavor
         texture = 0 if texture < 0 else texture
-        if capacity * durability * flavor * texture > max_score:
-            the_max_p = p
-            max_score = capacity * durability * flavor * texture
+        calories = 0 if calories < 0 else calories
+        if capacity * durability * flavor * texture > max_score_step1:
+            the_max_p_step1 = p
+            max_score_step1 = capacity * durability * flavor * texture
+        if capacity * durability * flavor * texture > max_score_step2 and calories == 500:
+            the_max_p_step2 = p
+            max_score_step2 = capacity * durability * flavor * texture
 
-    print(the_max_p, max_score)
+    print("step1", the_max_p_step1, max_score_step1)
+    print("step2", the_max_p_step2, max_score_step2)
 
 
