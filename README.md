@@ -41,7 +41,7 @@ python 2015/03-py/puzzle.py
 
 [Congruence](https://en.wikipedia.org/wiki/Modular_arithmetic#Congruence)
 
-## Resolved
+## Solved
 
 ![2015 Calendar](./2015.16.2-calendar.png?&raw=true "2015 Calendar")
 
