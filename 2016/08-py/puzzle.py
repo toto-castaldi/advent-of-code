@@ -6,7 +6,7 @@ def main():
     input_file = "/input.txt"
     wide = 50
     tall = 6
-    screen = [['.' for _ in range(wide)] for _ in range(tall)]
+    screen = [[' ' for _ in range(wide)] for _ in range(tall)]
     with open(f".{input_file}" if len(os.path.dirname(__file__)) == 0 else os.path.dirname(__file__) + input_file,
               'r') as file:
         for line in file:
@@ -34,12 +34,14 @@ def main():
                 row_copy = [x for x in screen[row_index]]
                 for c in range(len(screen[row_index])):
                     screen[row_index][(c + steps) % len(screen[row_index])] = row_copy[c]
-        print(screen)
         acc = 0
         for row in screen:
+            print(row)
             for c in row:
                acc += 1 if c == '#' else 0
+
         print(acc)
+
 
 if __name__ == "__main__":
     main()
