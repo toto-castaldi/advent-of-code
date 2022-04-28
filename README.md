@@ -25,6 +25,15 @@ python puzzle.py
 python 2015/03-py/puzzle.py
 ```
 
+## Go solutions
+
+Tested with Go version go1.18.1 linux/amd64
+
+```console
+//inside the solution folder
+go run .
+```
+
 ## TO BE OPTIMIZED
 
 - 2020.15.2
@@ -54,3 +63,5 @@ python 2015/03-py/puzzle.py
 ![2019 Calendar](./2019.02.2-calendar.png?&raw=true "2019 Calendar")
 
 ![2020 Calendar](./2020-calendar.png?&raw=true "2020 Calendar")
+
+![2021 Calendar](./2021.01.1-calendar.png?&raw=true "2021 Calendar")
