@@ -64,4 +64,4 @@ go run .
 
 ![2020 Calendar](./2020-calendar.png?&raw=true "2020 Calendar")
 
-![2021 Calendar](./2021.01.1-calendar.png?&raw=true "2021 Calendar")
+![2021 Calendar](./2021.01.2-calendar.png?&raw=true "2021 Calendar")
