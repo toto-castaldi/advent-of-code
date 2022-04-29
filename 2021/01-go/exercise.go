@@ -27,14 +27,14 @@ func main() {
 		lastVar = intVar
 	}
 
-	fmt.Println("Result 1", countIncrease)
+	fmt.Println("Result1", countIncrease)
 
 	file2, _ := os.Open("input-2.txt")
 	defer file2.Close()
 	var w1 int = 0
 	var w2 int = 0
 	var w3 int = 0
-	var w4 int = 1
+	var w4 int = 0
 	var index int = 0
 	countIncrease = 0
 
@@ -44,7 +44,7 @@ func main() {
 		intVar, _ := strconv.Atoi(scanner2.Text())
 		var mod4 int = int(math.Mod(float64(index), 4))
 
-		if mod4 != 3 && w4 > 0 {
+		if mod4 != 3 {
 			w1 += intVar
 		}
 
@@ -82,7 +82,7 @@ func main() {
 		}
 
 		if mod4 == 2 {
-			if w1 > w4 && w1 != 0 && w4 != 0 && w4 != 1 {
+			if w1 > w4 && w1 != 0 && w4 != 0 {
 				countIncrease++
 			}
 			w4 = 0
@@ -93,6 +93,6 @@ func main() {
 		index++
 	}
 
-	fmt.Println("Result 2", countIncrease)
+	fmt.Println("Result2", countIncrease)
 
 }
