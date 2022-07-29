@@ -22,6 +22,7 @@ func main() {
 		if lastVar > -1 {
 			if lastVar < intVar {
 				countIncrease++
+				fmt.Println(intVar)			
 			}
 		}
 		lastVar = intVar
