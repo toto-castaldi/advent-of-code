@@ -34,6 +34,14 @@ Tested with Go version go1.18.1 linux/amd64
 go run .
 ```
 
+## Kotlin solutions
+
+Tested with Kotlink version 1.7.21 and Java openjdk 17.0.3 2022-04-19
+
+```console
+kotlinc exercise.kt -include-runtime -d exercise.jar ; java -jar exercise.jar
+```
+
 ## TO BE OPTIMIZED
 
 - 2020.15.2
@@ -64,4 +72,4 @@ go run .
 
 ![2020 Calendar](./2020-calendar.png?&raw=true "2020 Calendar")
 
-![2021 Calendar](./2021.01.2-calendar-0.png?&raw=true "2021 Calendar")
+![2021 Calendar](./2021.02.1-calendar.png?&raw=true "2021 Calendar")
