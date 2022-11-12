@@ -14,14 +14,14 @@ fun computeCounters(values: List<String>): Array<Int> {
 
 fun main() {
     val firstLine: String? = File("input.txt").useLines { it.firstOrNull() } 
-    var oxigenValues: List<String> = List(0) { "" }
-    var co2Values: List<String> = List(0) { "" }
-    var values: List<String> = List(0) { "" }
+    var oxigenValues: ArrayList<String> = ArrayList()
+    var co2Values: ArrayList<String> = ArrayList()
+    var values: ArrayList<String> = ArrayList()
     if (firstLine != null) {
         File("input.txt").forEachLine { 
-            values = values.plusElement(it)
-            oxigenValues = oxigenValues.plusElement(it)
-            co2Values = co2Values.plusElement(it)
+            values.add(it)
+            oxigenValues.add(it)
+            co2Values.add(it)
         }
         var counters = computeCounters(values);
         var gamma : String = ""
@@ -43,9 +43,9 @@ fun main() {
             val ones = counters[i]
             val zeros = oxigenValues.size - counters[i]
             if (ones >= zeros) { 
-                oxigenValues = oxigenValues.filter { it[i] == '1' }
+                oxigenValues = ArrayList(oxigenValues.filter { it[i] == '1' })
             } else { 
-                oxigenValues = oxigenValues.filter { it[i] == '0' }
+                oxigenValues = ArrayList(oxigenValues.filter { it[i] == '0' })
             }
             i ++
         }
@@ -56,9 +56,9 @@ fun main() {
             val ones = counters[i]
             val zeros = co2Values.size - counters[i]
             if (ones >= zeros) { 
-                co2Values = co2Values.filter { it[i] == '0' }
+                co2Values = ArrayList(co2Values.filter { it[i] == '0' })
             } else { 
-                co2Values = co2Values.filter { it[i] == '1' }
+                co2Values = ArrayList(co2Values.filter { it[i] == '1' })
             }
             i ++
         }
