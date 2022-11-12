@@ -1,15 +1,15 @@
 import java.io.File
 
 fun main() {
-    var horizontal1 = 0
-    var depth1 = 0
-    var horizontal2 = 0
-    var depth2 = 0
-    var aim = 0
-    File("input-1.txt").forEachLine { 
-        val splitted = it.split("\\s".toRegex()).toTypedArray()
+    var horizontal1: Int = 0
+    var depth1: Int = 0
+    var horizontal2: Int = 0
+    var depth2: Int = 0
+    var aim: Int = 0
+    File("input.txt").forEachLine { 
+        val splitted: Array<String> = it.split("\\s".toRegex()).toTypedArray()
         val direction = splitted[0]
-        val amount = splitted[1].toInt()
+        val amount: Int = splitted[1].toInt()
         when (direction) {
             "up" -> { 
                 depth1 -= amount
