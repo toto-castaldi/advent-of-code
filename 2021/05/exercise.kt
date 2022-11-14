@@ -2,21 +2,22 @@ import java.io.File
 import java.util.Arrays
 import java.util.Collections
 
-class LineHV  {
+class Line  {
 
     val points : ArrayList<Point> = ArrayList()
     val description : String
+    val isDiagonal : Boolean
     
     constructor (descriptionC : String) {
-        var startPoint : Point? = null
-        var endPoint : Point? = null
-        var hVsV : Boolean? = null
+        val startPoint : Point
+        val endPoint : Point
         val (start, end) = descriptionC.split(" -> ")
         val pointA = Point (start)
         val pointB = Point (end)
         description = descriptionC
-        if (pointA.x == pointB.x && pointA.y != pointB.y) { 
-            hVsV = false
+        var diagonalNS : Boolean? = null
+        if (pointA.x == pointB.x && pointA.y != pointB.y) { //vertical 
+            isDiagonal = false
             if (pointA.y < pointB.y) {
                 startPoint = pointA
                 endPoint = pointB
@@ -24,8 +25,8 @@ class LineHV  {
                 startPoint = pointB
                 endPoint = pointA
             }
-        } else if (pointA.y == pointB.y && pointA.x != pointB.x) { 
-            hVsV = true
+        } else if (pointA.y == pointB.y && pointA.x != pointB.x) { //horizontal
+            isDiagonal = false
             if (pointA.x < pointB.x) {
                 startPoint = pointA
                 endPoint = pointB
@@ -33,16 +34,42 @@ class LineHV  {
                 startPoint = pointB
                 endPoint = pointA
             }
-        }
-        if (startPoint != null && endPoint != null) {
-            if (hVsV == true) {
-                for (x in startPoint.x..endPoint.x) {
-                    points.add(Point(x, startPoint.y))
-                }
+        } else {
+            isDiagonal = true
+            if (pointA.x < pointB.x) {
+                startPoint = pointA
+                endPoint = pointB
             } else {
-                for (y in startPoint.y..endPoint.y) {
-                    points.add(Point(startPoint.x, y))
+                startPoint = pointB
+                endPoint = pointA
+            }
+            if (startPoint.y < endPoint.y) {
+                diagonalNS = true
+            } else {
+                diagonalNS = false
+            }
+        }
+        var x = startPoint.x
+        var y = startPoint.y
+        var yContinue = true
+        //println("$startPoint $endPoint")
+        while (x <= endPoint.x && yContinue) {
+            points.add(Point(x, y))
+            //println("$isDiagonal, $diagonalNS, $x, $y")
+            if (isDiagonal) {
+                x ++
+                if (diagonalNS == true) {
+                    y ++
+                    yContinue = y <= endPoint.y
+                } else {
+                    y --
+                    yContinue = y >= endPoint.y
                 }
+            } else if (startPoint.x == endPoint.x) {
+                y ++
+                yContinue = y <= endPoint.y
+            } else {
+                x ++
             }
         }
     }
@@ -50,8 +77,6 @@ class LineHV  {
     override fun toString() : String {
         return description
     }
-
-
 }
 
 class Point {
@@ -93,11 +118,8 @@ class Point {
 class Plane () {
 
     val points : HashMap<Point, Int> = HashMap()
-
     
-    fun draw(line : LineHV) {
-        print("$line ")
-        println(line.points)
+    fun draw(line : Line) {
         for (point in line.points) {
             points.put(point, points.getOrDefault(point, 0) + 1)
         }
@@ -110,18 +132,21 @@ class Plane () {
 
 fun main() {
     val inputLines: List<String> = File("input.txt").readLines()
-    val lines : ArrayList<LineHV> = ArrayList(inputLines.map { LineHV(it) })
-    val plane : Plane = Plane()
+    val lines : ArrayList<Line> = ArrayList(inputLines.map { Line(it) })
+    val plane1 : Plane = Plane()
+    val plane2 : Plane = Plane()
     for (line in lines) {
-        plane.draw(line)
+        print("$line ")
+        println(line.points)
+        if (!line.isDiagonal) plane1.draw(line)
+        plane2.draw(line)
     }
 
-    println(plane.points)
+    val result1: Int = plane1.countPointsWithMinOverlapping(2)
 
-    val result: Int = plane.countPointsWithMinOverlapping(2)
+    println("result1 $result1")
 
-    println("result $result")
+    val result2: Int = plane2.countPointsWithMinOverlapping(2)
 
-
-
+    println("result2 $result2")
 }
