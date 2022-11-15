@@ -5,32 +5,44 @@ import java.util.Collections
 fun main(args: Array<String>) {
     val firstLine: String? = File("input.txt").useLines { it.firstOrNull() } 
     if (firstLine != null) {
-        var initialState: List<Int> = firstLine.split(",").map({it.trim().toInt()})
-        println(initialState)
+        var theState: HashMap<Int, Int> = HashMap()
+        var inputState: List<Int> = firstLine.split(",").map({it.trim().toInt()})
+        println(inputState)
         val days: Int = args[0].toInt()
-        println(days)
+
+        for (s in inputState) {
+            theState.put(s, theState.getOrDefault(s, 0) + 1)
+        }
+        println(theState)
+
         for (i in 1..days) {
-            val newState: ArrayList<Int> = ArrayList()
+            println(i)
             var newFishCount : Int = 0
-            for (theState in initialState) {
+            val newState: HashMap<Int, Int> = HashMap()
+            for (s in theState.keys) {
                 var state : Int
-                if (theState == 0) {
+                if (s == 0) {
                     state = 6
-                    newFishCount ++
+                    newFishCount += theState.get(s)!!
                 } else {
-                    state = theState -1
+                    state = s -1
                 }
-                newState.add(state)
+                //println("add $state")
+                newState.put(state, newState.getOrDefault(state, 0) + theState.get(s)!!)
+                
             }
-            for (nfc in 1..newFishCount) {
-                newState.add(8)
+            newState.put(8, newState.getOrDefault(8, 0) + newFishCount)
+            println(newState)
+            for (k in 0..8) {
+                theState.remove(k)
             }
-            initialState = ArrayList()
-            initialState.addAll(newState)
-            println(initialState)
+            theState.putAll(newState)
         }
 
-        val result : Int = initialState.size
+        var result : Int = 0
+        for (v in theState.values) {
+            result += v
+        }
         println("result $result")
 
     }
