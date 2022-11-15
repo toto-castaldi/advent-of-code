@@ -9,69 +9,33 @@ class Line  {
     val isDiagonal : Boolean
     
     constructor (descriptionC : String) {
-        val startPoint : Point
-        val endPoint : Point
         val (start, end) = descriptionC.split(" -> ")
         val pointA = Point (start)
         val pointB = Point (end)
         description = descriptionC
-        var diagonalNS : Boolean? = null
-        if (pointA.x == pointB.x && pointA.y != pointB.y) { //vertical 
-            isDiagonal = false
-            if (pointA.y < pointB.y) {
-                startPoint = pointA
-                endPoint = pointB
-            } else {
-                startPoint = pointB
-                endPoint = pointA
+        
+        val normalize  = { num : Int -> 
+            when {
+                num > 0 -> 1
+                num < 0 -> -1
+                else -> 0
             }
-        } else if (pointA.y == pointB.y && pointA.x != pointB.x) { //horizontal
-            isDiagonal = false
-            if (pointA.x < pointB.x) {
-                startPoint = pointA
-                endPoint = pointB
-            } else {
-                startPoint = pointB
-                endPoint = pointA
-            }
+        }
+
+        val vector : Point = Point(normalize(pointB.x - pointA.x), normalize(pointB.y - pointA.y))
+
+        if (vector.x == 0 || vector.y == 0) {
+            isDiagonal = false;
         } else {
-            isDiagonal = true
-            if (pointA.x < pointB.x) {
-                startPoint = pointA
-                endPoint = pointB
-            } else {
-                startPoint = pointB
-                endPoint = pointA
-            }
-            if (startPoint.y < endPoint.y) {
-                diagonalNS = true
-            } else {
-                diagonalNS = false
-            }
+            isDiagonal = true;
         }
-        var x = startPoint.x
-        var y = startPoint.y
-        var yContinue = true
-        //println("$startPoint $endPoint")
-        while (x <= endPoint.x && yContinue) {
-            points.add(Point(x, y))
-            //println("$isDiagonal, $diagonalNS, $x, $y")
-            if (isDiagonal) {
-                x ++
-                if (diagonalNS == true) {
-                    y ++
-                    yContinue = y <= endPoint.y
-                } else {
-                    y --
-                    yContinue = y >= endPoint.y
-                }
-            } else if (startPoint.x == endPoint.x) {
-                y ++
-                yContinue = y <= endPoint.y
-            } else {
-                x ++
-            }
+
+        var p = pointA
+        while (p != pointB) {
+            points.add(p)
+            p = p.add(vector)
         }
+        points.add(p)
     }
 
     override fun toString() : String {
@@ -93,6 +57,10 @@ class Point {
     constructor (xC : Int, yC : Int) {
         x = xC
         y = yC
+    }
+
+    fun add(p : Point) : Point {
+        return Point(x + p.x, y + p.y)
     }
 
     override fun toString() : String {
