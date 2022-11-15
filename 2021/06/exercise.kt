@@ -5,7 +5,7 @@ import java.util.Collections
 fun main(args: Array<String>) {
     val firstLine: String? = File("input.txt").useLines { it.firstOrNull() } 
     if (firstLine != null) {
-        var theState: HashMap<Int, Int> = HashMap()
+        var theState: HashMap<Int, Long> = HashMap()
         var inputState: List<Int> = firstLine.split(",").map({it.trim().toInt()})
         println(inputState)
         val days: Int = args[0].toInt()
@@ -17,8 +17,8 @@ fun main(args: Array<String>) {
 
         for (i in 1..days) {
             println(i)
-            var newFishCount : Int = 0
-            val newState: HashMap<Int, Int> = HashMap()
+            var newFishCount : Long = 0
+            val newState: HashMap<Int, Long> = HashMap()
             for (s in theState.keys) {
                 var state : Int
                 if (s == 0) {
@@ -27,7 +27,6 @@ fun main(args: Array<String>) {
                 } else {
                     state = s -1
                 }
-                //println("add $state")
                 newState.put(state, newState.getOrDefault(state, 0) + theState.get(s)!!)
                 
             }
@@ -39,7 +38,7 @@ fun main(args: Array<String>) {
             theState.putAll(newState)
         }
 
-        var result : Int = 0
+        var result : Long = 0
         for (v in theState.values) {
             result += v
         }
