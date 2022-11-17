@@ -68,8 +68,6 @@ In the output values, how many times do digits 1, 4, 7, or 8 appear?
 
 Your puzzle answer was XXXXXX.
 
-The first half of this puzzle is complete! It provides one gold star: *
-
 --- Part Two ---
 Through a little deduction, you should now be able to determine the remaining digits. Consider again the first example above:
 
@@ -120,9 +118,4 @@ Adding all of the output values in this larger example produces 61229.
 
 For each entry, determine all of the wire/segment connections and decode the four-digit output values. What do you get if you add up all of the output values?
 
-Answer: 
- 
-
-Although it hasn't changed, you can still get your puzzle input.
-
-You can also [Share] this puzzle.
+Your puzzle answer was XXXXXX.
