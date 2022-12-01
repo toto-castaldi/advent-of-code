@@ -1,11 +1,10 @@
 import java.io.File
 
 fun main(args: Array<String>) {
-    val fileName : String = args[0]
-    val fileInput = File(fileName)
     val elvesCalories = mutableListOf<Int>()
     var currentCalories = 0
-    fileInput.forEachLine { line ->
+
+    File(args[0]).forEachLine { line ->
         line.trim().toIntOrNull()
             ?.let {cal ->
                 currentCalories += cal
@@ -20,6 +19,7 @@ fun main(args: Array<String>) {
     elvesCalories.sortDescending()
     val first = elvesCalories[0]
     val firstThree = elvesCalories.subList(0, 3).fold(0) { acc, value -> acc + value }
+
     println("result1 $first")
     println("result2 $firstThree")
 }
