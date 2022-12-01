@@ -4,7 +4,7 @@ import java.util.ArrayList
 fun main(args: Array<String>) {
     val fileName : String = args[0]
     val fileInput = File(fileName)
-    val levels : ArrayList<Int> = ArrayList()
+    val levels : ArrayList<Pair<Int, Boolean>> = ArrayList()
     var size = 0
     fileInput.forEachLine {
         line ->
@@ -13,19 +13,18 @@ fun main(args: Array<String>) {
         levels.addAll(line.toCharArray().toList().map {
             c ->
 
-            c.digitToInt()
+            Pair(c.digitToInt(), false)
         })
-
-
     }
     println(levels)
 
-    var total = 0
-    for ((i, value) in levels.iterator().withIndex()) {
-        val dx : Int ? = if ((i < levels.size -1) && ((i + 1) % size != 0)) levels[i+1] else null
-        val sx : Int ? = if ((i > 0) && (i% size != 0)) levels[i-1] else null
-        val dw : Int ? = if (i + size < levels.size) levels[i+size] else null
-        val up : Int ? = if (i - size >= 0) levels[i-size] else null
+    var total1 = 0
+    for ((i, pair) in levels.iterator().withIndex()) {
+        val value = pair.first
+        val dx : Int ? = if ((i < levels.size -1) && ((i + 1) % size != 0)) levels[i+1].first else null
+        val sx : Int ? = if ((i > 0) && (i% size != 0)) levels[i-1].first else null
+        val dw : Int ? = if (i + size < levels.size) levels[i+size].first else null
+        val up : Int ? = if (i - size >= 0) levels[i-size].first else null
 
         if (
             (value < (sx ?: Int.MAX_VALUE)) &&
@@ -33,7 +32,7 @@ fun main(args: Array<String>) {
             (value < (dw ?: Int.MAX_VALUE)) &&
             (value < (up ?: Int.MAX_VALUE))
         ) {
-            total += value + 1
+            total1 += value + 1
             val ssx = sx?.toString() ?: " "
             val sdx = dx?.toString() ?: " "
             val sdw = dw?.toString() ?: " "
@@ -42,9 +41,10 @@ fun main(args: Array<String>) {
             println(" $sup")
             println("$ssx$value$sdx")
             println(" $sdw")
-            println("##### $value -> $total")
+            println("##### $value -> $total1")
+
         }
     }
-    println("result $total")
+    println("result1 $total1")
 
 }
