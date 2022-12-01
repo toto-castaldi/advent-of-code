@@ -5,12 +5,10 @@ fun main(args: Array<String>) {
     val fileInput = File(fileName)
     val elvesCalories = mutableListOf<Int>()
     var currentCalories = 0
-    fileInput.forEachLine {
-        line ->
-
+    fileInput.forEachLine { line ->
         line.trim().toIntOrNull()
-            ?.let {
-                currentCalories += it
+            ?.let {cal ->
+                currentCalories += cal
             } //null case
             ?: run {
                 elvesCalories.add(currentCalories)
