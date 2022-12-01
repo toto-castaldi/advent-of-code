@@ -1,28 +1,27 @@
 import java.io.File
-import java.util.ArrayList
 
 fun main(args: Array<String>) {
     val fileName : String = args[0]
     val fileInput = File(fileName)
-    var elvesCalories: ArrayList<Int> = ArrayList()
+    val elvesCalories = mutableListOf<Int>()
     var currentCalories = 0
     fileInput.forEachLine {
         line ->
 
-        if (line.trim().length == 0) {
-            elvesCalories.add(currentCalories)
-            currentCalories = 0
-        } else {
-            currentCalories += line.trim().toInt()
-        }
-
+        line.trim().toIntOrNull()
+            ?.let {
+                currentCalories += it
+            } //null case
+            ?: run {
+                elvesCalories.add(currentCalories)
+                currentCalories = 0
+            }
     }
 
-    var caloriesSorted = elvesCalories.sortedDescending()
-    val first = caloriesSorted.get(0)
-    val second = caloriesSorted.get(1)
-    val thirth = caloriesSorted.get(2)
-    val total = first + second + thirth
+    //change in place
+    elvesCalories.sortDescending()
+    val first = elvesCalories[0]
+    val firstThree = elvesCalories.subList(0, 3).fold(0) { acc, value -> acc + value }
     println("result1 $first")
-    println("result2 $total")
+    println("result2 $firstThree")
 }
