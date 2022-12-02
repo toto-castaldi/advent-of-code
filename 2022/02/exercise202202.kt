@@ -10,9 +10,7 @@ fun main(args: Array<String>) {
     var totalScore2 = 0
 
     File(args[0]).forEachLine { line ->
-        val hand = line.trim().split(" ")
-        val handFirst = hand[0]
-        val handSecond = hand[1]
+        val (handFirst, handSecond) = line.trim().split(" ")
         val first = symbolMap[handFirst]
         var second = symbolMap[handSecond]
 
