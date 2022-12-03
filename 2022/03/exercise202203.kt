@@ -1,9 +1,7 @@
 import java.io.File
 
-private class Rucksack(description: String, l: Array<Char>, u: Array<Char>) {
+private class Rucksack(description: String) {
 
-    private var upper: Array<Char> = u
-    private var lower: Array<Char> = l
     private val firstCompartment = mutableMapOf<Char, Int>()
     private val secondCompartment = mutableMapOf<Char, Int>()
     private val commonSupplies = mutableMapOf<Char, Int>()
@@ -16,8 +14,7 @@ private class Rucksack(description: String, l: Array<Char>, u: Array<Char>) {
         compartmentSize = description.length / 2
     }
 
-
-    fun insert(supply: Char) {
+    fun insert(supply: Char, lower: Array<Char>, upper: Array<Char>) {
         var compInsert = firstCompartment
         var compTest = secondCompartment
 
@@ -58,10 +55,10 @@ fun main(args: Array<String>) {
     var totalDuplication = 0
 
     File(args[0]).forEachLine { line ->
-        val rucksack = Rucksack(line, lower, upper)
+        val rucksack = Rucksack(line)
 
         for (supply in line) {
-            rucksack.insert(supply)
+            rucksack.insert(supply, lower, upper)
         }
 
         totalDuplication += rucksack.duplicationPriorities
