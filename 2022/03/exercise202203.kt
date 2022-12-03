@@ -1,38 +1,31 @@
 import java.io.File
 
-private class Rucksack(description: String) {
+private class Rucksack() {
 
-    private val firstCompartment = mutableMapOf<Char, Int>()
-    private val secondCompartment = mutableMapOf<Char, Int>()
+    private val compartments = mutableListOf<Map<Char, Int>>()
+    private val duplicationSupplies = mutableListOf<Char>()
     private val commonSupplies = mutableMapOf<Char, Int>()
-    private var firstCompartmentUsage = 0
-    private var secondCompartmentUsage = 0
     var duplicationPriorities = 0
-    private var compartmentSize: Int
 
-    init {
-        compartmentSize = description.length / 2
+    fun insert(supplies: String, lower: Array<Char>, upper: Array<Char>) {
+        var compartment = mutableMapOf<Char, Int>()
+        for (supply in supplies) {
+            compartment[supply] = compartment[supply]?.let { c -> c + 1 } ?: 1
+            commonSupplies[supply] = commonSupplies[supply]?.let { c -> c + 1 } ?: 1
+            for (compTest in compartments) {
+                if (supply in compTest.keys) {
+                    if (supply !in duplicationSupplies) {
+                        duplicationPriorities += if (supply in lower) lower.indexOf(supply) + 1 else upper.indexOf(supply) + 1 + lower.size
+                    }
+                    duplicationSupplies.add(supply)
+                }
+            }
+        }
+        compartments.add(compartment)
     }
 
-    fun insert(supply: Char, lower: Array<Char>, upper: Array<Char>) {
-        var compInsert = firstCompartment
-        var compTest = secondCompartment
-
-        if (firstCompartmentUsage < compartmentSize) {
-            firstCompartmentUsage ++
-        } else {
-            secondCompartmentUsage ++
-            compInsert = secondCompartment
-            compTest = firstCompartment
-        }
-
-        compInsert[supply] = compInsert[supply]?.let { c -> c + 1 } ?: 1
-        if (supply in compTest.keys) {
-            if (supply !in commonSupplies.keys) {
-                duplicationPriorities += if (supply in lower) lower.indexOf(supply) + 1 else upper.indexOf(supply) + 1 + lower.size
-            }
-            commonSupplies[supply] = commonSupplies[supply]?.let { c -> c + 1 } ?: 1
-        }
+    fun getAllInCommons(): List<MutableMap.MutableEntry<Char, Int>> {
+        return commonSupplies.entries.filter { entry -> entry.value == compartments.size }
     }
 }
 
@@ -49,19 +42,29 @@ fun main(args: Array<String>) {
         upper[c.code - base] = c
     }
 
-    println(lower.contentToString())
-    println(upper.contentToString())
-
     var totalDuplication = 0
 
-    File(args[0]).forEachLine { line ->
-        val rucksack = Rucksack(line)
+    var groupSupplies = Array(3) { "" }
+    var count = 0
 
-        for (supply in line) {
-            rucksack.insert(supply, lower, upper)
-        }
+    File(args[0]).forEachLine { line ->
+        val rucksack = Rucksack()
+        groupSupplies[++count] = line
+
+        //part 1
+        rucksack.insert(line.substring(0, line.length / 2), lower, upper)
+        rucksack.insert(line.substring(line.length / 2, line.length), lower, upper)
 
         totalDuplication += rucksack.duplicationPriorities
+
+        if (count == 2) {
+            count = 0
+            val groupRucksack = Rucksack()
+            for (supplies in groupSupplies) {
+                groupRucksack.insert(supplies, lower, upper)
+            }
+            println(groupRucksack.getAllInCommons())
+        }
     }
     println("result $totalDuplication")
 }
