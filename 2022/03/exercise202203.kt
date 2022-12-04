@@ -1,6 +1,6 @@
 import java.io.File
 
-val supplyVal = { supply: Char -> if (supply.isLowerCase()) supply.code - 'a'.code + 1 else  supply.code - 'A'.code + 27}
+private val supplyVal = { supply: Char -> if (supply.isLowerCase()) supply.code - 'a'.code + 1 else  supply.code - 'A'.code + 27}
 
 private class Rucksack() {
 
