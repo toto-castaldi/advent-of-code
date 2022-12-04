@@ -1,4 +1,5 @@
 import java.io.File
+import kotlin.math.abs
 
 private class Octopus(val energy: Int) {
 
@@ -12,28 +13,29 @@ private class Octopus(val energy: Int) {
 
     fun neighbor(x: Int, y: Int, neighbor: Octopus) {
         neighbors[Coordinates(x, y)] = neighbor
+        neighbor.neighbors[Coordinates(-x, -y)] = this
     }
 
     fun resolve(stepX: Int, stepY: Int): Octopus? {
-        var result: Octopus? = this
-        if (stepX != 0) {
-            val foot = if (stepX > 0) 1 else -1
-            for (i in 1..stepX) {
-                if (result != null) {
-                    result = result.resolve(foot, 0)
-                }
+        return if (stepX == 0 && stepY == 0) {
+            this
+        } else if (abs(stepX) <= 1 && abs(stepY) <= 1) {
+            neighbors[Coordinates(stepX, stepY)]
+        } else {
+            if (stepX < 0 && neighbors.containsKey(Coordinates(-1, 0))) {
+                neighbors[Coordinates(-1, 0)]!!.resolve(stepX +1, stepY)
+            } else if (stepX > 0 && neighbors.containsKey(Coordinates(1, 0))) {
+                neighbors[Coordinates(1, 0)]!!.resolve(stepX -1, stepY)
+            } else if (stepY < 0 && neighbors.containsKey(Coordinates(0, -1))) {
+                neighbors[Coordinates(0, -1)]!!.resolve(stepX, stepY+1)
+            } else {
+                neighbors[Coordinates(0, 1)]!!.resolve(stepX, stepY-1)
             }
         }
-        if (stepY != 0) {
-            val foot = if (stepY > 0) 1 else -1
-            for (i in 1..stepY) {
-                if (result != null) {
-                    result = result.resolve(0, foot)
-                }
-            }
-        }
+    }
 
-        return result
+    override fun toString(): String {
+        return currentyEnergy.toString()
     }
 }
 
@@ -47,29 +49,31 @@ fun main(args: Array<String>) {
             val octopus = Octopus(matrix[y][x])
             if (x == 0) {
                 if (octopusPointer != null) {
-                    octopus.neighbor(0, -1, octopusPointer.resolve(-matrix[y].size-1, 0)!!)
+                    octopus.neighbor(0, -1, octopusPointer.resolve(-matrix[y].size+1, 0)!!)
                 }
             } else {
                 octopus.neighbor(-1, 0, octopusPointer!!)
                 if (y > 0) {
-                    val firstPrevRow = octopusPointer.resolve(-matrix[y].size-1, 0)!!
-                    octopus.neighbor(-1, -1, firstPrevRow)
-                    octopus.neighbor(0, -1, firstPrevRow.resolve(1, 0)!!)
+                    val upLeft = octopusPointer.resolve(0, -1)!!
+                    val up = upLeft.resolve(1, 0)!!
+                    octopus.neighbor(-1, -1, upLeft)
+                    octopus.neighbor(0, -1, up)
+                    up.neighbor(-1, 1, octopusPointer)
                 }
             }
             octopusPointer = octopus
         }
     }
-    octopusPointer = octopusPointer!!.resolve(matrix[0].size-1, matrix.size -1)
+    octopusPointer = octopusPointer!!.resolve(-matrix[0].size+1, -matrix.size+1 )
 
     while (octopusPointer != null) {
-        print("${octopusPointer!!} ")
-        while (octopusPointer != null) {
+        print("${octopusPointer}")
+        if (octopusPointer.resolve(1, 0) == null) {
+            println()
+            octopusPointer = octopusPointer.resolve(-matrix[0].size+1, 1)
+        } else {
             octopusPointer = octopusPointer.resolve(1, 0)
-            print("${octopusPointer!!} ")
         }
-        println()
-        //octopusPointer = octopusPointer!!.resolve(matrix[0].size-1, 1)
     }
 
 }
