@@ -57,24 +57,14 @@ private class Octopus(var energy: Int) {
         }
         return false
     }
+
 }
 
 private fun printOctopuses(
-    octopus: Octopus?
+    octopus: Octopus
 ) {
-    var navigation: Octopus? = octopus
-    var width = 0
-    while (navigation != null) {
-        print("${navigation}")
-        if (navigation.resolve(1, 0) != null) {
-            width ++
-            navigation = navigation.resolve(1, 0)!!
-        } else {
-            println()
-            navigation = navigation.resolve(-width, 1)
-            width = 0
-        }
-    }
+    navigate(octopus, { print("$it") }, { println() })
+
 }
 
 private data class Coordinates(val x: Int, val y: Int)
@@ -83,31 +73,31 @@ private fun step(
     octopus: Octopus
 ): Int {
     var flashes = 0
+
+    navigate(octopus, { it.incEnergy() }, {})
+    navigate(octopus, { flashes += if (it.flash()) 1 else 0 }, {})
+
+    return flashes
+}
+
+private fun navigate(
+    octopus: Octopus,
+    action: (it: Octopus) -> Unit,
+    changeLine: () -> Unit
+) {
     var navigation: Octopus? = octopus
     var width = 0
     while (navigation != null) {
-        navigation.incEnergy()
+        action(navigation)
         if (navigation.resolve(1, 0) != null) {
             width ++
             navigation = navigation.resolve(1, 0)!!
         } else {
+            changeLine()
             navigation = navigation.resolve(-width, 1)
             width = 0
         }
     }
-    navigation = octopus
-    width = 0
-    while (navigation != null) {
-        flashes += if (navigation.flash()) 1 else 0
-        if (navigation.resolve(1, 0) != null) {
-            width ++
-            navigation = navigation.resolve(1, 0)!!
-        } else {
-            navigation = navigation.resolve(-width, 1)
-            width = 0
-        }
-    }
-    return flashes
 }
 
 fun main(
@@ -137,12 +127,12 @@ fun main(
     }
     octopusPointer = octopusPointer!!.resolve(-matrix[0].size+1, -matrix.size+1 )
 
-    printOctopuses(octopusPointer)
+    printOctopuses(octopusPointer!!)
 
     var allFlashes = 0
 
     for (i in 1 .. 100) {
-        allFlashes += step(octopusPointer!!)
+        allFlashes += step(octopusPointer)
         println()
         printOctopuses(octopusPointer)
     }
