@@ -1,22 +1,23 @@
 import java.io.File
 import kotlin.math.abs
 
-private class Octopus(val energy: Int) {
+private class Octopus(var energy: Int) {
 
-    private var neighbors: MutableMap<Coordinates, Octopus>
-    private var currentyEnergy: Int
+    private var neighbors: MutableMap<Coordinates, Octopus> = mutableMapOf<Coordinates, Octopus>()
 
-    init {
-        currentyEnergy = energy
-        neighbors = mutableMapOf<Coordinates, Octopus>()
-    }
-
-    fun neighbor(x: Int, y: Int, neighbor: Octopus) {
+    fun neighbor(
+        x: Int,
+        y: Int,
+        neighbor: Octopus
+    ) {
         neighbors[Coordinates(x, y)] = neighbor
         neighbor.neighbors[Coordinates(-x, -y)] = this
     }
 
-    fun resolve(stepX: Int, stepY: Int): Octopus? {
+    fun resolve(
+        stepX: Int,
+        stepY: Int
+    ): Octopus? {
         return if (stepX == 0 && stepY == 0) {
             this
         } else if (abs(stepX) <= 1 && abs(stepY) <= 1) {
@@ -35,13 +36,83 @@ private class Octopus(val energy: Int) {
     }
 
     override fun toString(): String {
-        return currentyEnergy.toString()
+        return energy.toString()
+    }
+
+    fun incEnergy() {
+        if (energy <= 9) {
+            energy++
+            if (energy > 9) {
+                for (n in neighbors.values) {
+                    n.incEnergy()
+                }
+            }
+        }
+    }
+
+    fun flash(): Boolean {
+        if (energy > 9) {
+            energy = 0
+            return true
+        }
+        return false
+    }
+}
+
+private fun printOctopuses(
+    octopus: Octopus?
+) {
+    var navigation: Octopus? = octopus
+    var width = 0
+    while (navigation != null) {
+        print("${navigation}")
+        if (navigation.resolve(1, 0) != null) {
+            width ++
+            navigation = navigation.resolve(1, 0)!!
+        } else {
+            println()
+            navigation = navigation.resolve(-width, 1)
+            width = 0
+        }
     }
 }
 
 private data class Coordinates(val x: Int, val y: Int)
 
-fun main(args: Array<String>) {
+private fun step(
+    octopus: Octopus
+): Int {
+    var flashes = 0
+    var navigation: Octopus? = octopus
+    var width = 0
+    while (navigation != null) {
+        navigation.incEnergy()
+        if (navigation.resolve(1, 0) != null) {
+            width ++
+            navigation = navigation.resolve(1, 0)!!
+        } else {
+            navigation = navigation.resolve(-width, 1)
+            width = 0
+        }
+    }
+    navigation = octopus
+    width = 0
+    while (navigation != null) {
+        flashes += if (navigation.flash()) 1 else 0
+        if (navigation.resolve(1, 0) != null) {
+            width ++
+            navigation = navigation.resolve(1, 0)!!
+        } else {
+            navigation = navigation.resolve(-width, 1)
+            width = 0
+        }
+    }
+    return flashes
+}
+
+fun main(
+    args: Array<String>
+) {
     var octopusPointer: Octopus? = null
     val matrix = File(args[0]).readLines().map { line -> line.toCharArray().map { c -> c.digitToInt() }.toMutableList() }
     for (y in 0 until matrix.size) {
@@ -66,14 +137,14 @@ fun main(args: Array<String>) {
     }
     octopusPointer = octopusPointer!!.resolve(-matrix[0].size+1, -matrix.size+1 )
 
-    while (octopusPointer != null) {
-        print("${octopusPointer}")
-        if (octopusPointer.resolve(1, 0) == null) {
-            println()
-            octopusPointer = octopusPointer.resolve(-matrix[0].size+1, 1)
-        } else {
-            octopusPointer = octopusPointer.resolve(1, 0)
-        }
-    }
+    printOctopuses(octopusPointer)
 
+    var allFlashes = 0
+
+    for (i in 1 .. 100) {
+        allFlashes += step(octopusPointer!!)
+        println()
+        printOctopuses(octopusPointer)
+    }
+    println(allFlashes)
 }
