@@ -6,17 +6,15 @@ fun main(args: Array<String>) {
     File(args[0]).forEachLine {
         line ->
 
-        val (assignmentLeft, assignmentRight) = line.trim().split(",").map {it.trim().split("-").map { section -> section.toInt() }}
+        val (assignmentLeft, assignmentRight) = line.trim().split(",").map {
+            val (fromSeq, toSeq) = it.trim().split("-").map { it.toInt() }
+            (fromSeq..toSeq).toSet()
+        }
 
-        if (assignmentLeft[0] <= assignmentRight[0] && assignmentLeft[1] >= assignmentRight[1]) {
+        if (assignmentLeft.containsAll(assignmentRight) || assignmentRight.containsAll(assignmentLeft)) {
             containgCount ++
             overlappingCount ++
-        } else if (assignmentRight[0] <= assignmentLeft[0] && assignmentRight[1] >= assignmentLeft[1]) {
-            containgCount ++
-            overlappingCount ++
-        } else if (assignmentRight[0] <= assignmentLeft[1] && assignmentRight[0] >= assignmentLeft[0]) {
-            overlappingCount ++
-        } else if (assignmentRight[1] <= assignmentLeft[1] && assignmentRight[1] >= assignmentLeft[0]) {
+        } else if (assignmentLeft.intersect(assignmentRight).isNotEmpty() || assignmentRight.intersect(assignmentLeft).isNotEmpty()) {
             overlappingCount ++
         }
     }
