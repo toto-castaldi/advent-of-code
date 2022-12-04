@@ -104,9 +104,11 @@ fun main(
     args: Array<String>
 ) {
     var octopusPointer: Octopus? = null
+    var count = 0
     val matrix = File(args[0]).readLines().map { line -> line.toCharArray().map { c -> c.digitToInt() }.toMutableList() }
     for (y in 0 until matrix.size) {
         for (x in 0 until matrix[y].size) {
+            count ++
             val octopus = Octopus(matrix[y][x])
             if (x == 0) {
                 if (octopusPointer != null) {
@@ -130,11 +132,22 @@ fun main(
     printOctopuses(octopusPointer!!)
 
     var allFlashes = 0
+    var flashesTogether = 0
+    var i = 0
 
-    for (i in 1 .. 100) {
-        allFlashes += step(octopusPointer)
-        println()
+    while (flashesTogether == 0) {
+        i++
+        val stepFlashes = step(octopusPointer)
+        if (i < 100) {
+            allFlashes += stepFlashes
+        }
+
         printOctopuses(octopusPointer)
+
+        if (stepFlashes == count) {
+            flashesTogether = i
+        }
     }
     println(allFlashes)
+    println(flashesTogether)
 }

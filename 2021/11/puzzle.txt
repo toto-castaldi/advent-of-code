@@ -1,7 +1,3 @@
-Advent of Code[About][Events][Shop][Settings][Log Out]Antonio Toto Castaldi 19*
-   <y>2021</y>[Calendar][AoC++][Sponsors][Leaderboard][Stats]
-Our sponsors help make Advent of Code possible:
-American Express - Work with the latest tech and back the engineering community through open source. Find your place in tech on #TeamAmex.
 --- Day 11: Dumbo Octopus ---
 You enter a large cavern full of rare bioluminescent dumbo octopuses! They seem to not like the Christmas lights on your submarine, so you turn them off for now.
 
@@ -298,8 +294,6 @@ Given the starting energy levels of the dumbo octopuses in your cavern, simulate
 
 Your puzzle answer was XXXXXX.
 
-The first half of this puzzle is complete! It provides one gold star: *
-
 --- Part Two ---
 It seems like the individual flashes aren't bright enough to navigate. However, you might have a better option: the flashes seem to be synchronizing!
 
@@ -341,3 +335,5 @@ After step 195:
 0000000000
 0000000000
 If you can calculate the exact moments when the octopuses will all flash simultaneously, you should be able to navigate through the cavern. What is the first step during which all octopuses flash?
+
+Your puzzle answer was XXXXXX.
