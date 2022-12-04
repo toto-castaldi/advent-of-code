@@ -1,8 +1,8 @@
 import java.io.File
 
-val rules = mapOf('(' to ')', '[' to ']', '{' to '}', '<' to '>')
-val corruptPoints = mapOf(')' to 3, ']' to 57, '}' to 1197, '>' to 25137)
-val patchPoints = mapOf(')' to 1, ']' to 2, '}' to 3, '>' to 4)
+private val rules = mapOf('(' to ')', '[' to ']', '{' to '}', '<' to '>')
+private val corruptPoints = mapOf(')' to 3, ']' to 57, '}' to 1197, '>' to 25137)
+private val patchPoints = mapOf(')' to 1, ']' to 2, '}' to 3, '>' to 4)
 
 fun main(args: Array<String>) {
     assert(Pair(false, null) == findCorruption("[({(<(())[]>[[{[]{<()<>>"))
