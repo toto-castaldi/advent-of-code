@@ -1,43 +1,75 @@
 import java.io.File
 
-fun main(args: Array<String>) {
-    val matrix = File(args[0]).readLines().map { line -> line.toCharArray().map { c -> c.digitToInt() }.toMutableList() }
-    for (i in 1..2) {
-        step(matrix)
-        for (row in matrix) {
-            println(row)
-        }
-        println()
+private class Octopus(val energy: Int) {
 
+    private var neighbors: MutableMap<Coordinates, Octopus>
+    private var currentyEnergy: Int
+
+    init {
+        currentyEnergy = energy
+        neighbors = mutableMapOf<Coordinates, Octopus>()
     }
 
-}
-
-fun step(matrix: List<MutableList<Int>>) {
-    for (y in 0 until matrix.size) {
-        for(x in 0 until matrix[y].size) {
-            matrix[y][x] += 1
-        }
+    fun neighbor(x: Int, y: Int, neighbor: Octopus) {
+        neighbors[Coordinates(x, y)] = neighbor
     }
-    for (y in 0 until matrix.size) {
-        for(x in 0 until matrix[y].size) {
-            if (matrix[y][x] > 9) {
-                if (y > 0 && x > 0) matrix[y-1][x-1] += 1
-                if (y > 0) matrix[y-1][x] += 1
-                if (y > 0 && x < matrix[y].size -1) matrix[y-1][x+1] += 1
-                if (x > 0) matrix[y][x-1] += 1
-                if (x < matrix[y].size -1) matrix[y][x+1] += 1
-                if (y < matrix.size -1 && x > 0) matrix[y+1][x-1] += 1
-                if (y < matrix.size -1) matrix[y+1][x] += 1
-                if (y < matrix.size -1 && x < matrix[y].size -1) matrix[y+1][x+1] += 1
+
+    fun resolve(stepX: Int, stepY: Int): Octopus? {
+        var result: Octopus? = this
+        if (stepX != 0) {
+            val foot = if (stepX > 0) 1 else -1
+            for (i in 1..stepX) {
+                if (result != null) {
+                    result = result.resolve(foot, 0)
+                }
             }
         }
-    }
-    for (y in 0 until matrix.size) {
-        for(x in 0 until matrix[y].size) {
-            if (matrix[y][x] > 9) matrix[y][x] = 0
+        if (stepY != 0) {
+            val foot = if (stepY > 0) 1 else -1
+            for (i in 1..stepY) {
+                if (result != null) {
+                    result = result.resolve(0, foot)
+                }
+            }
         }
+
+        return result
+    }
+}
+
+private data class Coordinates(val x: Int, val y: Int)
+
+fun main(args: Array<String>) {
+    var octopusPointer: Octopus? = null
+    val matrix = File(args[0]).readLines().map { line -> line.toCharArray().map { c -> c.digitToInt() }.toMutableList() }
+    for (y in 0 until matrix.size) {
+        for (x in 0 until matrix[y].size) {
+            val octopus = Octopus(matrix[y][x])
+            if (x == 0) {
+                if (octopusPointer != null) {
+                    octopus.neighbor(0, -1, octopusPointer.resolve(-matrix[y].size-1, 0)!!)
+                }
+            } else {
+                octopus.neighbor(-1, 0, octopusPointer!!)
+                if (y > 0) {
+                    val firstPrevRow = octopusPointer.resolve(-matrix[y].size-1, 0)!!
+                    octopus.neighbor(-1, -1, firstPrevRow)
+                    octopus.neighbor(0, -1, firstPrevRow.resolve(1, 0)!!)
+                }
+            }
+            octopusPointer = octopus
+        }
+    }
+    octopusPointer = octopusPointer!!.resolve(matrix[0].size-1, matrix.size -1)
+
+    while (octopusPointer != null) {
+        print("${octopusPointer!!} ")
+        while (octopusPointer != null) {
+            octopusPointer = octopusPointer.resolve(1, 0)
+            print("${octopusPointer!!} ")
+        }
+        println()
+        //octopusPointer = octopusPointer!!.resolve(matrix[0].size-1, 1)
     }
 
 }
-
