@@ -5,7 +5,12 @@ fun main(args: Array<String>) {
     val stackNumbers = lines.find { it.startsWith(" 1")}!!
     val stackCount = stackNumbers.split("  ").map { it.trim().toInt() }.last()
     val stackStartingDescriptionCount = lines.indexOf(stackNumbers)
-    val stacks = buildList(stackCount) {
+    val stacks1 = buildList(stackCount) {
+        for (i in 1..stackCount) {
+            add(mutableListOf<Char>())
+        }
+    }
+    val stacks2 = buildList(stackCount) {
         for (i in 1..stackCount) {
             add(mutableListOf<Char>())
         }
@@ -17,7 +22,8 @@ fun main(args: Array<String>) {
         for (j in 0..chunks.size-1) {
             val element = chunks[j].trim().substringAfter('[').substringBefore(']')
             if (element.isNotEmpty()) {
-                stacks[j].add(element[0])
+                stacks1[j].add(element[0])
+                stacks2[j].add(element[0])
             }
         }
     }
@@ -27,13 +33,17 @@ fun main(args: Array<String>) {
         val fromStack = movingLine.substringAfter(" from ").substringBefore(" to").trim().toInt()-1
         val toStack = movingLine.substringAfter(" to ").trim().toInt()-1
         println("move $howMany from $fromStack to $toStack")
-        val movingElements = mutableListOf<Char>()
+        val movingElements1 = mutableListOf<Char>()
+        val movingElements2 = mutableListOf<Char>()
         for (j in 1 .. howMany) {
-            movingElements.add(stacks[fromStack].removeFirst())
+            movingElements1.add(stacks1[fromStack].removeFirst())
+            movingElements2.add(stacks2[fromStack].removeFirst())
         }
-        stacks[toStack].addAll(0, movingElements.reversed())
+        stacks1[toStack].addAll(0, movingElements1.reversed())
+        stacks2[toStack].addAll(0, movingElements2)
     }
-    println(stacks.fold("") { acc, elements -> acc + if (elements.firstOrNull() != null) elements.firstOrNull()!! else ""})
+    println(stacks1.fold("") { acc, elements -> acc + if (elements.firstOrNull() != null) elements.firstOrNull()!! else ""})
+    println(stacks2.fold("") { acc, elements -> acc + if (elements.firstOrNull() != null) elements.firstOrNull()!! else ""})
 
 }
 
