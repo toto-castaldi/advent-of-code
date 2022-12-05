@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
     while (i < stackStartingDescriptionCount) {
         val stackStartingDescription = lines[i++]
         val chunks = stackStartingDescription.chunked(4)
-        for (j in 0..chunks.size-1) {
+        for (j in chunks.indices) {
             val element = chunks[j].trim().substringAfter('[').substringBefore(']')
             if (element.isNotEmpty()) {
                 stacks1[j].add(element[0])
@@ -27,7 +27,7 @@ fun main(args: Array<String>) {
             }
         }
     }
-    for (i in stackStartingDescriptionCount + 2..lines.size-1) {
+    for (i in stackStartingDescriptionCount + 2 until lines.size) {
         val movingLine = lines[i]
         val howMany = movingLine.substringAfter("move ").substringBefore(" from").trim().toInt()
         val fromStack = movingLine.substringAfter(" from ").substringBefore(" to").trim().toInt()-1
@@ -42,8 +42,8 @@ fun main(args: Array<String>) {
         stacks1[toStack].addAll(0, movingElements1.reversed())
         stacks2[toStack].addAll(0, movingElements2)
     }
-    println(stacks1.fold("") { acc, elements -> acc + if (elements.firstOrNull() != null) elements.firstOrNull()!! else ""})
-    println(stacks2.fold("") { acc, elements -> acc + if (elements.firstOrNull() != null) elements.firstOrNull()!! else ""})
+    println(stacks1.fold("") { acc, elements -> (acc + elements.firstOrNull()?.let { it }) ?: "" })
+    println(stacks2.fold("") { acc, elements -> (acc + elements.firstOrNull()?.let { it }) ?: "" })
 
 }
 
