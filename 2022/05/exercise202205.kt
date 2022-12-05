@@ -5,16 +5,8 @@ fun main(args: Array<String>) {
     val stackNumbers = lines.find { it.startsWith(" 1")}!!
     val stackCount = stackNumbers.split("  ").map { it.trim().toInt() }.last()
     val stackStartingDescriptionCount = lines.indexOf(stackNumbers)
-    val stacks1 = buildList(stackCount) {
-        for (i in 1..stackCount) {
-            add(mutableListOf<Char>())
-        }
-    }
-    val stacks2 = buildList(stackCount) {
-        for (i in 1..stackCount) {
-            add(mutableListOf<Char>())
-        }
-    }
+    val stacks1 = List(stackCount) {mutableListOf<Char>() }
+    val stacks2 = List(stackCount) {mutableListOf<Char>() }
     var i = 0
     while (i < stackStartingDescriptionCount) {
         val stackStartingDescription = lines[i++]
