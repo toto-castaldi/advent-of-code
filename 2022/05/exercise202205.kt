@@ -21,9 +21,10 @@ fun main(args: Array<String>) {
     }
     for (i in stackStartingDescriptionCount + 2 until lines.size) {
         val movingLine = lines[i]
-        val howMany = movingLine.substringAfter("move ").substringBefore(" from").trim().toInt()
-        val fromStack = movingLine.substringAfter(" from ").substringBefore(" to").trim().toInt()-1
-        val toStack = movingLine.substringAfter(" to ").trim().toInt()-1
+        val match = "move (\\d+) from (\\d+) to (\\d+)".toRegex().find(movingLine)
+        val howMany = match!!.groups[1]!!.value.toInt()
+        val fromStack = match!!.groups[2]!!.value.toInt() - 1
+        val toStack = match!!.groups[3]!!.value.toInt() - 1
         println("move $howMany from $fromStack to $toStack")
         val movingElements1 = mutableListOf<Char>()
         val movingElements2 = mutableListOf<Char>()
