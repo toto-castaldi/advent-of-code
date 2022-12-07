@@ -32,20 +32,10 @@ private class DeviceFolder(val name: String, val parent: DeviceFolder?) {
         return result
     }
 
-    fun printAll(indentLevel : Long) {
-        println((0..indentLevel).fold("") { acc, _ -> "$acc " } + "- $name (dir) - ${this.totalDimension()}")
-        for (d in folders) {
-            d.printAll(indentLevel + 2)
-        }
-    }
-
 }
-
 private data class DeviceFile(val name: String, val dimension: Long)
 
-
 fun main(args: Array<String>) {
-    test()
     val rootFolder = DeviceFolder("/", null)
     var currentFolder: DeviceFolder = rootFolder
     File(args[0]).forEachLine {
@@ -79,23 +69,20 @@ fun main(args: Array<String>) {
         }
     }
 
-    var total = 0L
-    var bigEnough = mutableListOf<DeviceFolder>()
-
-    fun findAndCumulate (theFolder: DeviceFolder, maxSize : Long) {
+    fun navigate (theFolder: DeviceFolder, folderTest : (DeviceFolder) -> Unit ) {
         for (d in theFolder.folders) {
-            val totalDimension = d.totalDimension()
-            if (totalDimension <= maxSize) {
-                total += totalDimension
-            }
-            if (totalDimension >= maxSize) {
-                bigEnough.add(d)
-            }
-            findAndCumulate(d, maxSize)
+            folderTest(d)
+            navigate(d, folderTest)
         }
     }
-    findAndCumulate(rootFolder, 100000L)
-    println(total)
+
+    var res1 = 0L
+    navigate(rootFolder) {
+        if (it.totalDimension() <= 100000L) {
+            res1 += it.totalDimension()
+        }
+    }
+    println("res1 $res1")
 
     val diskSpace = 70000000L
     val updateSpace = 30000000L
@@ -106,22 +93,12 @@ fun main(args: Array<String>) {
     println("unused space $unusedSpace")
     println("need space $needSpace")
 
-    rootFolder.printAll(0)
-    total = 0
-    bigEnough = mutableListOf<DeviceFolder>()
-    findAndCumulate(rootFolder, needSpace)
+    var lesserBigEnough = rootFolder
+    navigate(rootFolder) {
+        if (it.totalDimension() >= needSpace && it.totalDimension() < lesserBigEnough.totalDimension()) {
+            lesserBigEnough = it
+        }
+    }
 
-    bigEnough.sortBy { it.totalDimension() }
-
-    val f = bigEnough.first()
-
-    println("$f -> ${f.totalDimension()}")
-
-    println("${f.totalDimension() - needSpace}")
+    println("res2 ${lesserBigEnough.totalDimension()}")
 }
-
-
-private fun test() {
-    assert(42 == 42)
-}
-
