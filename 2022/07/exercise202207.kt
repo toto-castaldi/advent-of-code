@@ -73,18 +73,41 @@ fun main(args: Array<String>) {
     }
 
     var total = 0L
+    var bigEnough = mutableListOf<DeviceFolder>()
 
-    fun navigate (theFolder: DeviceFolder) {
+    fun findAndCumulate (theFolder: DeviceFolder, maxSize : Long) {
         for (d in theFolder.folders.values) {
             val totalDimension = d.totalDimension()
-            if (totalDimension <= 100000) {
+            if (totalDimension <= maxSize) {
                 total += totalDimension
             }
-            navigate(d)
+            if (totalDimension >= maxSize) {
+                bigEnough.add(d)
+            }
+            findAndCumulate(d, maxSize)
         }
     }
-    navigate(rootFolder)
+    findAndCumulate(rootFolder, 100000L)
     println(total)
+
+    val diskSpace = 70000000L
+    val updateSpace = 30000000L
+    val usedSpace = rootFolder.totalDimension()
+    val unusedSpace = diskSpace - usedSpace
+    val needSpace = updateSpace - unusedSpace
+    println("used space $usedSpace")
+    println("unused space $unusedSpace")
+    println("need space $needSpace")
+
+    total = 0
+    bigEnough = mutableListOf<DeviceFolder>()
+    findAndCumulate(rootFolder, needSpace)
+
+    bigEnough.sortBy { it.totalDimension() }
+
+    val f = bigEnough.first()
+
+    println("$f -> ${f.totalDimension()}")
 }
 
 
