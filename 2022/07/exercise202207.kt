@@ -2,19 +2,19 @@ import java.io.File
 
 private class DeviceFolder(val name: String, val parent: DeviceFolder?) {
 
-    val folders = mutableMapOf<String, DeviceFolder>()
-    val files = mutableMapOf<String, DeviceFile>()
+    val folders = mutableListOf<DeviceFolder>()
+    val files = mutableListOf<DeviceFile>()
 
     fun getFolder(folderName: String): DeviceFolder {
-        return folders[folderName]!!
+        return folders.find { it -> it.name == folderName }!!
     }
 
     fun addFolder(folderName: String) {
-        folders[folderName] = DeviceFolder(folderName, this)
+        folders.add(DeviceFolder(folderName, this))
     }
 
     fun addFile(fileSize: Long, fileName: String) {
-        files[fileName] = DeviceFile(fileName, fileSize)
+        files.add(DeviceFile(fileName, fileSize))
     }
 
     override fun toString(): String {
@@ -23,13 +23,20 @@ private class DeviceFolder(val name: String, val parent: DeviceFolder?) {
 
     fun totalDimension(): Long {
         var result = 0L
-        for (d in folders.values) {
+        for (d in folders) {
             result += d.totalDimension()
         }
-        for (f in files.values) {
+        for (f in files) {
             result += f.dimension
         }
         return result
+    }
+
+    fun printAll(indentLevel : Long) {
+        println((0..indentLevel).fold("") { acc, _ -> "$acc " } + "- $name (dir) - ${this.totalDimension()}")
+        for (d in folders) {
+            d.printAll(indentLevel + 2)
+        }
     }
 
 }
@@ -76,7 +83,7 @@ fun main(args: Array<String>) {
     var bigEnough = mutableListOf<DeviceFolder>()
 
     fun findAndCumulate (theFolder: DeviceFolder, maxSize : Long) {
-        for (d in theFolder.folders.values) {
+        for (d in theFolder.folders) {
             val totalDimension = d.totalDimension()
             if (totalDimension <= maxSize) {
                 total += totalDimension
@@ -99,6 +106,7 @@ fun main(args: Array<String>) {
     println("unused space $unusedSpace")
     println("need space $needSpace")
 
+    rootFolder.printAll(0)
     total = 0
     bigEnough = mutableListOf<DeviceFolder>()
     findAndCumulate(rootFolder, needSpace)
@@ -108,6 +116,8 @@ fun main(args: Array<String>) {
     val f = bigEnough.first()
 
     println("$f -> ${f.totalDimension()}")
+
+    println("${f.totalDimension() - needSpace}")
 }
 
 
