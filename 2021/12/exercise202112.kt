@@ -38,7 +38,7 @@ fun main(
 
         val (caveAName, caveBName) = line.split("-")
         val caveA = Cave(caveAName)
-        val caveB = Cave(caveAName)
+        val caveB = Cave(caveBName)
         if (caveA !in caves) {
             caves.add(caveA)
         }
