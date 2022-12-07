@@ -8,12 +8,14 @@ private class Cave(val name: String) {
     fun bindTo(otherCave: Cave) {
         if (otherCave !in bindedCaves) {
             bindedCaves.add(otherCave)
+        }
+        if (this !in otherCave.bindedCaves) {
             otherCave.bindedCaves.add(this)
         }
     }
 
     override fun toString(): String {
-        return name
+        return "$name " + bindedCaves.fold("(") { acc, cave -> acc + (if (acc.endsWith("(")) "" else "; ") + cave.name} + ")"
     }
 
     //iterator.contains
@@ -37,14 +39,17 @@ fun main(
         line ->
 
         val (caveAName, caveBName) = line.split("-")
-        val caveA = Cave(caveAName)
-        val caveB = Cave(caveBName)
-        if (caveA !in caves) {
-            caves.add(caveA)
+        val caveA = caves.find { it.name == caveAName }?.let { it } ?: run {
+            val cave = Cave(caveAName)
+            caves.add(cave)
+            cave
         }
-        if (caveB !in caves) {
-            caves.add(caveB)
+        val caveB = caves.find { it.name == caveBName }?.let { it } ?: run {
+            val cave = Cave(caveBName)
+            caves.add(cave)
+            cave
         }
+
         caveA.bindTo(caveB)
     }
     println(caves)
