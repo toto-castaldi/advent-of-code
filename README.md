@@ -65,4 +65,4 @@ kotlinc exercise.kt -include-runtime -d exercise.jar ; java -jar exercise.jar
 
 ![2021 Calendar](./2021.11.2-calendar.png?&raw=true "2021 Calendar")
 
-![2022 Calendar](./2022.06.2-calendar.png?&raw=true "2021 Calendar")
+![2022 Calendar](./2022.07.1-calendar.png?&raw=true "2021 Calendar")
