@@ -41,25 +41,23 @@ fun main(args: Array<String>) {
     File(args[0]).forEachLine {
         line ->
 
-        if (line.startsWith("\$")) { //command
+        if (line.startsWith("\$")) {
             when (line.substring(2, 4)) {
                 "cd" -> {
-                    if (line[5] == '/') {
-                        currentFolder = rootFolder
+                    currentFolder = if (line[5] == '/') {
+                        rootFolder
                     } else {
                         val folderName = line.substring(5)
                         if (folderName == "..") {
-                            currentFolder = currentFolder.parent!!
+                            currentFolder.parent!!
                         } else {
-                            currentFolder = currentFolder.getFolder(folderName)
+                            currentFolder.getFolder(folderName)
                         }
                     }
                 }
-                "ls" -> {
-                }
-                else -> println("unknow command")
+                else -> {}
             }
-        } else { //folder content
+        } else {
             if (line.startsWith("dir ")) {
                 currentFolder.addFolder(line.substring(4))
             } else {
