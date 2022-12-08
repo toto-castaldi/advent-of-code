@@ -36,7 +36,7 @@ private fun step(
 fun main(
     args: Array<String>
 ) {
-    val matrix = File(args[0]).readLines().map { line -> line.toCharArray().map { c -> c.digitToInt() }.toMutableList() }
+    val matrix = File(args[0]).readLines().map { line -> line.toCharArray().map { c -> c.digitToInt() }.toList() }
     var (octopus: BidimentionalNode<Int>?, count) = BidimentionalNode.build(matrix) { it }
     octopus = octopus!!.topLeft()
 
