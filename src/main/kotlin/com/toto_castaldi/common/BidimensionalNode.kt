@@ -2,6 +2,8 @@ package com.toto_castaldi.common
 
 import kotlin.math.abs
 
+data class NodeAndCounting<T>(val node: BidimentionalNode<T>?, val countNodes: Int)
+
 class BidimentionalNode<T>(var data: T) {
 
     private var neighbors: MutableMap<Coordinates, BidimentionalNode<T>> = mutableMapOf<Coordinates, BidimentionalNode<T>>()
@@ -86,7 +88,7 @@ class BidimentionalNode<T>(var data: T) {
                 }
             }
         }
-        fun <T, R> build(matrix : List<List<T>>, builder : (T) -> R) : Pair<BidimentionalNode<R>?, Int> {
+        fun <T, R> build(matrix : List<List<T>>, builder : (T) -> R) : NodeAndCounting<R> {
             var count = 0
             var pointer : BidimentionalNode<R>? = null
             for (y in 0 until matrix.size) {
@@ -110,7 +112,7 @@ class BidimentionalNode<T>(var data: T) {
                     pointer = node
                 }
             }
-            return Pair(pointer, count)
+            return NodeAndCounting(pointer, count)
         }
     }
 }

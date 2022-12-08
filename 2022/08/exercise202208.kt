@@ -63,9 +63,7 @@ fun main(
     test()
 
     val treesHeights = File(args[0]).readLines().map { line -> line.toCharArray().map { c -> c.digitToInt() }.toMutableList() }
-    var tree: BidimentionalNode<Int>? = BidimentionalNode.build(treesHeights) { it }.first
-
-    tree = tree!!.topLeft()
+    var tree: BidimentionalNode<Int> = BidimentionalNode.build(treesHeights) { it }.node!!.topLeft()
 
     var visibleCount = 0
     BidimentionalNode.navigate(tree, {
