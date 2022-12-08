@@ -2,11 +2,7 @@ import java.io.File
 import com.toto_castaldi.common.BidimentionalNode
 
 fun BidimentionalNode<Int>.scenicScore(): Int {
-    if (resolve(0, -1) == null ||
-        resolve(-1, 0) == null ||
-        resolve(1, 0) == null ||
-        resolve(0, 1) == null
-    ) {
+    if (onTheEdge()) {
         return 0
     } else {
         val viewDistance : (Int, Int) -> Int = {
@@ -30,10 +26,7 @@ fun BidimentionalNode<Int>.scenicScore(): Int {
 }
 
 fun BidimentionalNode<Int>.isVisible(): Boolean {
-    val up = resolve(0, -1)
-    val left = resolve(-1, 0)
-    val right = resolve(1, 0)
-    val down = resolve(0, 1)
+    val (up, _, right, _, down, _, left, _) = edges()
     if (up == null || left == null || right == null || down == null) {
         return true
     } else {
@@ -63,7 +56,7 @@ fun main(
     test()
 
     val treesHeights = File(args[0]).readLines().map { line -> line.toCharArray().map { c -> c.digitToInt() }.toMutableList() }
-    var tree: BidimentionalNode<Int> = BidimentionalNode.build(treesHeights) { it }.node!!.topLeft()
+    val tree: BidimentionalNode<Int> = BidimentionalNode.build(treesHeights) { it }.node!!.topLeft()
 
     var visibleCount = 0
     BidimentionalNode.navigate(tree, {

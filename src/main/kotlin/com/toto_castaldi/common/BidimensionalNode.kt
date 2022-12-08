@@ -6,6 +6,11 @@ data class NodeAndCounting<T>(val node: BidimentionalNode<T>?, val countNodes: I
 
 class BidimentionalNode<T>(var data: T) {
 
+    operator fun <T> List<T>.component6(): T = get(5)
+    operator fun <T> List<T>.component7(): T = get(6)
+    operator fun <T> List<T>.component8(): T = get(7)
+
+
     private var neighbors: MutableMap<Coordinates, BidimentionalNode<T>> = mutableMapOf<Coordinates, BidimentionalNode<T>>()
 
     fun neighbors(): Collection<BidimentionalNode<T>> {
@@ -61,6 +66,23 @@ class BidimentionalNode<T>(var data: T) {
             nextLeft = pointer.resolve(-1, 0)
         }
         return pointer
+    }
+
+    fun edges(): List<BidimentionalNode<T>?> {
+        return listOf(
+            resolve(0, -1),
+            resolve(1, -1),
+            resolve(1, 0),
+            resolve(1, 1),
+            resolve(0, 1),
+            resolve(-1, 1),
+            resolve(-1, 0),
+            resolve(-1, -1)
+        )
+    }
+
+    fun onTheEdge(): Boolean {
+        return neighbors.size < 8
     }
 
     companion object {
