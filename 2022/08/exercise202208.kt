@@ -62,13 +62,13 @@ fun main(
 ) {
     test()
 
-    val matrix = File(args[0]).readLines().map { line -> line.toCharArray().map { c -> c.digitToInt() }.toMutableList() }
-    var pointer: BidimentionalNode<Int>? = BidimentionalNode.build(matrix) { it }.first
+    val treesHeights = File(args[0]).readLines().map { line -> line.toCharArray().map { c -> c.digitToInt() }.toMutableList() }
+    var tree: BidimentionalNode<Int>? = BidimentionalNode.build(treesHeights) { it }.first
 
-    pointer = pointer!!.resolve(-matrix[0].size+1, -matrix.size+1 )!!
+    tree = tree!!.topLeft()
 
     var visibleCount = 0
-    BidimentionalNode.navigate(pointer, {
+    BidimentionalNode.navigate(tree, {
         node ->
 
         if (node.isVisible()) {
@@ -79,7 +79,7 @@ fun main(
     println("result1 $visibleCount")
 
     var maxScenicScore = 0
-    BidimentionalNode.navigate(pointer, {
+    BidimentionalNode.navigate(tree, {
         node ->
 
         val score = node.scenicScore()

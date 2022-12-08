@@ -45,6 +45,22 @@ class BidimentionalNode<T>(var data: T) {
         return data.toString()
     }
 
+    fun topLeft(): BidimentionalNode<T> {
+        //top
+        var pointer = this
+        var nextTop = pointer.resolve(0, -1)
+        while (nextTop != null) {
+            pointer = nextTop
+            nextTop = pointer.resolve(0, -1)
+        }
+        var nextLeft = pointer.resolve(-1, 0)
+        while (nextLeft != null) {
+            pointer = nextLeft
+            nextLeft = pointer.resolve(-1, 0)
+        }
+        return pointer
+    }
+
     companion object {
         fun <T> printNodes(
             tree: BidimentionalNode<T>
