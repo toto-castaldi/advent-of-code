@@ -17,6 +17,9 @@ class BidimentionalNode<T>(var data: T) {
         return neighbors.values
     }
 
+    /**
+     * clockwise Edges
+     */
     fun neighbor(
         x: Int,
         y: Int,
@@ -27,23 +30,26 @@ class BidimentionalNode<T>(var data: T) {
         return this
     }
 
+    /**
+     * moving from here to a distant node
+     */
     fun resolve(
-        stepX: Int,
-        stepY: Int
+        dirX: Int,
+        dirY: Int
     ): BidimentionalNode<T>? {
-        return if (stepX == 0 && stepY == 0) {
+        return if (dirX == 0 && dirY == 0) {
             this
-        } else if (abs(stepX) <= 1 && abs(stepY) <= 1) {
-            neighbors[Coordinates(stepX, stepY)]
+        } else if (abs(dirX) <= 1 && abs(dirY) <= 1) {
+            neighbors[Coordinates(dirX, dirY)]
         } else {
-            if (stepX < 0 && neighbors.containsKey(Coordinates(-1, 0))) {
-                neighbors[Coordinates(-1, 0)]!!.resolve(stepX +1, stepY)
-            } else if (stepX > 0 && neighbors.containsKey(Coordinates(1, 0))) {
-                neighbors[Coordinates(1, 0)]!!.resolve(stepX -1, stepY)
-            } else if (stepY < 0 && neighbors.containsKey(Coordinates(0, -1))) {
-                neighbors[Coordinates(0, -1)]!!.resolve(stepX, stepY+1)
+            if (dirX < 0 && neighbors.containsKey(Coordinates(-1, 0))) {
+                neighbors[Coordinates(-1, 0)]!!.resolve(dirX +1, dirY)
+            } else if (dirX > 0 && neighbors.containsKey(Coordinates(1, 0))) {
+                neighbors[Coordinates(1, 0)]!!.resolve(dirX -1, dirY)
+            } else if (dirY < 0 && neighbors.containsKey(Coordinates(0, -1))) {
+                neighbors[Coordinates(0, -1)]!!.resolve(dirX, dirY+1)
             } else {
-                neighbors[Coordinates(0, 1)]!!.resolve(stepX, stepY-1)
+                neighbors[Coordinates(0, 1)]!!.resolve(dirX, dirY-1)
             }
         }
     }
@@ -60,6 +66,7 @@ class BidimentionalNode<T>(var data: T) {
             pointer = nextTop
             nextTop = pointer.resolve(0, -1)
         }
+        //left
         var nextLeft = pointer.resolve(-1, 0)
         while (nextLeft != null) {
             pointer = nextLeft
@@ -89,7 +96,7 @@ class BidimentionalNode<T>(var data: T) {
         fun <T> printNodes(
             tree: BidimentionalNode<T>
         ) {
-            navigate(tree, { print("$it") }, { println() })
+            navigate(tree, { print(it) }, { println() })
         }
         fun <T> navigate(
             node: BidimentionalNode<T>,
@@ -110,6 +117,10 @@ class BidimentionalNode<T>(var data: T) {
                 }
             }
         }
+
+        /**
+         * build and return the last node in the grid
+         */
         fun <T, R> build(matrix : List<List<T>>, builder : (T) -> R) : NodeAndCounting<R> {
             var count = 0
             var pointer : BidimentionalNode<R>? = null

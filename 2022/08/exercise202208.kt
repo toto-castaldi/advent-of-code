@@ -31,13 +31,13 @@ fun BidimentionalNode<Int>.isVisible(): Boolean {
         return true
     } else {
         val checkDir : (BidimentionalNode<Int>, Int, Int) -> Boolean = {
-                node, stepX, stepY ->
+                node, dirX, dirY ->
 
             var p: BidimentionalNode<Int>? = node
             var max = -1
             while (p != null) {
                 if (p.data > max) max = p.data
-                p = p.resolve(stepX, stepY)
+                p = p.resolve(dirX, dirY)
             }
             max < data
         }
