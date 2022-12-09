@@ -5,68 +5,58 @@ import kotlin.math.abs
 fun main(
     args: Array<String>
 ) {
-    test()
+    part(args[0], 2)
+    part(args[0], 12)
 
-    var tailPassing = mutableMapOf<Coordinates, Int>()
-    tailPassing[Coordinates(0,0)] = 1
+}
 
-    var headCoordinates = Coordinates(0, 0)
-    var tailCoordinates = Coordinates(0, 0)
+private fun part(fileName : String , len : Int) {
+    val tailPassing = mutableMapOf<Coordinates, Int>()
+    tailPassing[Coordinates(0, 0)] = 1
 
-    println("$headCoordinates $tailCoordinates")
-    File(args[0]).forEachLine {
-        line ->
+    val rope = (1..len).map { Coordinates(0, 0) }.toMutableList()
+
+    File(fileName).forEachLine { line ->
 
         val (dir, stepsString) = line.split(" ")
         val steps = stepsString.toInt()
 
         for (i in 0 until steps) {
             //move head
+            val headCoordinates = rope[0]
             when (dir) {
-                "R" -> headCoordinates = Coordinates(headCoordinates.x + 1, headCoordinates.y)
-                "U" -> headCoordinates = Coordinates(headCoordinates.x , headCoordinates.y -1)
-                "L" -> headCoordinates = Coordinates(headCoordinates.x - 1, headCoordinates.y)
-                "D" -> headCoordinates = Coordinates(headCoordinates.x, headCoordinates.y + 1)
+                "R" -> headCoordinates.move(1, 0)
+                "U" -> headCoordinates.move(0, -1)
+                "L" -> headCoordinates.move(-1, 0)
+                "D" -> headCoordinates.move(0, 1)
             }
-            //move tail
-            val d = distance(headCoordinates, tailCoordinates)
+            var lastTailPos = rope[0]
+            for (j in 0 until rope.size - 1) {
+                val first = rope[j]
+                val second = rope[j + 1]
+                val distance = first - second
 
-            if (d.x != 0 || d.y != 0) {
-                if (d.y == 0) { //horizontal
-                    if (abs(d.x) > 1) {
-                        tailCoordinates = moveTail(tailPassing, tailCoordinates, if (d.x > 0) 1 else -1, 0)
-                    }
-                } else if (d.x == 0) { //vertical
-                    if (abs(d.y) > 1) {
-                        tailCoordinates = moveTail(tailPassing, tailCoordinates, 0, if (d.y > 0) 1 else -1)
-                    }
-                } else { //diagonal
-                    if (abs(d.y) > 1 || abs(d.x) > 1) {
-                        tailCoordinates = moveTail(tailPassing, tailCoordinates, if (d.x > 0) 1 else -1, if (d.y > 0) 1 else -1)
+                var x  = 0
+                var y  = 0
+
+                if (distance.x != 0 || distance.y != 0) {
+                    if (distance.y == 0 && abs(distance.x) > 1) x = if (distance.x > 0) 1 else -1
+                    else if (distance.x == 0 && abs(distance.y) > 1) y = if (distance.y > 0) 1 else -1
+                    else if (abs(distance.y) > 1 || abs(distance.x) > 1) {
+                        x = if (distance.x > 0) 1 else -1
+                        y = if (distance.y > 0) 1 else -1
                     }
                 }
+                lastTailPos = second.clone()
+                second.move(x, y )
             }
+
+            tailPassing[lastTailPos] = tailPassing[lastTailPos] ?.let { it + 1 } ?: 1
+
         }
     }
-    tailPassing[tailCoordinates] = if (tailCoordinates in tailPassing.keys) tailPassing[tailCoordinates]!! + 1 else 1
+    val tail = rope[rope.size - 1]
+    tailPassing[tail] = if (tail in tailPassing.keys) tailPassing[tail]!! + 1 else 1
 
     println(tailPassing.keys.size)
-
-}
-
-fun moveTail(
-    tailPassing: MutableMap<Coordinates, Int>,
-    tailCoordinates: Coordinates,
-    x: Int,
-    y: Int): Coordinates {
-    tailPassing[tailCoordinates] = if (tailCoordinates in tailPassing.keys) tailPassing[tailCoordinates]!! + 1 else 1
-    return Coordinates(tailCoordinates.x + x, tailCoordinates.y + y)
-}
-
-fun distance(toCoord: Coordinates, fromCoord: Coordinates): Coordinates {
-    return Coordinates(toCoord.x - fromCoord.x, toCoord.y - fromCoord.y)
-}
-
-private fun test() {
-    assert(42 == 42)
 }
