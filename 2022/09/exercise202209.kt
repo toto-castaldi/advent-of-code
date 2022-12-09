@@ -1,6 +1,7 @@
 import com.toto_castaldi.common.Coordinates
 import java.io.File
 import kotlin.math.abs
+import kotlin.math.sign
 
 fun main(
     args: Array<String>
@@ -40,11 +41,11 @@ private fun part(fileName : String , len : Int) {
                 var y  = 0
 
                 if (distance.x != 0 || distance.y != 0) {
-                    if (distance.y == 0 && abs(distance.x) > 1) x = if (distance.x > 0) 1 else -1
-                    else if (distance.x == 0 && abs(distance.y) > 1) y = if (distance.y > 0) 1 else -1
+                    if (distance.y == 0 && abs(distance.x) > 1) x = sign(distance.x.toDouble()).toInt()
+                    else if (distance.x == 0 && abs(distance.y) > 1) y = sign(distance.y.toDouble()).toInt()
                     else if (abs(distance.y) > 1 || abs(distance.x) > 1) {
-                        x = if (distance.x > 0) 1 else -1
-                        y = if (distance.y > 0) 1 else -1
+                        x = sign(distance.x.toDouble()).toInt()
+                        y = sign(distance.y.toDouble()).toInt()
                     }
                 }
                 lastTailPos = second.clone()
