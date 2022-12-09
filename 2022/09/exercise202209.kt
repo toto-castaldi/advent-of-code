@@ -13,8 +13,6 @@ fun main(
 private fun part(fileName : String , len : Int) : Int{
     val tailPassing = mutableSetOf<Coordinates>()
 
-    tailPassing.add(Coordinates(0, 0))
-
     val rope = (1..len).map { Coordinates(0, 0) }.toMutableList()
 
     File(fileName).forEachLine { line ->
@@ -44,7 +42,7 @@ private fun part(fileName : String , len : Int) : Int{
             }
         }
     }
-    tailPassing.add(rope.last())
+    tailPassing.add(rope.last().clone())
 
     return tailPassing.size
 }
