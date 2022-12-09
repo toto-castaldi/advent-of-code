@@ -3,7 +3,7 @@ import java.io.File
 private val caves = mutableListOf<Cave>()
 
 private class Cave(val name: String) {
-    private val bindedCaves = mutableListOf<Cave>()
+    val bindedCaves = mutableListOf<Cave>()
 
     fun bindTo(otherCave: Cave) {
         if (otherCave !in bindedCaves) {
@@ -15,7 +15,8 @@ private class Cave(val name: String) {
     }
 
     override fun toString(): String {
-        return "$name " + bindedCaves.fold("(") { acc, cave -> acc + (if (acc.endsWith("(")) "" else "; ") + cave.name} + ")"
+        //return "$name " + bindedCaves.fold("(") { acc, cave -> acc + (if (acc.endsWith("(")) "" else "; ") + cave.name} + ")"
+        return name
     }
 
     //iterator.contains
@@ -35,6 +36,8 @@ fun main(
     args: Array<String>
 ) {
     test()
+    var caveStart : Cave? = null
+    var caveEnd : Cave? = null
     File(args[0]).forEachLine {
         line ->
 
@@ -50,9 +53,41 @@ fun main(
             cave
         }
 
+        if (caveA.name == "start") caveStart = caveA
+        if (caveB.name == "start") caveStart = caveB
+        if (caveA.name == "end") caveEnd = caveA
+        if (caveB.name == "end") caveEnd = caveB
+
         caveA.bindTo(caveB)
     }
     println(caves)
+
+    //val paths = mutableListOf<String>()
+
+    println(a(caveStart!!, "", caveStart!!, caveEnd!!))
+
+}
+
+private fun a(cave: Cave, prevSteps: String, caveStart : Cave, caveEnd: Cave): String {
+    if (prevSteps.endsWith("-${caveEnd.name}")) {
+        return ""
+    } else {
+        var steps = prevSteps + "-${cave.name}"
+        for (c in cave.bindedCaves) {
+            if (c != caveStart) {
+                if (c == caveEnd) {
+                    println("add $cave -> $c")
+                    steps += "-${c.name}"
+                } else {
+                    if ((c.name[0].isUpperCase() || ("-${c.name}" !in steps)) && !steps.contains("${c.name}-${cave.name}")) {
+                        println("add $cave -> $c")
+                        steps += a(c, steps, caveStart, caveEnd)
+                    }
+                }
+            }
+        }
+        return steps
+    }
 }
 
 private fun test() {
