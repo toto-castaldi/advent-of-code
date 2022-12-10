@@ -81,20 +81,13 @@ fun main(
     val cpu = Computer(File(args[0]).readLines())
     val monitor = CRT(40, 6)
     cpu.addRegistry("x", 1)
-    val signalStrengts = mutableMapOf<Int,Long>(
-        20 to 0L,
-        60 to 0L,
-        100 to 0L,
-        140 to 0L,
-        180 to 0L,
-        220 to 0L
-    )
+    var signalStrengts = 0L
 
     while (cpu.executionContinues()) {
         val currentTick = cpu.tick()
 
-        if (currentTick in signalStrengts.keys) {
-            signalStrengts[currentTick] = currentTick * cpu.getRegistryValue("x")
+        if((currentTick - 20).mod(40) == 0 && currentTick <= 220) {
+            signalStrengts += currentTick * cpu.getRegistryValue("x")
         }
 
         monitor.cycle(currentTick, cpu.getRegistryValue("x"))
@@ -110,6 +103,5 @@ fun main(
     }
 
     println(signalStrengts)
-    println(signalStrengts.values.fold(0L) { acc, value -> acc + value})
     println(monitor)
 }
