@@ -36,10 +36,9 @@ fun main(
     args: Array<String>
 ) {
     test()
-    var caveStart : Cave? = null
-    var caveEnd : Cave? = null
-    File(args[0]).forEachLine {
-        line ->
+    var caveStart: Cave? = null
+    var caveEnd: Cave? = null
+    File(args[0]).forEachLine { line ->
 
         val (caveAName, caveBName) = line.split("-")
         val caveA = caves.find { it.name == caveAName }?.let { it } ?: run {
@@ -62,32 +61,21 @@ fun main(
     }
     println(caves)
 
-    //val paths = mutableListOf<String>()
-
-    println(a(caveStart!!, "", caveStart!!, caveEnd!!))
-
+    println(rp("", caveStart!!, caveEnd!!))
 }
 
-private fun a(cave: Cave, prevSteps: String, caveStart : Cave, caveEnd: Cave): String {
-    if (prevSteps.endsWith("-${caveEnd.name}")) {
-        return ""
-    } else {
-        var steps = prevSteps + "-${cave.name}"
-        for (c in cave.bindedCaves) {
-            if (c != caveStart) {
-                if (c == caveEnd) {
-                    println("add $cave -> $c")
-                    steps += "-${c.name}"
-                } else {
-                    if ((c.name[0].isUpperCase() || ("-${c.name}" !in steps)) && !steps.contains("${c.name}-${cave.name}")) {
-                        println("add $cave -> $c")
-                        steps += a(c, steps, caveStart, caveEnd)
-                    }
-                }
+private fun rp(prevSteps: String, cave : Cave, caveEnd: Cave): String {
+    val pn : (Cave) -> String = { it -> "-${it.name}"}
+    val st = prevSteps + pn(cave)
+    for (c in cave.bindedCaves) {
+        if (!st.endsWith(pn(c) + pn(cave))) {
+            val childPath = rp(st, c, caveEnd)
+            if (childPath.endsWith(pn(caveEnd))) {
+                return st
             }
         }
-        return steps
     }
+    return st
 }
 
 private fun test() {
