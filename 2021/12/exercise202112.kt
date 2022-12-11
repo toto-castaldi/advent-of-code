@@ -61,25 +61,30 @@ fun main(
     }
     println(caves)
 
-    println(rp("", caveStart!!, caveStart!!, caveEnd!!))
-}
+    val paths = mutableListOf<String>()
 
-private fun rp(prevSteps: String, cave : Cave, caveStart: Cave, caveEnd: Cave): String {
-    val pn : (Cave) -> String = { it -> "-${it.name}"}
-    val st = prevSteps + pn(cave)
-    if (cave == caveEnd) {
-        return st
-    }
-    for (c in cave.bindedCaves) {
-        if (!st.contains(pn(c) + pn(cave)) && c != caveStart) {
-            val childPath = rp(st, c, caveStart, caveEnd)
-            if (childPath.endsWith(pn(caveEnd))) {
-                return childPath
+
+    fun rp (prevSteps: String, cave : Cave)   {
+        val pn : (Cave) -> String = { it -> "-${it.name}"}
+        var st = prevSteps + pn(cave)
+        if (st.endsWith(pn(caveEnd!!))) {
+            paths.add(st)
+        } else {
+            for (c in cave.bindedCaves) {
+                if (c.name[0].isLowerCase() && !st.contains(pn(c))) {
+                    rp(st, c)
+                } else if (c.name[0].isUpperCase() && !st.contains(pn(cave) + pn(c))) {
+                    rp(st, c)
+                }
             }
         }
     }
-    return st
+
+    rp("", caveStart!!)
+    println(paths)
+    println(paths.size)
 }
+
 
 private fun test() {
 
