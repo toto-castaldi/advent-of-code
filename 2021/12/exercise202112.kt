@@ -61,17 +61,20 @@ fun main(
     }
     println(caves)
 
-    println(rp("", caveStart!!, caveEnd!!))
+    println(rp("", caveStart!!, caveStart!!, caveEnd!!))
 }
 
-private fun rp(prevSteps: String, cave : Cave, caveEnd: Cave): String {
+private fun rp(prevSteps: String, cave : Cave, caveStart: Cave, caveEnd: Cave): String {
     val pn : (Cave) -> String = { it -> "-${it.name}"}
     val st = prevSteps + pn(cave)
+    if (cave == caveEnd) {
+        return st
+    }
     for (c in cave.bindedCaves) {
-        if (!st.endsWith(pn(c) + pn(cave))) {
-            val childPath = rp(st, c, caveEnd)
+        if (!st.contains(pn(c) + pn(cave)) && c != caveStart) {
+            val childPath = rp(st, c, caveStart, caveEnd)
             if (childPath.endsWith(pn(caveEnd))) {
-                return st
+                return childPath
             }
         }
     }
