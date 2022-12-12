@@ -41,7 +41,8 @@ fun main(
     val startIndex = startCoordinates.linearIndex(width)
     val endIndex = endCoordinates.linearIndex(width)
 
-    val dijkstra = Dijkstra(countNodes)
+
+    val dijkstra = Dijkstra<Int>()
     var count = 0
     val debugMap = heightmapInputChar.fold(mutableListOf<Char>(), { acc, value ->
         acc.addAll(value)
@@ -52,17 +53,17 @@ fun main(
         val d = it.d()
         val l = it.l()
         val r = it.r()
-        if (u != null && (u.data - it.data) in 0..1) dijkstra.arc(count, count - width)
-        if (d != null && (d.data - it.data) in 0..1) dijkstra.arc(count, count + width)
-        if (l != null && (l.data - it.data) in 0..1) dijkstra.arc(count, count - 1)
-        if (r != null && (r.data - it.data) in 0..1) dijkstra.arc(count, count + 1)
+        if (u != null && (u.data - it.data) <= 1) dijkstra.arc(count, count - width)
+        if (d != null && (d.data - it.data) <= 1) dijkstra.arc(count, count + width)
+        if (l != null && (l.data - it.data) <= 1) dijkstra.arc(count, count - 1)
+        if (r != null && (r.data - it.data) <= 1) dijkstra.arc(count, count + 1)
         count ++
     }, {})
-    val dijkstraCompute = dijkstra.compute(startIndex)
+    val dijkstraCompute = dijkstra.shortestPath(startIndex,endIndex)
     println(debugMap[startIndex])
     println(debugMap[endIndex])
-    println(dijkstraCompute.precedingIndex.contentToString())
-    println(Dijkstra.countBackwards(dijkstraCompute, endIndex, startIndex))
+    println(dijkstraCompute)
+    println(dijkstraCompute.size - 1)
 }
 
 
