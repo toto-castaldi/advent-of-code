@@ -63,7 +63,6 @@ fun main(
 
     val paths = mutableListOf<String>()
 
-
     fun rp (prevSteps: String, cave : Cave)   {
         val pn : (Cave) -> String = { it -> "-${it.name}"}
         var st = prevSteps + pn(cave)

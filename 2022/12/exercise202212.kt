@@ -2,6 +2,9 @@ import com.toto_castaldi.common.BidimentionalNode
 import com.toto_castaldi.common.Coordinates
 import java.io.File
 
+operator fun <T> List<T>.component6(): T = get(5)
+operator fun <T> List<T>.component7(): T = get(6)
+operator fun <T> List<T>.component8(): T = get(7)
 fun main(
     args: Array<String>
 ) {
@@ -31,12 +34,43 @@ fun main(
     BidimentionalNode.printNodes(heightmap) {
         it.toString().padStart(3)
     }
-    val startNode = heightmap.resolve(startCoordinates)
-    val endNode = heightmap.resolve(endCoordinates)
 
-    println(startNode)
-    println(endNode)
+    var lowestPath = ""
+
+    fun recMove (prevSteps: String, coordinates: Coordinates )   {
+        val moveLabel : (Coordinates) -> String = { it -> "-${it.x.toString().padStart(2)}:${it.y.toString().padStart(2)}"}
+        val currentNode = heightmap.resolve(coordinates)!!
+        var currentSteps = prevSteps + moveLabel(coordinates)
+        if (currentSteps.endsWith(moveLabel(endCoordinates))) {
+            println("found path ${currentSteps}")
+            if (lowestPath == "" || currentSteps.length < lowestPath.length) {
+                lowestPath = currentSteps
+            }
+        } else {
+            val (up, _, right, _, down, _, left, _) = heightmap.resolve(coordinates)!!.edges()
+            fun moveIfCorrectAndNew  (newNode : BidimentionalNode<Int>?, newCoordinates: Coordinates) {
+                if (
+                    newNode != null &&
+                    newNode!!.data - currentNode.data <= 1 &&
+                    //!currentSteps.contains(moveLabel(newCoordinates)+moveLabel(coordinates))
+                    !currentSteps.contains(moveLabel(newCoordinates))
+                ) {
+                    recMove(currentSteps, newCoordinates)
+                }
+            }
+            moveIfCorrectAndNew(up, coordinates.clone().move(0, -1))
+            moveIfCorrectAndNew(down, coordinates.clone().move(0, 1))
+            moveIfCorrectAndNew(left, coordinates.clone().move(-1, 0))
+            moveIfCorrectAndNew(right, coordinates.clone().move(1, 0))
+        }
+    }
+
+    recMove("", startCoordinates)
+    println(lowestPath)
+    println(lowestPath.split("-").size - 2)
+
 }
+
 
 private fun test() {
     assert(42 == 42)

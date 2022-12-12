@@ -4,6 +4,7 @@ import kotlin.math.abs
 
 data class NodeAndCounting<T>(val node: BidimentionalNode<T>?, val countNodes: Int)
 
+
 class BidimentionalNode<T>(var data: T) {
 
     operator fun <T> List<T>.component6(): T = get(5)
