@@ -26,7 +26,11 @@ fun BidimentionalNode<Int>.scenicScore(): Int {
 }
 
 fun BidimentionalNode<Int>.isVisible(): Boolean {
-    val (up, _, right, _, down, _, left, _) = edges()
+    val up = u()
+    val right = r()
+    val down = d()
+    val left = l()
+
     if (up == null || left == null || right == null || down == null) {
         return true
     } else {

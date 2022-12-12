@@ -15,4 +15,8 @@ data class Coordinates(var x: Int, var y: Int) {
         return Coordinates(x - toCoord.x , y - toCoord.y)
     }
 
+    fun linearIndex(width: Int): Int {
+        return y * width + x
+    }
+
 }
