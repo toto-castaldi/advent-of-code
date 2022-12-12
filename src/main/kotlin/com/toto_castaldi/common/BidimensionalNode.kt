@@ -29,6 +29,14 @@ class BidimentionalNode<T>(var data: T) {
         neighbor.neighbors[Coordinates(-x, -y)] = this
         return this
     }
+    /**
+     * moving from here to a distant node
+     */
+    fun resolve(
+        coordinates: Coordinates
+    ): BidimentionalNode<T>? {
+        return resolve(coordinates.x, coordinates.y)
+    }
 
     /**
      * moving from here to a distant node
@@ -97,6 +105,12 @@ class BidimentionalNode<T>(var data: T) {
             tree: BidimentionalNode<T>
         ) {
             navigate(tree, { print(it) }, { println() })
+        }
+        fun <T> printNodes(
+            tree: BidimentionalNode<T>,
+            format: (it: T) -> String,
+        ) {
+            navigate(tree, { print(format(it.data)) }, { println() })
         }
         fun <T> navigate(
             node: BidimentionalNode<T>,
