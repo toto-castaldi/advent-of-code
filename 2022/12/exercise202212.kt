@@ -38,13 +38,12 @@ fun main(
     val startIndex = startCoordinates.linearIndex(width)
     val endIndex = endCoordinates.linearIndex(width)
 
-
     val dijkstra = Dijkstra<Int>()
     var count = 0
-    val debugMap = heightmapInputChar.fold(mutableListOf<Char>(), { acc, value ->
+    val debugMap = heightmapInputChar.fold(mutableListOf<Char>()) { acc, value ->
         acc.addAll(value)
         acc
-    })
+    }
     BidimentionalNode.navigate(heightmap,{
         val u = it.u()
         val d = it.d()
