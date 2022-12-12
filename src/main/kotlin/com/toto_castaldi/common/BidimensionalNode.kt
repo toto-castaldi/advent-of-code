@@ -13,9 +13,6 @@ class BidimentionalNode<T>(var data: T) {
         return neighbors.values
     }
 
-    /**
-     * clockwise Edges
-     */
     fun neighbor(
         x: Int,
         y: Int,

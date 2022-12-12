@@ -49,7 +49,9 @@ class Dijkstra<T>() {
                 .key
 
             graph.edges.getValue(v).minus(S).forEach { neighbor ->
-                val newPath = delta.getValue(v) + graph.weights.getValue(Pair(v, neighbor))
+                val k = Pair(v, neighbor)
+                val weight = if (graph.weights.containsKey(k)) graph.weights.getValue(k) else Int.MAX_VALUE
+                val newPath = delta.getValue(v) + weight
 
                 if (newPath < delta.getValue(neighbor)) {
                     delta[neighbor] = newPath
