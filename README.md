@@ -53,6 +53,7 @@ Tested with Kotlink version 1.7.21 and Java openjdk 17.0.3 2022-04-19
 
 ```
 (a % kn) % n = a % n
+https://en.wikipedia.org/wiki/Modulo_operation
 ```
 
 ## Solved

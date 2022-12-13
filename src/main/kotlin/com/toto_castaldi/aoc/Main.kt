@@ -1,5 +1,10 @@
 fun main(args: Array<String>) {
     when (args[0]) {
+        "202211" -> {
+            val aoc202211 = Aoc202211.build(args[1])
+            println(aoc202211.part1())
+            println(aoc202211.part2())
+        }
         "202213" -> {
             val aoc202213: Aoc202213 = Aoc202213.build(args[1])
             val correctOrderIndexes = aoc202213.correctOrderIndexes()
