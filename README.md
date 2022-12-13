@@ -39,7 +39,7 @@ Tested with Kotlink version 1.7.21 and Java openjdk 17.0.3 2022-04-19
 
 ## Notes
 
-### 2000.13.02
+### 2020.13.02
 
 [Euclidean algorithm](https://en.wikipedia.org/wiki/Euclidean_algorithm)
 
@@ -48,6 +48,12 @@ Tested with Kotlink version 1.7.21 and Java openjdk 17.0.3 2022-04-19
 [Chinese remainder theorem](https://en.wikipedia.org/wiki/Chinese_remainder_theorem)
 
 [Congruence](https://en.wikipedia.org/wiki/Modular_arithmetic#Congruence)
+
+### 2022.11.2
+
+```
+(a % kn) % n = a % n
+```
 
 ## Solved
 

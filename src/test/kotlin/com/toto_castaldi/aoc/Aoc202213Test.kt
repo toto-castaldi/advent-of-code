@@ -15,6 +15,75 @@ class Aoc202213Test {
     }
 
     @Test
+    fun listParseInteger() {
+        val aoc202213 = Aoc202213.build(listOf("[[1],[2,3,4]]" ,"[[1],4]"))
+        assertEquals("[[1],[2,3,4]]", aoc202213.getPair(1).left().toString())
+        assertEquals("[[1],4]", aoc202213.getPair(1).rigth().toString())
+    }
+
+    @Test
+    fun bothInteger() {
+        val aoc202213 = Aoc202213()
+        var pair = aoc202213.addPair()
+        pair.left().add(1).add(3)
+        pair.rigth().add(1).add(5)
+        assertTrue { pair.isInRightOrder() }
+    }
+
+    @Test
+    fun intList() {
+        val aoc202213 = Aoc202213.build(listOf("[1]" ,"[[2]]"))
+        assertTrue { aoc202213.getPair(1).isInRightOrder() }
+    }
+
+    @Test
+    fun emptyL() {
+        val aoc202213 = Aoc202213.build(listOf("[]" ,"[1]"))
+        assertTrue { aoc202213.getPair(1).isInRightOrder() }
+    }
+
+    @Test
+    fun emptyLList5() {
+        val aoc202213 = Aoc202213.build(listOf("[]" ,"[[[[[1]]]]]"))
+        assertTrue { aoc202213.getPair(1).isInRightOrder() }
+    }
+
+    @Test
+    fun emptyR() {
+        val aoc202213 = Aoc202213.build(listOf("[1]" ,"[0]"))
+        assertFalse { aoc202213.getPair(1).isInRightOrder() }
+    }
+
+
+    @Test
+    fun intListList() {
+        val aoc202213 = Aoc202213.build(listOf("[1]" ,"[[[[2]]]]"))
+        assertTrue { aoc202213.getPair(1).isInRightOrder() }
+    }
+
+    @Test
+    fun listInt() {
+        val aoc202213 = Aoc202213.build(listOf("[[[[1]]]]" ,"[2]"))
+        assertTrue { aoc202213.getPair(1).isInRightOrder() }
+    }
+
+    @Test
+    fun leftRunsOut() {
+        val pair = Aoc202213().addPair()
+        pair.left().add(7).add(7).add(7).add(7)
+        pair.rigth().add(7).add(7).add(7)
+        assertFalse { pair.isInRightOrder() }
+    }
+
+    @Test
+    fun rightRunsOut() {
+        val pair = Aoc202213().addPair()
+        pair.left().add(7).add(7)
+        pair.rigth().add(7).add(7).add(7)
+        assertTrue { pair.isInRightOrder() }
+    }
+
+    @Test
     fun part1() {
         val aoc202213 = Aoc202213()
         var pair = aoc202213.addPair()

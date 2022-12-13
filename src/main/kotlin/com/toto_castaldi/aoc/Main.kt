@@ -3,4 +3,6 @@ fun main(args: Array<String>) {
     val correctOrderIndexes = aoc202213.correctOrderIndexes()
     println(correctOrderIndexes)
     println(correctOrderIndexes.fold(0) { acc, value -> acc + value})
+    //4919 too low
+
 }

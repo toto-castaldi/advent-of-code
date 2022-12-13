@@ -2,7 +2,7 @@ import java.io.File
 
 class Aoc202213 {
 
-    private val pairs = mutableListOf<PacketPair>()
+    public val pairs = mutableListOf<PacketPair>()
 
     fun addPair(): PacketPair {
         val result = PacketPair()
@@ -43,43 +43,84 @@ class Aoc202213 {
 
 
         fun isInRightOrder(): Boolean {
-            for ((lIndex, lValue) in leftPacket.values.withIndex()) {
-                val rValue = if (rigthPacket.values.size > lIndex) rigthPacket.values[lIndex] else null
-                if (rValue == null) {
-                    return false //Right side ran out of items, so inputs are not in the right order
+            return leftPacket < rigthPacket
+        }
+
+        private fun spaces(level: Int): String {
+            return (1..level).fold("", { acc, _ -> acc + "  "})
+        }
+
+        class IntOrPacket {
+            fun isInt(): Boolean {
+                return valueInt != null
+            }
+
+            fun toInt(): Int {
+                return valueInt!!
+            }
+
+            fun toPacket(): Packet {
+                return valuePacket!!
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (other?.javaClass != javaClass) return false
+
+                other as IntOrPacket
+
+                if (isInt() && other.isInt()) {
+                    return valueInt!! == other.valueInt!!
+                } else if (!isInt() && !other.isInt()) {
+                    return valuePacket!! == other.valuePacket!!
+                }
+
+                return false
+            }
+
+            operator fun compareTo(other: IntOrPacket): Int {
+                if (isInt() && other.isInt()) {
+                    return valueInt!!.compareTo(other.toInt())
+                } else if (!isInt() && !other.isInt()) {
+                    return valuePacket!!.compareTo(other.toPacket())
+                } else if (isInt()) {
+                    return build(Packet().add(valueInt!!)).compareTo(other)
                 } else {
-                    if (lValue.first != null && rValue.first != null) { //both values are integers
-                        if (lValue.first!! < rValue!!.first!!) {
-                            return true
-                        } else if (lValue.first!! > rValue!!.first!!) {
-                            return false
-                        }
-                    } else if (lValue.second != null && rValue.second != null) { //If both values are lists
-                        return fromFather(lValue.second!!, rValue.second!!).isInRightOrder()
-                    } else {
-                        if (lValue.second != null) { //first list, second number
-                            return fromFather(lValue.second!!, Packet().add(rValue.first!!)).isInRightOrder()
-                        } else { //first number, second list
-                            return fromFather(Packet().add(lValue.first!!), rValue.second!!).isInRightOrder()
-                        }
-                    }
+                    return this.compareTo(build(Packet().add(other.toInt())))
                 }
             }
-            return true //Left side ran out of items, so inputs are in the right order
+
+            private var valueInt : Int? = null
+            private var valuePacket : Packet? = null
+
+            companion object {
+                fun build(value: Int): IntOrPacket {
+                    val result = IntOrPacket()
+                    result.valueInt = value;
+                    return result
+                }
+
+                fun build(value: Packet): IntOrPacket {
+                    val result = IntOrPacket()
+                    result.valuePacket = value;
+                    return result
+                }
+            }
+
         }
 
         class Packet {
             private var father: Aoc202213.PacketPair.Packet? = null
-            internal val values = mutableListOf<Pair<Int?, Packet?>>()
+            internal val values = mutableListOf<IntOrPacket>()
             fun add(value: Int): Packet {
-                values.add(Pair(value, null))
+                values.add(IntOrPacket.build(value))
                 return this
             }
 
             fun push(): Packet {
                 val child = Packet()
                 child.father = this
-                values.add(Pair(null, child))
+                values.add(IntOrPacket.build(child))
                 return child
             }
 
@@ -90,10 +131,10 @@ class Aoc202213 {
             override fun toString(): String {
                 var result = "["
                 for ((i, v) in values.withIndex()) {
-                    if (v.first != null) {
-                        result += v.first!!
+                    if (v.isInt()) {
+                        result += v.toInt()
                     } else {
-                        result += v.second!!.toString()
+                        result += v.toPacket().toString()
                     }
                     if (i < values.size - 1 ) {
                         result += ","
@@ -103,6 +144,35 @@ class Aoc202213 {
                 return result
             }
 
+            operator fun compareTo(other: Packet): Int {
+                for ((i, l) in values.withIndex()) {
+                    val r = if (other.values.size > i) other.values[i] else null
+                    if (r != null && l != r) {
+                        return l.compareTo(r)
+                    }
+                }
+                if (values.size == other.values.size) return 0
+                return values.size.compareTo(other.values.size)
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (other?.javaClass != javaClass) return false
+
+                other as Packet
+
+                for ((i, v) in values.withIndex()) {
+                    val o = if (other.values.size > i) other.values[i] else null
+                    if (o == null) {
+                        return false
+                    } else {
+                        if (v != o!!) {
+                            return false
+                        }
+                    }
+                }
+                return true
+            }
         }
 
         companion object {
