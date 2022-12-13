@@ -2,16 +2,7 @@ import java.io.File
 
 class Aoc202213 {
 
-    val pairs = mutableListOf<PacketPair>()
-
-    fun run(fileName: String) {
-        val chunks = File(fileName).readLines().chunked(3)
-        for (chunk in chunks) {
-            val first = chunk[0]
-            val second = chunk[1]
-
-        }
-    }
+    private val pairs = mutableListOf<PacketPair>()
 
     fun addPair(): PacketPair {
         val result = PacketPair()
@@ -29,6 +20,10 @@ class Aoc202213 {
         return result
     }
 
+    fun getPair(index: Int): PacketPair {
+        return pairs[index - 1]
+    }
+
     class PacketPair() {
 
         private var leftPacket = Packet()
@@ -40,6 +35,10 @@ class Aoc202213 {
 
         fun rigth(): Packet{
             return rigthPacket
+        }
+
+        override fun toString(): String {
+            return leftPacket.toString() + "\n" + rigthPacket.toString()
         }
 
 
@@ -88,6 +87,22 @@ class Aoc202213 {
                 return father!!
             }
 
+            override fun toString(): String {
+                var result = "["
+                for ((i, v) in values.withIndex()) {
+                    if (v.first != null) {
+                        result += v.first!!
+                    } else {
+                        result += v.second!!.toString()
+                    }
+                    if (i < values.size - 1 ) {
+                        result += ","
+                    }
+                }
+                result += "]"
+                return result
+            }
+
         }
 
         companion object {
@@ -98,6 +113,59 @@ class Aoc202213 {
                 return result
             }
         }
+
+    }
+
+    companion object {
+        fun build(fileName: String): Aoc202213 {
+            return build(File(fileName).readLines())
+        }
+        fun build(lines: List<String>): Aoc202213 {
+            val chunks = lines.chunked(3)
+            val result = Aoc202213()
+
+
+            for (chunk in chunks) {
+                val first = chunk[0]
+                val second = chunk[1]
+
+                val packetPair = result.addPair()
+
+                fun addAndClean(strDigits: String, packet: PacketPair.Packet): String {
+                    var result = strDigits
+                    if (result.isNotEmpty()) {
+                        packet.add(result.toInt())
+                        result = ""
+                    }
+                    return result
+                }
+
+                fun parsePacket(inputPacket: PacketPair.Packet, line: String) {
+                    var packet = inputPacket
+                    var index = 1
+                    var strDigits = ""
+                    while (index < line.length - 1) {
+                        if (line[index].isDigit()) {
+                            strDigits += line[index]
+                        } else if (line[index] == ',') {
+                            strDigits = addAndClean(strDigits, packet)
+                        } else if (line[index] == '[') {
+                            packet = packet.push()
+                        } else { //]
+                            strDigits = addAndClean(strDigits, packet)
+                            packet = packet.pop()
+                        }
+                        index ++
+                    }
+                    addAndClean(strDigits, packet)
+                }
+
+                parsePacket(packetPair.left(), first)
+                parsePacket(packetPair.rigth(), second)
+            }
+            return result
+        }
+
 
     }
 

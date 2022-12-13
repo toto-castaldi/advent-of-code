@@ -9,6 +9,12 @@ import kotlin.test.assertFalse
 class Aoc202213Test {
 
     @Test
+    fun parsePacket() {
+        val aoc202213 = Aoc202213.build(listOf("[1,[2,[3,[4,[5,6]]]],7,8,9]","[1,[2,[3,[4,[5,6]]]],0,8,9]"))
+        assertEquals("[1,[2,[3,[4,[5,6]]]],7,8,9]", aoc202213.getPair(1).left().toString())
+    }
+
+    @Test
     fun part1() {
         val aoc202213 = Aoc202213()
         var pair = aoc202213.addPair()
