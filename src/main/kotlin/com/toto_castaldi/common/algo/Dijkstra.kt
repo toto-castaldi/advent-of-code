@@ -1,16 +1,6 @@
-package com.toto_castaldi.common
+package com.toto_castaldi.common.algo
 
-
-fun <T> List<Pair<T, T>>.getUniqueValuesFromPairs(): Set<T> = this
-    .map { (a, b) -> listOf(a, b) }
-    .flatten()
-    .toSet()
-
-fun <T> List<Pair<T, T>>.getUniqueValuesFromPairs(predicate: (T) -> Boolean): Set<T> = this
-    .map { (a, b) -> listOf(a, b) }
-    .flatten()
-    .filter(predicate)
-    .toSet()
+import com.toto_castaldi.common.Graph
 
 class Dijkstra<T>() {
 

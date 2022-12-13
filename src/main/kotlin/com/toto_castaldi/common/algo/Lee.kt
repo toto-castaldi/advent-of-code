@@ -1,5 +1,6 @@
-package com.toto_castaldi.common
+package com.toto_castaldi.common.algo
 
+import com.toto_castaldi.common.Coordinates
 import java.util.*
 
 class Lee(val mat: Array<IntArray>) {

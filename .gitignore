@@ -6,3 +6,7 @@ exercise.jar
 .iml
 out
 advent-of-code.iml
+.gradle
+.vscode
+gradle
+build

@@ -1,6 +1,6 @@
 import com.toto_castaldi.common.BidimentionalNode
 import com.toto_castaldi.common.Coordinates
-import com.toto_castaldi.common.Dijkstra
+import com.toto_castaldi.common.algo.Dijkstra
 import java.io.File
 
 fun main(

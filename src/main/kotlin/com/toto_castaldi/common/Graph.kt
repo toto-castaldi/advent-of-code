@@ -1,5 +1,16 @@
 package com.toto_castaldi.common
 
+fun <T> List<Pair<T, T>>.getUniqueValuesFromPairs(): Set<T> = this
+    .map { (a, b) -> listOf(a, b) }
+    .flatten()
+    .toSet()
+
+fun <T> List<Pair<T, T>>.getUniqueValuesFromPairs(predicate: (T) -> Boolean): Set<T> = this
+    .map { (a, b) -> listOf(a, b) }
+    .flatten()
+    .filter(predicate)
+    .toSet()
+
 data class Graph<T>(
     val vertices: Set<T>,
     val edges: Map<T, Set<T>>,
