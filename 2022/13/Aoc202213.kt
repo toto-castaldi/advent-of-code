@@ -2,7 +2,7 @@ import java.io.File
 
 class Aoc202213 {
 
-    public val pairs = mutableListOf<PacketPair>()
+    val pairs = mutableListOf<PacketPair>()
 
     fun addPair(): PacketPair {
         val result = PacketPair()
@@ -46,10 +46,6 @@ class Aoc202213 {
             return leftPacket < rigthPacket
         }
 
-        private fun spaces(level: Int): String {
-            return (1..level).fold("", { acc, _ -> acc + "  "})
-        }
-
         class IntOrPacket {
             fun isInt(): Boolean {
                 return valueInt != null
@@ -80,14 +76,24 @@ class Aoc202213 {
 
             operator fun compareTo(other: IntOrPacket): Int {
                 if (isInt() && other.isInt()) {
-                    return valueInt!!.compareTo(other.toInt())
+                    return toInt().compareTo(other.toInt())
                 } else if (!isInt() && !other.isInt()) {
-                    return valuePacket!!.compareTo(other.toPacket())
+                    val c = toPacket().compareTo(other.toPacket())
+                    if (c != 0) {
+                        return c
+                    }
                 } else if (isInt()) {
-                    return build(Packet().add(valueInt!!)).compareTo(other)
+                    return build(Packet().add(toInt())).compareTo(other)
                 } else {
                     return this.compareTo(build(Packet().add(other.toInt())))
                 }
+                return 0
+            }
+
+            override fun hashCode(): Int {
+                var result = valueInt ?: 0
+                result = 31 * result + (valuePacket?.hashCode() ?: 0)
+                return result
             }
 
             private var valueInt : Int? = null
@@ -96,21 +102,21 @@ class Aoc202213 {
             companion object {
                 fun build(value: Int): IntOrPacket {
                     val result = IntOrPacket()
-                    result.valueInt = value;
+                    result.valueInt = value
                     return result
                 }
 
                 fun build(value: Packet): IntOrPacket {
                     val result = IntOrPacket()
-                    result.valuePacket = value;
+                    result.valuePacket = value
                     return result
                 }
             }
 
         }
 
-        class Packet {
-            private var father: Aoc202213.PacketPair.Packet? = null
+        class Packet : Comparable<Packet>{
+            private var father: Packet? = null
             internal val values = mutableListOf<IntOrPacket>()
             fun add(value: Int): Packet {
                 values.add(IntOrPacket.build(value))
@@ -126,6 +132,10 @@ class Aoc202213 {
 
             fun pop(): Packet {
                 return father!!
+            }
+
+            operator fun plus(value: Int): Packet {
+                return add(value)
             }
 
             override fun toString(): String {
@@ -144,14 +154,16 @@ class Aoc202213 {
                 return result
             }
 
-            operator fun compareTo(other: Packet): Int {
+            override operator fun compareTo(other: Packet): Int {
                 for ((i, l) in values.withIndex()) {
                     val r = if (other.values.size > i) other.values[i] else null
-                    if (r != null && l != r) {
-                        return l.compareTo(r)
+                    if (r != null) {
+                        val c = l.compareTo(r)
+                        if (c != 0) {
+                            return c
+                        }
                     }
                 }
-                if (values.size == other.values.size) return 0
                 return values.size.compareTo(other.values.size)
             }
 
@@ -166,21 +178,56 @@ class Aoc202213 {
                     if (o == null) {
                         return false
                     } else {
-                        if (v != o!!) {
+                        if (v != o) {
                             return false
                         }
                     }
                 }
                 return true
             }
-        }
 
-        companion object {
-            fun fromFather(lP: Packet, rP: Packet): PacketPair {
-                val result = PacketPair()
-                result.leftPacket = lP
-                result.rigthPacket = rP
+            override fun hashCode(): Int {
+                var result = father?.hashCode() ?: 0
+                result = 31 * result + values.hashCode()
                 return result
+            }
+
+            companion object {
+
+                fun parsePacket(inputPacket: Packet, line: String) {
+                    fun addAndClean(strDigits: String, packet: Packet): String {
+                        var result = strDigits
+                        if (result.isNotEmpty()) {
+                            packet.add(result.toInt())
+                            result = ""
+                        }
+                        return result
+                    }
+
+                    var packet = inputPacket
+                    var index = 1
+                    var strDigits = ""
+                    while (index < line.length - 1) {
+                        if (line[index].isDigit()) {
+                            strDigits += line[index]
+                        } else if (line[index] == ',') {
+                            strDigits = addAndClean(strDigits, packet)
+                        } else if (line[index] == '[') {
+                            packet = packet.push()
+                        } else { //]
+                            strDigits = addAndClean(strDigits, packet)
+                            packet = packet.pop()
+                        }
+                        index ++
+                    }
+                    addAndClean(strDigits, packet)
+                }
+
+                fun createAndParsePacket(line: String): Packet {
+                    val result = Packet()
+                    parsePacket(result, line)
+                    return result
+                }
             }
         }
 
@@ -201,39 +248,14 @@ class Aoc202213 {
 
                 val packetPair = result.addPair()
 
-                fun addAndClean(strDigits: String, packet: PacketPair.Packet): String {
-                    var result = strDigits
-                    if (result.isNotEmpty()) {
-                        packet.add(result.toInt())
-                        result = ""
-                    }
-                    return result
-                }
-
-                fun parsePacket(inputPacket: PacketPair.Packet, line: String) {
-                    var packet = inputPacket
-                    var index = 1
-                    var strDigits = ""
-                    while (index < line.length - 1) {
-                        if (line[index].isDigit()) {
-                            strDigits += line[index]
-                        } else if (line[index] == ',') {
-                            strDigits = addAndClean(strDigits, packet)
-                        } else if (line[index] == '[') {
-                            packet = packet.push()
-                        } else { //]
-                            strDigits = addAndClean(strDigits, packet)
-                            packet = packet.pop()
-                        }
-                        index ++
-                    }
-                    addAndClean(strDigits, packet)
-                }
-
-                parsePacket(packetPair.left(), first)
-                parsePacket(packetPair.rigth(), second)
+                PacketPair.Packet.parsePacket(packetPair.left(), first)
+                PacketPair.Packet.parsePacket(packetPair.rigth(), second)
             }
             return result
+        }
+
+        fun packets(fileName: String): List<PacketPair.Packet> {
+            return File(fileName).readLines().filter { it.trim().isNotEmpty() }.map { PacketPair.Packet.createAndParsePacket(it) }
         }
 
 

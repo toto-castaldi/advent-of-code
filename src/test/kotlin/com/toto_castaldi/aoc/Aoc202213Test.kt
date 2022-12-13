@@ -87,8 +87,8 @@ class Aoc202213Test {
     fun part1() {
         val aoc202213 = Aoc202213()
         var pair = aoc202213.addPair()
-        pair.left().add(1).add(1).add(3).add(1).add(1)
-        pair.rigth().add(1).add(1).add(5).add(1).add(1)
+        pair.left() + 1 + 1 + 3 + 1 + 1
+        pair.rigth() + 1 + 1 + 5 + 1 + 1
         assertTrue { pair.isInRightOrder() }
 
         pair = aoc202213.addPair()
