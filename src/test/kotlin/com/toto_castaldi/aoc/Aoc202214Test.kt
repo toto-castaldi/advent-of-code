@@ -2,6 +2,7 @@ package com.toto_castaldi.aoc
 
 import Aoc202214
 import com.toto_castaldi.common.Coordinates
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -14,7 +15,18 @@ class Aoc202214Test {
         aoc202214 + Aoc202214.parsePath("498,4 -> 498,6 -> 496,6")
         aoc202214 + Aoc202214.parsePath("503,4 -> 502,4 -> 502,9 -> 494,9")
 
-        assertEquals(24,  aoc202214.blockedSandCount())
+        assertEquals(24,  aoc202214.blockedSandCount(true))
+    }
+
+    @Test
+    @Ignore
+    fun part2() {
+        val aoc202214 = Aoc202214(500)
+        aoc202214 + Aoc202214.parsePath("498,4 -> 498,6 -> 496,6")
+        aoc202214 + Aoc202214.parsePath("503,4 -> 502,4 -> 502,9 -> 494,9")
+        aoc202214.addFloor(2)
+
+        assertEquals(93,  aoc202214.blockedSandCount(true))
     }
 
     @Test

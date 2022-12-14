@@ -2,6 +2,7 @@ import com.toto_castaldi.common.Coordinates
 
 class Aoc202214(val sandXStart: Int) {
 
+    private var floorYDelta: Int = -1
     private var maxY: Int = 0
     private var maxX: Int = 0
     private var minX: Int = Int.MAX_VALUE
@@ -16,29 +17,25 @@ class Aoc202214(val sandXStart: Int) {
 
             val pathSequence = Coordinates.path(pFrom, pTo)
             bricks.add(pFrom)
-            if (pFrom.y > maxY) {
-                maxY = pFrom.y
-            }
-            if (pFrom.x < minX) {
-                minX = pFrom.x
-            }
-            if (pFrom.x > maxX) {
-                maxX = pFrom.x
-            }
+            setPrintBounderies(pFrom)
             for (p in pathSequence) {
                 bricks.add(p)
-                if (p.y > maxY) {
-                    maxY = p.y
-                }
-                if (p.x < minX) {
-                    minX = p.x
-                }
-                if (p.x > maxX) {
-                    maxX = p.x
-                }
+                setPrintBounderies(p)
             }
         }
         return this
+    }
+
+    private fun setPrintBounderies(c: Coordinates) {
+        if (c.y > maxY) {
+            maxY = c.y
+        }
+        if (c.x < minX) {
+            minX = c.x
+        }
+        if (c.x > maxX) {
+            maxX = c.x
+        }
     }
 
     fun blockedSandCount(print : Boolean = false): Int {
@@ -95,6 +92,10 @@ class Aoc202214(val sandXStart: Int) {
 
 
         return result
+    }
+
+    fun addFloor(delta: Int) {
+        floorYDelta = delta
     }
 
     companion object {
