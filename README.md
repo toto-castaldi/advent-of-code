@@ -30,7 +30,7 @@ python 2015/03-py/puzzle.py
 Tested with Kotlink version 1.7.21 and Java openjdk 17.0.3 2022-04-19
 
 ```console
-./gradlew run
+./gradlew run --args 2022/14
 ```
 
 ## TO BE OPTIMIZED

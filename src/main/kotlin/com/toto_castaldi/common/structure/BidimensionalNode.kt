@@ -1,4 +1,4 @@
-package com.toto_castaldi.common
+package com.toto_castaldi.common.structure
 
 import kotlin.math.abs
 

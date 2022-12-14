@@ -1,5 +1,6 @@
 package com.toto_castaldi.common
 
+import com.toto_castaldi.common.structure.Coordinates
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals

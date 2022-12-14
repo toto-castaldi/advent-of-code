@@ -1,4 +1,4 @@
-import com.toto_castaldi.common.BidimentionalNode
+import com.toto_castaldi.common.structure.BidimentionalNode
 import java.io.File
 
 fun BidimentionalNode<Int>.incEnergy () {

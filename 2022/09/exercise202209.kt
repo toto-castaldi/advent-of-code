@@ -1,4 +1,4 @@
-import com.toto_castaldi.common.Coordinates
+import com.toto_castaldi.common.structure.Coordinates
 import java.io.File
 import kotlin.math.abs
 import kotlin.math.sign

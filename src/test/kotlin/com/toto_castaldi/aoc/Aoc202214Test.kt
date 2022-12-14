@@ -1,7 +1,7 @@
 package com.toto_castaldi.aoc
 
 import Aoc202214
-import com.toto_castaldi.common.Coordinates
+import com.toto_castaldi.common.structure.Coordinates
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

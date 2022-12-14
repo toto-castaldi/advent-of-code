@@ -1,5 +1,5 @@
 import java.io.File
-import com.toto_castaldi.common.BidimentionalNode
+import com.toto_castaldi.common.structure.BidimentionalNode
 
 fun BidimentionalNode<Int>.scenicScore(): Int {
     if (onTheEdge()) {

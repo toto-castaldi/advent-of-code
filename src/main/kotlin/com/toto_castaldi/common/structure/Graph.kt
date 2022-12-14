@@ -1,4 +1,4 @@
-package com.toto_castaldi.common
+package com.toto_castaldi.common.structure
 
 fun <T> List<Pair<T, T>>.getUniqueValuesFromPairs(): Set<T> = this
     .map { (a, b) -> listOf(a, b) }

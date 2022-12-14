@@ -1,4 +1,4 @@
-import com.toto_castaldi.common.Coordinates
+import com.toto_castaldi.common.structure.Coordinates
 
 class Aoc202214(val sandXStart: Int) {
 
@@ -113,7 +113,7 @@ class Aoc202214(val sandXStart: Int) {
         }
 
         //"498,4 -> 498,6 -> 496,6"
-        val parsePath = { pathStringDef: String -> pathStringDef.trim().split(" -> ").map { Coordinates(it.trim().split(",")[0].toInt(), it.trim().split(",")[1].toInt())}}
+        val parsePath = { pathStringDef: String -> pathStringDef.trim().split(" -> ").map { Coordinates(it.trim().split(",")[0].toInt(), it.trim().split(",")[1].toInt()) }}
     }
 
 }

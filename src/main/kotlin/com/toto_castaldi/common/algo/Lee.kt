@@ -1,6 +1,6 @@
 package com.toto_castaldi.common.algo
 
-import com.toto_castaldi.common.Coordinates
+import com.toto_castaldi.common.structure.Coordinates
 import java.util.*
 
 class Lee(val mat: Array<IntArray>) {
@@ -85,7 +85,7 @@ class Lee(val mat: Array<IntArray>) {
 
 }
 
-fun main(args: Array<String>) {
+fun main() {
     val mat = arrayOf(
         intArrayOf(1, 1, 1, 1, 1, 0, 0, 1, 1, 1),
         intArrayOf(0, 1, 1, 1, 1, 1, 0, 1, 0, 1),

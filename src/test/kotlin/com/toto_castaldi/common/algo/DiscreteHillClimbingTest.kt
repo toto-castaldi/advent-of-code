@@ -1,12 +1,14 @@
 package com.toto_castaldi.common.algo
 
-import com.toto_castaldi.common.BidimentionalNode
+import com.toto_castaldi.common.structure.BidimentionalNode
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DiscreteHillClimbingTest {
 
     @Test
+    @Ignore
     fun testSlope() {
         val startingHill = BidimentionalNode(1)
         var pointer = startingHill

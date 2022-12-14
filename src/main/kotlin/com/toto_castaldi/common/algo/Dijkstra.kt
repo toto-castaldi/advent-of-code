@@ -1,6 +1,6 @@
 package com.toto_castaldi.common.algo
 
-import com.toto_castaldi.common.Graph
+import com.toto_castaldi.common.structure.Graph
 
 class Dijkstra<T>() {
 
@@ -35,7 +35,7 @@ class Dijkstra<T>() {
             // let v be the closest vertex that has not yet been visited
             val v: T = delta
                 .filter { !S.contains(it.key) }
-                .minBy { it.value }!!
+                .minBy { it.value }
                 .key
 
             graph.edges.getValue(v).minus(S).forEach { neighbor ->
