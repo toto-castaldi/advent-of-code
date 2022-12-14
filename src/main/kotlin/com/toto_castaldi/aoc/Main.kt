@@ -1,3 +1,5 @@
+import java.io.File
+
 fun main(args: Array<String>) {
     when (args[0]) {
         "202211" -> {
@@ -22,6 +24,14 @@ fun main(args: Array<String>) {
             val secondIndex = packets.indexOf(secondDivider) + 1
 
             println("$firstIndex $secondIndex ${firstIndex * secondIndex}")
+        }
+        "202214" -> {
+            val aoc202214 = Aoc202214(500)
+            for (line in File(args[1]).readLines()) {
+                aoc202214 + Aoc202214.parsePath(line)
+            }
+
+            println(aoc202214.blockedSandCount())
         }
     }
 
