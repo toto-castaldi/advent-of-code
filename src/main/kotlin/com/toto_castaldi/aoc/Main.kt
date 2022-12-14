@@ -26,12 +26,12 @@ fun main(args: Array<String>) {
             println("$firstIndex $secondIndex ${firstIndex * secondIndex}")
         }
         "202214" -> {
-            val aoc202214 = Aoc202214(500)
-            for (line in File(args[1]).readLines()) {
-                aoc202214 + Aoc202214.parsePath(line)
-            }
+            val aoc202214Part1 = Aoc202214.parsePaths(Aoc202214(500), File(args[1]).readLines())
+            println(aoc202214Part1.blockedSandCount())
 
-            println(aoc202214.blockedSandCount())
+            val aoc202214Part2 = Aoc202214.parsePaths(Aoc202214(500), File(args[1]).readLines())
+            aoc202214Part2.addFloor(2)
+            println(aoc202214Part2.blockedSandCount())
         }
     }
 

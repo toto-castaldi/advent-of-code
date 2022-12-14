@@ -2,7 +2,6 @@ package com.toto_castaldi.aoc
 
 import Aoc202214
 import com.toto_castaldi.common.Coordinates
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -19,7 +18,6 @@ class Aoc202214Test {
     }
 
     @Test
-    @Ignore
     fun part2() {
         val aoc202214 = Aoc202214(500)
         aoc202214 + Aoc202214.parsePath("498,4 -> 498,6 -> 496,6")
