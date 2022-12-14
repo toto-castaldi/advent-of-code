@@ -6,7 +6,6 @@ class Aoc202214(val sandXStart: Int) {
     private var maxY: Int = 0
     private var maxX: Int = 0
     private var minX: Int = Int.MAX_VALUE
-    private var canFall = true
     val bricks = mutableSetOf<Coordinates>()
 
     operator fun plus(parsePath: List<Coordinates>): Aoc202214 {
@@ -37,61 +36,11 @@ class Aoc202214(val sandXStart: Int) {
         }
     }
 
-    fun blockedSandCount(print : Boolean = false): Int {
-        if (floorY == -1) {
-            return blockedSandCountNoFloor(print)
-        } else {
-            return blockedSandCountWithFloor(print)
-        }
-    }
-
-    private fun blockedSandCountWithFloor(print : Boolean = false, debug : Int = -1): Int {
+    fun blockedSandCount(print : Boolean = false, debug : Int = -1): Int {
         var time = 0
         var result = 0
         var currentSand: Coordinates? = null
-
-        while (canFall && (debug == -1 || time < debug)) {
-            time++
-
-            if (currentSand == null) {
-                currentSand = Coordinates(sandXStart, 0)
-            }
-
-            if (currentSand.clone().d() !in bricks && currentSand.clone().d().y < floorY) { //can move down
-                currentSand = currentSand.clone().d()
-            } else if (currentSand.clone().ld() !in bricks && currentSand.clone().ld().y < floorY) { //can move ld
-                currentSand = currentSand.clone().ld()
-            } else if (currentSand.clone().rd() !in bricks && currentSand.clone().d().y < floorY) { //can move rd
-                currentSand = currentSand.clone().rd()
-            }
-            if ((
-                        currentSand.clone().d() in bricks &&
-                        currentSand.clone().ld() in bricks &&
-                        currentSand.clone().rd() in bricks
-                        ) || (
-                        currentSand.clone().d().y == floorY
-                        )) {
-                bricks.add(currentSand.clone())
-                result++
-                currentSand = null
-            }
-            if (Coordinates(sandXStart, 0) in bricks) { //cave full
-                canFall = false
-                currentSand = null
-            }
-
-            if (print) {
-                printCave(currentSand)
-                println("round ${time} ${result}")
-            }
-        }
-        return result
-    }
-
-    private fun blockedSandCountNoFloor(print : Boolean = false, debug : Int = -1): Int {
-        var time = 0
-        var result = 0
-        var currentSand: Coordinates? = null
+        var canFall = true
 
         while (canFall && (debug == -1 || time < debug)) {
             time ++
@@ -100,32 +49,37 @@ class Aoc202214(val sandXStart: Int) {
                 currentSand = Coordinates(sandXStart, 0)
             }
 
-            if (currentSand.clone().d() !in bricks) { //can move down
+            if (currentSand.clone().d() !in bricks && (floorY == -1 || currentSand.clone().d().y < floorY)) { //can move down
                 currentSand = currentSand.clone().d()
-            } else if (currentSand.clone().ld() !in bricks) { //can move ld
+            } else if (currentSand.clone().ld() !in bricks && (floorY == -1 || currentSand.clone().ld().y < floorY)) { //can move ld
                 currentSand = currentSand.clone().ld()
-            } else if (currentSand.clone().rd() !in bricks) { //can move rd
+            } else if (currentSand.clone().rd() !in bricks && (floorY == -1 || currentSand.clone().rd().y < floorY)) { //can move rd
                 currentSand = currentSand.clone().rd()
             }
-            if (
-                currentSand.clone().d() in bricks &&
-                currentSand.clone().ld() in bricks &&
-                currentSand.clone().rd() in bricks
-            ) {
+            if ((
+                        currentSand.clone().d() in bricks &&
+                        currentSand.clone().ld() in bricks &&
+                        currentSand.clone().rd() in bricks
+                        ) || (
+                        currentSand.clone().d().y == floorY && floorY != -1
+                        )) {
                 bricks.add(currentSand.clone())
                 result ++
                 currentSand = null
-            } else if (currentSand.y >= maxY) {
+            }
+            if (currentSand != null &&
+                (currentSand.y >= maxY && floorY == -1) ||
+                (Coordinates(sandXStart, 0) in bricks) //cave full
+            ){
                 canFall = false
                 currentSand = null
             }
+
 
             if (print) {
                 printCave(currentSand)
                 println("round ${time} ${result}")
             }
-
-
         }
         return result
     }
