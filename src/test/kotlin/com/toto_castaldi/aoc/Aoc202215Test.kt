@@ -30,7 +30,7 @@ class Aoc202215Test {
     }
 
     @Test
-    fun ruleAddTest() {
+    fun ruleAddTest0() {
         val aoc = Aoc202215() + "Sensor at x=8, y=7: closest beacon is at x=2, y=10"
         assertTrue { aoc.isOccupied(Coordinates(8, -2)) }
         assertTrue { aoc.isOccupied(Coordinates(7, -1)) }
@@ -39,6 +39,18 @@ class Aoc202215Test {
         assertFalse { aoc.isOccupied(Coordinates(6, -1)) }
         assertFalse { aoc.isOccupied(Coordinates(10, -1)) }
         assertTrue { aoc.isOccupied(Coordinates(8, 16)) }
+    }
+
+    @Test
+    fun ruleAddTest1() {
+        val aoc = Aoc202215() + "Sensor at x=0, y=4: closest beacon is at x=-1, y=5"
+        assertEquals(0, aoc.countOccupiedSpotForBeacon(1))
+        assertEquals(1, aoc.countOccupiedSpotForBeacon(2))
+        assertEquals(3, aoc.countOccupiedSpotForBeacon(3))
+        assertEquals(5, aoc.countOccupiedSpotForBeacon(4))
+        assertEquals(2, aoc.countOccupiedSpotForBeacon(5))
+        assertEquals(1, aoc.countOccupiedSpotForBeacon(6))
+        assertEquals(0, aoc.countOccupiedSpotForBeacon(7))
     }
 
 }
