@@ -1,7 +1,6 @@
 package com.toto_castaldi.aoc
 
 import Aoc202215
-import com.toto_castaldi.common.structure.Coordinates
 import kotlin.test.*
 
 class Aoc202215Test {
@@ -44,18 +43,6 @@ class Aoc202215Test {
         aoc + "Sensor at x=14, y=3: closest beacon is at x=15, y=3"
         aoc + "Sensor at x=20, y=1: closest beacon is at x=15, y=3"
         assertEquals(56000011, aoc.distressBeaconTuningFrequency(20))
-    }
-
-    @Test
-    fun ruleAddTest0() {
-        val aoc = Aoc202215() + "Sensor at x=8, y=7: closest beacon is at x=2, y=10"
-        assertTrue { aoc.isOccupied(Coordinates(8, -2)) }
-        assertTrue { aoc.isOccupied(Coordinates(7, -1)) }
-        assertTrue { aoc.isOccupied(Coordinates(8, -1)) }
-        assertTrue { aoc.isOccupied(Coordinates(9, -1)) }
-        assertFalse { aoc.isOccupied(Coordinates(6, -1)) }
-        assertFalse { aoc.isOccupied(Coordinates(10, -1)) }
-        assertTrue { aoc.isOccupied(Coordinates(8, 16)) }
     }
 
     @Test

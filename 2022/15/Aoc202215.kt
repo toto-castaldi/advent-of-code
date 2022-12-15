@@ -11,13 +11,7 @@ class Aoc202215() {
 
     private fun freeSpotAt(y: Int): Set<Int> {
         val result = mutableSetOf<Int>()
-        var intervals = setOf<IntRange>()
-        for (area in sensorAreas) {
-            val interval:IntRange ? = area.resolveInterval(y)
-            if (interval != null) {
-                intervals = Numbers.merged(intervals, interval)
-            }
-        }
+        val intervals = matchingY(y)
         if (intervals.isNotEmpty()) {
             val min = intervals.minBy { it.first }
             val max = intervals.maxBy { it.last }
@@ -30,13 +24,7 @@ class Aoc202215() {
         return result
     }
     fun countOccupiedSpotForBeacon(y: Int): Int {
-        var intervals = setOf<IntRange>()
-        for (area in sensorAreas) {
-            val interval:IntRange ? = area.resolveInterval(y)
-            if (interval != null) {
-                intervals = Numbers.merged(intervals, interval)
-            }
-        }
+        val intervals = matchingY(y)
         var count = 0
         for (interval in intervals) {
             val delta = beacons.filter { it.y == y }.fold(0) {
@@ -49,21 +37,23 @@ class Aoc202215() {
         return count
     }
 
-    operator fun plus(sensorBeaconDescription: String): Aoc202215 {
-        val intBetween = {
-            input: String, before: String, after: String ->
-
-            if (after.isNotEmpty()) {
-                input.trim().split(before)[1].trim().split(after)[0].toInt()
-            } else {
-                input.trim().split(before)[1].trim().toInt()
-            }
+    private fun matchingY(
+        y: Int
+    ): Set<IntRange> {
+        var result = setOf<IntRange>()
+        sensorAreas.forEach { area ->
+            result = area.resolveInterval(y)?.let { Numbers.merged(result, it) } ?: result
         }
+        return result
+    }
+
+    operator fun plus(sensorBeaconDescription: String): Aoc202215 {
         //Sensor at x=2, y=18: closest beacon is at x=-2, y=15
-        val sX = intBetween(sensorBeaconDescription, "Sensor at x=", ",")
-        val sY = intBetween(sensorBeaconDescription, "y=", ":")
-        val bX = intBetween(sensorBeaconDescription, ": closest beacon is at x=", ",")
-        val bY = intBetween(sensorBeaconDescription.trim().split(": closest beacon is at x=")[1], ", y=", "")
+        val match = "Sensor at x=(-?\\d+), y=(-?\\d+): closest beacon is at x=(-?\\d+), y=(-?\\d+)".toRegex().find(sensorBeaconDescription)!!
+        val sX = match.groups[1]!!.value.toInt()
+        val sY = match.groups[2]!!.value.toInt()
+        val bX = match.groups[3]!!.value.toInt()
+        val bY = match.groups[4]!!.value.toInt()
 
         val sensor = Coordinates(sX, sY)
         val beacon = Coordinates(bX, bY)
@@ -75,28 +65,18 @@ class Aoc202215() {
         return this
     }
 
-    fun isOccupied(coordinates: Coordinates) : Boolean{ 
-        for (area in sensorAreas) {
-            val o = coordinates in area
-            if (o) return true
-        }
-        return false
-    }
-
     fun distressBeaconTuningFrequency(max: Int): Long {
-        for (y in 0 .. max) {
-            val freeSpot = freeSpotAt(y)
+        (0..max).forEach{
+            val freeSpot = freeSpotAt(it)
             if (freeSpot.isNotEmpty()) {
                 val suitableX = freeSpot.find { it in 0..max }
                 if (suitableX != null) {
-                    return suitableX.toLong() * 4000000L + y.toLong()
+                    return suitableX.toLong() * 4000000L + it.toLong()
                 }
             }
         }
         throw Exception("... uhm")
     }
-
-
 
     companion object {
         fun run1(fileName: String, y: Int): Int {

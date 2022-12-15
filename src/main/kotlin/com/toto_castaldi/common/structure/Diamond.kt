@@ -18,7 +18,7 @@ package com.toto_castaldi.common.structure
 ..........###...............
 ...........#................
  */
-class Diamond(val center: Coordinates, val halfWidth: Int) {
+class Diamond(center: Coordinates, halfWidth: Int) {
 
     private var a: Coordinates = Coordinates(center.x, center.y - halfWidth)
     private var b: Coordinates = Coordinates(center.x + halfWidth, center.y)
@@ -26,18 +26,11 @@ class Diamond(val center: Coordinates, val halfWidth: Int) {
     private var d: Coordinates = Coordinates(center.x - halfWidth, center.y)
 
     operator fun contains(coordinates: Coordinates): Boolean {
-        val interval = resolveInterval(coordinates)
-        return interval != null && interval.contains(coordinates.x)
+        return resolveInterval(coordinates.y)?.contains(coordinates.x) ?: false
     }
 
     fun resolveInterval(y: Int): IntRange? {
-        return resolveInterval(Coordinates(center.x, y))
-    }
-    fun resolveInterval(coordinates: Coordinates): IntRange? {
         var interval: IntRange? = null
-        //val (x, y) = coordinates
-        val x = coordinates.x
-        val y = coordinates.y
         if (y >= a.y && y <= d.y) {
             val f = Coordinates(Line(a, d).atY(y).toInt(), y)
             val s = Coordinates(Line(a, b).atY(y).toInt(), y)
