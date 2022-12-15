@@ -1,5 +1,7 @@
+import com.toto_castaldi.common.Numbers
 import com.toto_castaldi.common.algo.ManhattanDistance
 import com.toto_castaldi.common.structure.Coordinates
+import com.toto_castaldi.common.structure.Diamond
 import com.toto_castaldi.common.structure.Line
 import java.io.File
 import java.lang.Math.max
@@ -7,32 +9,15 @@ import java.lang.Math.min
 
 class Aoc202215() {
 
-    private val sensorAreas = mutableSetOf<SeasonArea>()
+    private val sensorAreas = mutableSetOf<Diamond>()
     private val beacons = mutableSetOf<Coordinates>()
 
     private fun freeSpotAt(y: Int): Pair<Int, Int>? {
-        val intervals = mutableSetOf<IntRange>()
+        var intervals = setOf<IntRange>()
         for (area in sensorAreas) {
             var interval:IntRange ? = area.resolveInterval(y)
             if (interval != null) {
-                val covering = intervals.filter {
-                    it.contains(interval.last) || it.contains(interval.first) || (interval.first <= it.first && interval.last >= it.last)
-                }
-                if (covering.isNotEmpty()) {
-                    val min = intervals.minBy { it.first }
-                    val max = intervals.maxBy { it.last }
-                    for (c in covering) {
-                        intervals.remove(c)
-                        println("remove $c")
-                    }
-                    val i = min.first .. max.last
-                    println("add $i")
-                    intervals.add(i)
-
-                } else {
-                    println("add $interval")
-                    intervals.add(interval)
-                }
+                intervals = Numbers.merged(intervals, interval)
             }
         }
         if (intervals.size == 1) {
@@ -41,26 +26,11 @@ class Aoc202215() {
         return null
     }
     fun countOccupiedSpotForBeacon(y: Int): Int {
-        val intervals = mutableSetOf<IntRange>()
+        var intervals = setOf<IntRange>()
         for (area in sensorAreas) {
             var interval:IntRange ? = area.resolveInterval(y)
             if (interval != null) {
-                val covering = intervals.filter {
-                    it.contains(interval.last) || it.contains(interval.first) || intervals.contains(it)
-                }
-                if (covering.size > 1) throw Exception("a problem here")
-                if (covering.size == 1) {
-                    val other = covering[0]
-                    println("covering $interval $other")
-                    intervals.remove(other)
-                    println("remove $other")
-                    val i = min(interval.first, other.first) .. max(interval.last, other.last)
-                    println("add $i")
-                    intervals.add(i)
-                } else {
-                    println("add $interval")
-                    intervals.add(interval)
-                }
+                intervals = Numbers.merged(intervals, interval)
             }
         }
         var count = 0
@@ -97,47 +67,12 @@ class Aoc202215() {
         beacons.add(beacon)
 
         var distance = ManhattanDistance.between(sensor,beacon)
-        var a = Coordinates(sensor.x, sensor.y - distance)
-        var b = Coordinates(sensor.x + distance, sensor.y)
-        var c = Coordinates(sensor.x, sensor.y + distance)
-        var d = Coordinates(sensor.x - distance, sensor.y)
 
-        sensorAreas.add(SeasonArea(sensor, distance, a,b,c,d))
+        sensorAreas.add(Diamond(sensor, distance))
 
         return this
     }
 
-    class SeasonArea(val sensor: Coordinates, val distance: Int, val a: Coordinates, val b: Coordinates, val c: Coordinates, val  d: Coordinates) {
-        operator fun contains(coordinates: Coordinates): Boolean {
-            val interval = resolveInterval(coordinates)
-            return interval != null && interval.contains(coordinates.x)
-        }
-
-        fun resolveInterval(y: Int): IntRange? {
-            return resolveInterval(Coordinates(sensor.x, y))
-        }
-        fun resolveInterval(coordinates: Coordinates): IntRange? {
-            var interval: IntRange? = null
-            //val (x, y) = coordinates
-            val x = coordinates.x
-            val y = coordinates.y
-            if (y == a.y || y == c.y) {
-                interval = x..x
-            } else if (y == b.y) {
-                interval = d.x..b.x
-            } else if (y > a.y && y < d.y) {
-                val f = Coordinates(Line(a, d).atY(y).toInt(), y)
-                val s = Coordinates(Line(a, b).atY(y).toInt(), y)
-                interval = f.x..s.x
-            } else if (y > d.y && y < c.y) {
-                val f = Coordinates(Line(d, c).atY(y).toInt(), y)
-                val s = Coordinates(Line(b, c).atY(y).toInt(), y)
-                interval = f.x..s.x
-            }
-            return interval
-        }
-
-    }
     fun isOccupied(coordinates: Coordinates) : Boolean{ 
         for (area in sensorAreas) {
             val o = coordinates in area
