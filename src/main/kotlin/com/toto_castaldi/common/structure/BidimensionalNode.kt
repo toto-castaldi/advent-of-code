@@ -22,6 +22,12 @@ class BidimentionalNode<T>(var data: T) {
         neighbor.neighbors[Coordinates(-x, -y)] = this
         return this
     }
+
+    fun removeNeighbor(x: Int, y: Int): BidimentionalNode<T> {
+        neighbors[Coordinates(x, y)]?.neighbors?.remove(Coordinates(-x, -y))
+        neighbors.remove(Coordinates(x, y))
+        return this
+    }
     /**
      * moving from here to a distant node
      */
@@ -89,17 +95,21 @@ class BidimentionalNode<T>(var data: T) {
     fun dl(): BidimentionalNode<T>? { return resolve(-1,1) }
     fun ul(): BidimentionalNode<T>? { return resolve(-1,-1) }
 
+
     companion object {
-        fun <T> printNodes(
-            tree: BidimentionalNode<T>
-        ) {
-            navigate(tree, { print(it) }, { println() })
-        }
+
         fun <T> printNodes(
             tree: BidimentionalNode<T>,
-            format: (it: T) -> String,
+            format: (it: T) -> String = { it.toString() }
         ) {
             navigate(tree, { print(format(it.data)) }, { println() })
+        }
+
+        fun <T> navigate(
+            node: BidimentionalNode<T>,
+            action: (it: BidimentionalNode<T>) -> Unit
+        ) {
+            return navigate(node, action) {}
         }
         fun <T> navigate(
             node: BidimentionalNode<T>,
@@ -124,12 +134,12 @@ class BidimentionalNode<T>(var data: T) {
         /**
          * build and return the last node in the grid
          */
-        fun <T, R> build(matrix : List<List<T>>, builder : (T) -> R) : NodeAndCounting<R> {
+        fun <T, R> build(matrix : List<List<T>>, builder : (Int, Int, T) -> R) : NodeAndCounting<R> {
             var count = 0
             var pointer : BidimentionalNode<R>? = null
             for (y in 0 until matrix.size) {
                 for (x in 0 until matrix[y].size) {
-                    val node = BidimentionalNode(builder(matrix[y][x]))
+                    val node = BidimentionalNode(builder(x,y,matrix[y][x]))
                     count ++
                     if (x == 0) {
                         if (pointer != null) {

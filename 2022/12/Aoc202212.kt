@@ -1,9 +1,12 @@
 import com.toto_castaldi.common.structure.BidimentionalNode
 import com.toto_castaldi.common.structure.Coordinates
-import com.toto_castaldi.common.algo.Dijkstra
+import com.toto_castaldi.common.algo.DiscreteHillClimbing
+import com.toto_castaldi.common.algo.EuclidianDistance
 import java.io.File
 
 class Aoc202212 (private val fileName:String) {
+
+    data class XYH(val x: Int, val y: Int, val h : Int)
 
     fun run() {
         val heightVal = { supply: Char -> supply.code - 'a'.code + 1 }
@@ -27,37 +30,53 @@ class Aoc202212 (private val fileName:String) {
             }
             heightmapInput.add(rowInt)
         }
-        val (node, _) = BidimentionalNode.build(heightmapInput) { it }
-        val heightmap = node!!.topLeft()
-        BidimentionalNode.printNodes(heightmap) {
-            it.toString().padStart(3)
+        val (lastNode, _) = BidimentionalNode.build(heightmapInput) { x,y,h -> XYH(x,y,h) }
+        val firstNode = lastNode!!.topLeft()
+        var destination : BidimentionalNode<XYH>? = null
+        BidimentionalNode.printNodes(firstNode) {
+            it.h.toString().padStart(3)
         }
-        val width = heightmapInputChar[0].size
-        val startIndex = startCoordinates.linearIndex(width)
-        val endIndex = endCoordinates.linearIndex(width)
+        val allNodes = mutableListOf<BidimentionalNode<XYH>>()
+        BidimentionalNode.navigate(firstNode) {
+            allNodes.add(it)
+            if (it.data.x == endCoordinates.x && it.data.y == endCoordinates.y) destination = it
+        }
 
-        val dijkstra = Dijkstra<Int>()
-        var count = 0
-        val debugMap = heightmapInputChar.fold(mutableListOf<Char>()) { acc, value ->
-            acc.addAll(value)
-            acc
+        for (node in allNodes) {
+            val u = node.u()
+            val d = node.d()
+            val l = node.l()
+            val r = node.r()
+            if (u != null && u.data.h > node.data.h + 1) node.removeNeighbor(0, -1)
+            if (d != null && d.data.h > node.data.h + 1) node.removeNeighbor(0, 1)
+            if (l != null && l.data.h > node.data.h + 1) node.removeNeighbor(-1, 0)
+            if (r != null && r.data.h > node.data.h + 1) node.removeNeighbor(1, 0)
+            node
+                .removeNeighbor(1, -1)
+                .removeNeighbor(1, 1)
+                .removeNeighbor(-1, 1)
+                .removeNeighbor(-1, -1)
         }
-        BidimentionalNode.navigate(heightmap, {
-            val u = it.u()
-            val d = it.d()
-            val l = it.l()
-            val r = it.r()
-            if (u != null && (u.data - it.data) <= 1) dijkstra.arc(count, count - width)
-            if (d != null && (d.data - it.data) <= 1) dijkstra.arc(count, count + width)
-            if (l != null && (l.data - it.data) <= 1) dijkstra.arc(count, count - 1)
-            if (r != null && (r.data - it.data) <= 1) dijkstra.arc(count, count + 1)
-            count++
-        }, {})
-        val dijkstraCompute = dijkstra.shortestPath(startIndex, endIndex)
-        println(debugMap[startIndex])
-        println(debugMap[endIndex])
-        println(dijkstraCompute)
-        println(dijkstraCompute.size - 1)
+
+        val maxDistance = EuclidianDistance.distance2D(
+            endCoordinates.x.toDouble(), endCoordinates.y.toDouble(),
+            startCoordinates.x.toDouble(), startCoordinates.y.toDouble()
+        )
+
+        val eval: (BidimentionalNode<XYH>) -> Double = {
+            maxDistance - EuclidianDistance.distance2D(
+                destination!!.data.x.toDouble(), destination!!.data.y.toDouble(),
+                it.data.x.toDouble(), it.data.y.toDouble()
+            )
+        }
+        val path = DiscreteHillClimbing(firstNode).compute(destination!!, eval)
+
+        for (p in path) {
+            println(p)
+        }
+        println(path.size)
+
+
     }
 
 }

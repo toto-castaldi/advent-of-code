@@ -1,6 +1,5 @@
-package com.toto_castaldi.common
+package com.toto_castaldi.common.structure
 
-import com.toto_castaldi.common.structure.Coordinates
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,7 +16,7 @@ class CoordinatesTest {
         val pathSequence = Coordinates.path(from, dest)
         var prevPath = from
         for (p in pathSequence) {
-            assertEquals(p.x -1, prevPath.x)
+            assertEquals(p.x - 1, prevPath.x)
             assertEquals(p.y, from.y)
             assertEquals(p.y, dest.y)
             prevPath = p
@@ -34,7 +33,7 @@ class CoordinatesTest {
         val pathSequence = Coordinates.path(from, dest)
         var prevPath = from
         for (p in pathSequence) {
-            assertEquals(p.y -1, prevPath.y)
+            assertEquals(p.y - 1, prevPath.y)
             assertEquals(p.x, from.x)
             assertEquals(p.x, dest.x)
             prevPath = p
@@ -52,7 +51,7 @@ class CoordinatesTest {
         val pathSequence = Coordinates.path(from, dest)
         var prevPath = from
         for (p in pathSequence) {
-            assertEquals(p.x +1, prevPath.x)
+            assertEquals(p.x + 1, prevPath.x)
             assertEquals(p.y, from.y)
             assertEquals(p.y, dest.y)
             prevPath = p

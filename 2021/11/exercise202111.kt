@@ -37,7 +37,7 @@ fun main(
     args: Array<String>
 ) {
     val matrix = File(args[0]).readLines().map { line -> line.toCharArray().map { c -> c.digitToInt() }.toList() }
-    var (octopus: BidimentionalNode<Int>?, count) = BidimentionalNode.build(matrix) { it }
+    var (octopus: BidimentionalNode<Int>?, count) = BidimentionalNode.build(matrix) { _,_,i -> i }
     octopus = octopus!!.topLeft()
 
     BidimentionalNode.printNodes(octopus)

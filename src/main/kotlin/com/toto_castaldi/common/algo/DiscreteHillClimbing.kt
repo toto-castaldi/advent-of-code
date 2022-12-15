@@ -22,26 +22,34 @@ import com.toto_castaldi.common.structure.BidimentionalNode
  *         currentNode := nextNode
  *
  */
-class DiscreteHillClimbing<T>(private val startNode: BidimentionalNode<T>) {
+class DiscreteHillClimbing<T>(private val hillStartingNode: BidimentionalNode<T>) {
 
-    fun compute(destination: BidimentionalNode<T>, EVAL : (BidimentionalNode<T>) -> Int): List<BidimentionalNode<T>> {
-        val result = mutableListOf<BidimentionalNode<T>>()
-        var currenNode = startNode
-        while (currenNode != destination) {
-            val L = currenNode.neighbors()
-            var nextEval = Int.MIN_VALUE
-            var nextNode : BidimentionalNode<T>? = null
-            for (x in L) {
-                if (EVAL(x) > nextEval) {
-                    nextNode = x
-                    nextEval = EVAL(x)
-                }
+    private fun discreteSpaceHillClimbing(node: BidimentionalNode<T>, nodeScore : (BidimentionalNode<T>) -> Double): BidimentionalNode<T> {
+        var currentScore = nodeScore(node)
+        var result = node
+        for (n in node.neighbors()) {
+            val nEval = nodeScore(n)
+            if (nEval > currentScore) {
+                currentScore = nEval
+                result = n
             }
-            if (nextEval <= EVAL(currenNode)) {
-                result.add(currenNode)
-            }
-            currenNode = nextNode!!
         }
+        //println("propose ${result} for ${node}")
+        return result
+    }
+
+    fun compute(destination: BidimentionalNode<T>, nodeScore : (BidimentionalNode<T>) -> Double): List<BidimentionalNode<T>> {
+        val result = mutableListOf<BidimentionalNode<T>>()
+
+        result.add(hillStartingNode)
+
+        var pointer = hillStartingNode
+        while (pointer != destination) {
+            var next = discreteSpaceHillClimbing(pointer, nodeScore)
+            result.add(next)
+            pointer = next
+        }
+
         return result
     }
 

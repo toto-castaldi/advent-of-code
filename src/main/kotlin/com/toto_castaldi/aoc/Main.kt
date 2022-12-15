@@ -1,7 +1,7 @@
 import java.io.File
 
 fun main(args: Array<String>) {
-    val test = false
+    val test = args.size > 1 && args[1] == "1"
     val fileName = { yyyyDd: String -> "${yyyyDd + File.separator + (if (test) "test-input.txt" else "input.txt")}"}
 
     when (val yyyyDd = args.firstOrNull()?.let { it } ?: "") {
@@ -38,6 +38,9 @@ fun main(args: Array<String>) {
             val aoc202214Part2 = Aoc202214.parsePaths(Aoc202214(500), File(fileName(yyyyDd)).readLines())
             aoc202214Part2.addFloor(2)
             println(aoc202214Part2.blockedSandCount())
+        }
+        "2022/15" -> {
+            println(Aoc202215.run(fileName(yyyyDd), if (test) 10 else 2000000 ))
         }
         else -> {
             println("please specify correct YYYY/DD ($yyyyDd)")
