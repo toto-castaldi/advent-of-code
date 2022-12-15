@@ -48,7 +48,6 @@ fun main(args: Array<String>) {
 
             "2022/15" -> {
                 println(Aoc202215.run1(fileName(yyyyDd), if (test) 10 else 2000000))
-                //1208003992 is too low
                 println(Aoc202215.run2(fileName(yyyyDd), if (test) 20 else 4000000))
             }
 

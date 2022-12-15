@@ -83,15 +83,13 @@ class Aoc202215() {
         return false
     }
 
-    fun distressBeaconTuningFrequency(max: Int): Int {
+    fun distressBeaconTuningFrequency(max: Int): Long {
         for (y in 0 .. max) {
             val freeSpot = freeSpotAt(y)
             if (freeSpot.isNotEmpty()) {
                 val suitableX = freeSpot.find { it in 0..max }
                 if (suitableX != null) {
-                    println("$suitableX, $y")
-                    println(isOccupied(Coordinates(suitableX, y)))
-                    return suitableX * 4000000 + y
+                    return suitableX.toLong() * 4000000L + y.toLong()
                 }
             }
         }
@@ -106,7 +104,7 @@ class Aoc202215() {
             File(fileName).readLines().forEach { aoc + it }
             return aoc.countOccupiedSpotForBeacon(y)
         }
-        fun run2(fileName: String, max: Int): Int {
+        fun run2(fileName: String, max: Int): Long {
             val aoc = Aoc202215()
             File(fileName).readLines().forEach { aoc + it }
             return aoc.distressBeaconTuningFrequency(max)
