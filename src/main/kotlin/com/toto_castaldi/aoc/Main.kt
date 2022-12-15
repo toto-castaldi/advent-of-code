@@ -2,9 +2,9 @@ import java.io.File
 
 fun main(args: Array<String>) {
     val test = args.size > 1 && args[1] == "1"
-    val fileName = { yyyyDd: String -> "${yyyyDd + File.separator + (if (test) "test-input.txt" else "input.txt")}"}
+    val fileName = { yyyyDd: String -> yyyyDd + File.separator + (if (test) "test-input.txt" else "input.txt")}
 
-    when (val yyyyDd = args.firstOrNull()?.let { it } ?: "") {
+    when (val yyyyDd = args.firstOrNull() ?: "") {
         "2022/05" -> Aoc202205(fileName(yyyyDd)).run()
         "2022/10" -> Aoc202210(fileName(yyyyDd)).run()
         "2022/11" -> {
@@ -40,7 +40,8 @@ fun main(args: Array<String>) {
             println(aoc202214Part2.blockedSandCount())
         }
         "2022/15" -> {
-            println(Aoc202215.run(fileName(yyyyDd), if (test) 10 else 2000000 ))
+            println(Aoc202215.run1(fileName(yyyyDd), if (test) 10 else 2000000 ))
+            println(Aoc202215.run2(fileName(yyyyDd), if (test) 20 else 4000000 ))
         }
         else -> {
             println("please specify correct YYYY/DD ($yyyyDd)")

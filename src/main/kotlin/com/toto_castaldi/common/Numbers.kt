@@ -5,20 +5,33 @@ import kotlin.math.max
 
 class Numbers {
     companion object {
-        fun merged(theIntervals: Set<IntRange>, interval: IntRange): Set<IntRange> {
-            val intervals = theIntervals.toMutableSet()
-            val covering = intervals.filter {
+        fun merged(intervals: Set<IntRange>, interval: IntRange): Set<IntRange> {
+            val result = intervals.toMutableSet()
+            val covering = result.filter {
                 it.contains(interval.last) || it.contains(interval.first) || (interval.first <= it.first && interval.last >= it.last)
             }.toSet()
             if (covering.isNotEmpty()) {
-                val min = intervals.minBy { it.first }
-                val max = intervals.maxBy { it.last }
-                intervals.removeAll(covering)
-                intervals.add(min(min.first, interval.first) .. max(max.last, interval.last))
+                val min = covering.minBy { it.first }
+                val max = covering.maxBy { it.last }
+                result.removeAll(covering)
+                result.add(min(min.first, interval.first) .. max(max.last, interval.last))
             } else {
-                intervals.add(interval)
+                result.add(interval)
             }
-            return intervals
+            return result
+        }
+
+        fun freeSpots(intervals: Set<IntRange>): Set<Int> {
+            val result = mutableSetOf<Int>()
+            val sortedBy = intervals.toList().sortedBy { it.first }
+            for (i in 0 until  sortedBy.size - 1) {
+                val first = sortedBy[i]
+                val second = sortedBy[i+1]
+                if (first.last < second.first) {
+                    result.addAll(first.last + 1 until second.first)
+                }
+            }
+            return result
         }
     }
 

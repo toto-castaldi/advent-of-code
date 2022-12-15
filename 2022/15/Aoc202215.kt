@@ -2,40 +2,44 @@ import com.toto_castaldi.common.Numbers
 import com.toto_castaldi.common.algo.ManhattanDistance
 import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.Diamond
-import com.toto_castaldi.common.structure.Line
 import java.io.File
-import java.lang.Math.max
-import java.lang.Math.min
 
 class Aoc202215() {
 
     private val sensorAreas = mutableSetOf<Diamond>()
     private val beacons = mutableSetOf<Coordinates>()
 
-    private fun freeSpotAt(y: Int): Pair<Int, Int>? {
+    private fun freeSpotAt(y: Int): Set<Int> {
+        val result = mutableSetOf<Int>()
         var intervals = setOf<IntRange>()
         for (area in sensorAreas) {
-            var interval:IntRange ? = area.resolveInterval(y)
+            val interval:IntRange ? = area.resolveInterval(y)
             if (interval != null) {
                 intervals = Numbers.merged(intervals, interval)
             }
         }
-        if (intervals.size == 1) {
-            return Pair(intervals.first()!!.first -1, intervals.first()!!.last + 1)
+        if (intervals.isNotEmpty()) {
+            val min = intervals.minBy { it.first }
+            val max = intervals.maxBy { it.last }
+            val empties = Numbers.freeSpots(intervals)
+
+            result.add(min.first - 1)
+            result.add(max.last + 1)
+            result.addAll(empties)
         }
-        return null
+        return result
     }
     fun countOccupiedSpotForBeacon(y: Int): Int {
         var intervals = setOf<IntRange>()
         for (area in sensorAreas) {
-            var interval:IntRange ? = area.resolveInterval(y)
+            val interval:IntRange ? = area.resolveInterval(y)
             if (interval != null) {
                 intervals = Numbers.merged(intervals, interval)
             }
         }
         var count = 0
         for (interval in intervals) {
-            var delta = beacons.filter { it.y == y }.fold(0) {
+            val delta = beacons.filter { it.y == y }.fold(0) {
                 acc, value ->
 
                 if (interval.contains(value.x)) acc + 1 else acc
@@ -66,9 +70,7 @@ class Aoc202215() {
 
         beacons.add(beacon)
 
-        var distance = ManhattanDistance.between(sensor,beacon)
-
-        sensorAreas.add(Diamond(sensor, distance))
+        sensorAreas.add(Diamond(sensor, ManhattanDistance.between(sensor,beacon)))
 
         return this
     }
@@ -83,17 +85,11 @@ class Aoc202215() {
 
     fun distressBeaconTuningFrequency(max: Int): Int {
         for (y in 0 .. max) {
-            println(y)
-            if (y == 0) {
-                println("ddd")
-            }
-            var freeSpot = freeSpotAt(y)
-            if (freeSpot != null) {
-                println(freeSpot)
-                if (freeSpot.first in 0..max && Coordinates(freeSpot.first, y) !in beacons) {
-                    return freeSpot.first * 4000000 + y
-                } else if (freeSpot.second in 0..max && Coordinates(freeSpot.second, y) !in beacons) {
-                    return freeSpot.second * 4000000 + y
+            val freeSpot = freeSpotAt(y)
+            if (freeSpot.isNotEmpty()) {
+                val suitableX = freeSpot.find { it in 0..max }
+                if (suitableX != null) {
+                    return suitableX * 4000000 + y
                 }
             }
         }
@@ -103,10 +99,15 @@ class Aoc202215() {
 
 
     companion object {
-        fun run(fileName: String, y: Int): Int {
+        fun run1(fileName: String, y: Int): Int {
             val aoc = Aoc202215()
             File(fileName).readLines().forEach { aoc + it }
             return aoc.countOccupiedSpotForBeacon(y)
+        }
+        fun run2(fileName: String, max: Int): Int {
+            val aoc = Aoc202215()
+            File(fileName).readLines().forEach { aoc + it }
+            return aoc.distressBeaconTuningFrequency(max)
         }
     }
 

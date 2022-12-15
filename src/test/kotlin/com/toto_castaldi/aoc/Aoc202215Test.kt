@@ -27,7 +27,6 @@ class Aoc202215Test {
     }
 
     @Test
-    @Ignore
     fun part2() {
         val aoc = Aoc202215()
         aoc + "Sensor at x=2, y=18: closest beacon is at x=-2, y=15"
