@@ -10,6 +10,36 @@ class Aoc202215() {
     private val sensorAreas = mutableSetOf<SeasonArea>()
     private val beacons = mutableSetOf<Coordinates>()
 
+    private fun freeSpotAt(y: Int): Pair<Int, Int>? {
+        val intervals = mutableSetOf<IntRange>()
+        for (area in sensorAreas) {
+            var interval:IntRange ? = area.resolveInterval(y)
+            if (interval != null) {
+                val covering = intervals.filter {
+                    it.contains(interval.last) || it.contains(interval.first) || (interval.first <= it.first && interval.last >= it.last)
+                }
+                if (covering.isNotEmpty()) {
+                    val min = intervals.minBy { it.first }
+                    val max = intervals.maxBy { it.last }
+                    for (c in covering) {
+                        intervals.remove(c)
+                        println("remove $c")
+                    }
+                    val i = min.first .. max.last
+                    println("add $i")
+                    intervals.add(i)
+
+                } else {
+                    println("add $interval")
+                    intervals.add(interval)
+                }
+            }
+        }
+        if (intervals.size == 1) {
+            return Pair(intervals.first()!!.first -1, intervals.first()!!.last + 1)
+        }
+        return null
+    }
     fun countOccupiedSpotForBeacon(y: Int): Int {
         val intervals = mutableSetOf<IntRange>()
         for (area in sensorAreas) {
@@ -31,7 +61,6 @@ class Aoc202215() {
                     println("add $interval")
                     intervals.add(interval)
                 }
-
             }
         }
         var count = 0
@@ -116,6 +145,27 @@ class Aoc202215() {
         }
         return false
     }
+
+    fun distressBeaconTuningFrequency(max: Int): Int {
+        for (y in 0 .. max) {
+            println(y)
+            if (y == 0) {
+                println("ddd")
+            }
+            var freeSpot = freeSpotAt(y)
+            if (freeSpot != null) {
+                println(freeSpot)
+                if (freeSpot.first in 0..max && Coordinates(freeSpot.first, y) !in beacons) {
+                    return freeSpot.first * 4000000 + y
+                } else if (freeSpot.second in 0..max && Coordinates(freeSpot.second, y) !in beacons) {
+                    return freeSpot.second * 4000000 + y
+                }
+            }
+        }
+        throw Exception("... uhm")
+    }
+
+
 
     companion object {
         fun run(fileName: String, y: Int): Int {
