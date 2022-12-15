@@ -89,6 +89,8 @@ class Aoc202215() {
             if (freeSpot.isNotEmpty()) {
                 val suitableX = freeSpot.find { it in 0..max }
                 if (suitableX != null) {
+                    println("$suitableX, $y")
+                    println(isOccupied(Coordinates(suitableX, y)))
                     return suitableX * 4000000 + y
                 }
             }
