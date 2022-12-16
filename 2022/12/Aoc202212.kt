@@ -1,7 +1,5 @@
 import com.toto_castaldi.common.structure.BidimentionalNode
 import com.toto_castaldi.common.structure.Coordinates
-import com.toto_castaldi.common.algo.DiscreteHillClimbing
-import com.toto_castaldi.common.algo.EuclidianDistance
 import java.io.File
 
 class Aoc202212 (private val fileName:String) {
@@ -18,14 +16,18 @@ class Aoc202212 (private val fileName:String) {
         for ((indexRow, row) in heightmapInputChar.withIndex()) {
             val rowInt = mutableListOf<Int>()
             for ((indexCol, element) in row.withIndex()) {
-                if (element == 'S') {
-                    startCoordinates = Coordinates(indexCol, indexRow)
-                    rowInt.add(heightVal('a'))
-                } else if (element == 'E') {
-                    endCoordinates = Coordinates(indexCol, indexRow)
-                    rowInt.add(heightVal('z'))
-                } else {
-                    rowInt.add(heightVal(element))
+                when (element) {
+                    'S' -> {
+                        startCoordinates = Coordinates(indexCol, indexRow)
+                        rowInt.add(heightVal('a'))
+                    }
+                    'E' -> {
+                        endCoordinates = Coordinates(indexCol, indexRow)
+                        rowInt.add(heightVal('z'))
+                    }
+                    else -> {
+                        rowInt.add(heightVal(element))
+                    }
                 }
             }
             heightmapInput.add(rowInt)
@@ -58,27 +60,11 @@ class Aoc202212 (private val fileName:String) {
                 .removeNeighbor(-1, -1)
         }
 
-        val maxDistance = EuclidianDistance.distance2D(
-            endCoordinates.x.toDouble(), endCoordinates.y.toDouble(),
-            startCoordinates.x.toDouble(), startCoordinates.y.toDouble()
-        )
+        println(destination)
+        println(startCoordinates)
 
-        val eval: (BidimentionalNode<XYH>) -> Double = {
-            maxDistance - EuclidianDistance.distance2D(
-                destination!!.data.x.toDouble(), destination!!.data.y.toDouble(),
-                it.data.x.toDouble(), it.data.y.toDouble()
-            )
-        }
-        val path = DiscreteHillClimbing(firstNode).compute(destination!!, eval)
-
-        for (p in path) {
-            println(p)
-        }
-        println(path.size)
-
-
+        TODO()
     }
-
 }
 
 

@@ -16,7 +16,6 @@ fun main(args: Array<String>) {
                 println(aoc202211.part1())
                 println(aoc202211.part2())
             }
-
             "2022/12" -> Aoc202212(fileName(yyyyDd)).run()
             "2022/13" -> {
                 val aoc202213: Aoc202213 = Aoc202213.build(fileName(yyyyDd))
@@ -36,7 +35,6 @@ fun main(args: Array<String>) {
 
                 println("$firstIndex $secondIndex ${firstIndex * secondIndex}")
             }
-
             "2022/14" -> {
                 val aoc202214Part1 = Aoc202214.parsePaths(Aoc202214(500), File(fileName(yyyyDd)).readLines())
                 println(aoc202214Part1.blockedSandCount())
@@ -45,12 +43,13 @@ fun main(args: Array<String>) {
                 aoc202214Part2.addFloor(2)
                 println(aoc202214Part2.blockedSandCount())
             }
-
             "2022/15" -> {
                 println(Aoc202215.run1(fileName(yyyyDd), if (test) 10 else 2000000))
                 println(Aoc202215.run2(fileName(yyyyDd), if (test) 20 else 4000000))
             }
-
+            "2022/16" -> {
+                Aoc202216.run1(fileName(yyyyDd))
+            }
             else -> {
                 println("please specify correct YYYY/DD ($yyyyDd)")
             }
