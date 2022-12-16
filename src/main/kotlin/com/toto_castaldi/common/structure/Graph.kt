@@ -6,22 +6,19 @@ class Graph<T> : Iterable<Node<T>> {
 
     fun getOrCreateNode(name: String, t: T): Node<T> {
         return nodes[name] ?:run {
-            val result = Node(t)
+            val result = Node(name, t)
             nodes[name] = result
             result
         }
-    }
-
-    fun getNode(name: String): Node<T>? {
-        return nodes[name]
     }
 
     override fun iterator(): Iterator<Node<T>> {
         return nodes.values.iterator()
     }
 
-    fun clone(): Graph<T> {
-        TODO("Not yet implemented")
+    operator fun get(name: String): Node<T>? {
+        return nodes[name]
     }
+
 
 }

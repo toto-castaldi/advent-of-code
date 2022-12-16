@@ -12,4 +12,8 @@ class Node<T>(val name: String, val data : T) : Iterable<Node<T>> {
         return neighbors.iterator()
     }
 
+    override fun toString(): String {
+        return name
+    }
+
 }
