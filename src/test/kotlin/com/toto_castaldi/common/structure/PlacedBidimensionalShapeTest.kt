@@ -22,18 +22,18 @@ class PlacedBidimensionalShapeTest {
         val line = PlacedBidimensionalShape(Coordinates(2,1), hLineShape)
         val cross = PlacedBidimensionalShape(Coordinates(0,0), crossShape)
 
-        assertTrue { line.intesects(cross) }
-        assertTrue { cross.intesects(line) }
+        assertTrue { line.intersect(cross) }
+        assertTrue { cross.intersect(line) }
 
         line.move(1,0)
 
-        assertFalse { line.intesects(cross) }
-        assertFalse { cross.intesects(line) }
+        assertFalse { line.intersect(cross) }
+        assertFalse { cross.intersect(line) }
 
         line.move(10,20)
 
-        assertFalse { line.intesects(cross) }
-        assertFalse { cross.intesects(line) }
+        assertFalse { line.intersect(cross) }
+        assertFalse { cross.intersect(line) }
     }
 
     @Test
@@ -91,5 +91,12 @@ class PlacedBidimensionalShapeTest {
 
         assertEquals(5, stack.shape.getWidth())
         assertEquals(3, stack.shape.getHeight())
+    }
+
+    @Test
+    fun testIn() {
+        val cross = PlacedBidimensionalShape(Coordinates(0,0), crossShape)
+        assertFalse { Coordinates(0,2) in cross }
+        assertTrue { Coordinates(1,1) in cross }
     }
 }

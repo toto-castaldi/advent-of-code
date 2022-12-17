@@ -2,6 +2,8 @@ import com.toto_castaldi.common.structure.BidimensionalShape
 import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.PlacedBidimensionalShape
 import java.io.File
+import kotlin.math.max
+import kotlin.math.min
 
 class Aoc202217(val movements: String) {
     private var pieceIndex = 0
@@ -35,17 +37,21 @@ class Aoc202217(val movements: String) {
         ))
     )
 
-    fun towerHeight(maxStackedPiecesCount: Int): Int {
+    fun towerHeight(maxStackedPiecesCount: Int, debug : Int = -1): Int {
         val boundX = freeL .. freeR
         var currentPiece = nextPiece()
         var movement = nextMovement()
-        while (stackedPiecesCount < maxStackedPiecesCount) {
+        var time = 0
+        while (stackedPiecesCount < maxStackedPiecesCount && (debug == -1 || time < debug)) {
+            debug(currentPiece)
+            time ++
+
             val boundY = Int.MIN_VALUE .. stack.maxY()
             when (movement) {
                 '>' -> currentPiece.moveInBounderies(1, 0, boundX, boundY )
                 '<' -> currentPiece.moveInBounderies(-1, 0, boundX, boundY)
             }
-            if (currentPiece.intesects(stack)) { //illegal move. Go back
+            if (currentPiece.intersect(stack)) { //illegal move. Go back
                 when (movement) {
                     '<' -> currentPiece.move(1, 0)
                     '>' -> currentPiece.move(-1, 0)
@@ -60,12 +66,30 @@ class Aoc202217(val movements: String) {
                 currentPiece.moveInBounderies(0, 1 , boundX, boundY)
             }
             movement = nextMovement()
+
         }
         return stack.shape.getHeight()
     }
 
+    private fun debug(currentPiece: PlacedBidimensionalShape) {
+        val minX = min(currentPiece.minX(), stack.minX())
+        val maxX = max(currentPiece.maxX(), stack.maxX())
+        val minY = min(currentPiece.minY(), stack.minY())
+        val maxY = max(currentPiece.maxY(), stack.maxY())
+        for (y in minY..maxY) {
+            for (x in minX..maxX) {
+                if (Coordinates(x,y) in currentPiece) {
+                    print("@")
+                } else if (Coordinates(x,y) in stack) {
+                    print("#")
+                } else print(".")
+            }
+            println()
+        }
+    }
+
     private fun nextMovement(): Char {
-        return movements[movIndex ++]
+        return movements[(movIndex ++) % movements.length]
     }
 
     private fun nextPiece(): PlacedBidimensionalShape {

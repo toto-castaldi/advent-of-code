@@ -50,16 +50,7 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
         val lIndeces = verticalValues(this)
         val otherIndeces = verticalValues(other)
         val checkIndeces = lIndeces.intersect(otherIndeces)
-        println("A ###########")
-        println(anchorPoint)
-        println(lIndeces)
-        println("B ############")
-        println(other.anchorPoint)
-        println(otherIndeces)
-        println("COMMO ############")
-        println(checkIndeces)
         val shiftX = anchorPoint.x - other.anchorPoint.x
-        println("shift $shiftX")
         for (i in checkIndeces) {
             var l = shape.visualDescription[i - anchorPoint.y]
             var r = other.shape.visualDescription[i - other.anchorPoint.y]
@@ -68,8 +59,6 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
             } else {
                 r = r.padStart(-shiftX + r.length, BidimensionalShape.NULL_CHAR)
             }
-
-            println("$l vs $r")
             for ((cIndex, c) in l.withIndex()) {
                 if (cIndex < r.length && c == BidimensionalShape.POINT_CHAR && r[cIndex] == BidimensionalShape.POINT_CHAR) return true
             }
@@ -77,12 +66,23 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
         return false
     }
 
-    fun intesects(other: PlacedBidimensionalShape): Boolean {
+    fun intersect(other: PlacedBidimensionalShape): Boolean {
         return checkCommonSpots(other)
     }
 
     fun onTopOf(other: PlacedBidimensionalShape): Boolean {
         return tryMove(0,1).checkCommonSpots(other)
+    }
+
+    operator fun contains(coordinates: Coordinates): Boolean {
+        val c = coordinates.clone().move(-anchorPoint.x, -anchorPoint.y)
+        if (shape.visualDescription.size > c.y) {
+            val l = shape.visualDescription[c.y]
+            if (l.length > c.x) {
+                return l[c.x] == BidimensionalShape.POINT_CHAR
+            }
+        }
+        return false
     }
 
     val minX = { anchorPoint.x }
