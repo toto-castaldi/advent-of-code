@@ -29,23 +29,30 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
         return this
     }
 
-    private fun checkCommonSpots(other: PlacedBidimensionalShape, delta : Int): Boolean {
-
+    private fun checkCommonSpots(other: PlacedBidimensionalShape): Boolean {
         val lIndeces = verticalValues(this)
-        val otherIndeces = verticalValues(other, delta)
+        val otherIndeces = verticalValues(other)
         val checkIndeces = lIndeces.intersect(otherIndeces)
+        println("A ###########")
         println(anchorPoint)
-        println(shape.getHeight())
         println(lIndeces)
-        println("############")
-        println(delta)
+        println("B ############")
         println(other.anchorPoint)
-        println(other.shape.getHeight())
         println(otherIndeces)
+        println("COMMO ############")
         println(checkIndeces)
+        val shiftX = anchorPoint.x - other.anchorPoint.x
+        println("shift $shiftX")
         for (i in checkIndeces) {
-            val l = shape.visualDescription[i - anchorPoint.y]
-            val r = other.shape.visualDescription[i - anchorPoint.y]
+            var l = shape.visualDescription[i - anchorPoint.y]
+            var r = other.shape.visualDescription[i - other.anchorPoint.y]
+            if (shiftX < 0) {
+                r = r.padStart(-shiftX + r.length, BidimensionalShape.NULL_CHAR)
+            } else {
+                l = l.padStart(shiftX + l.length, BidimensionalShape.NULL_CHAR)
+            }
+
+            println("$l vs $r")
             for ((cIndex, c) in l.withIndex()) {
                 if (cIndex < r.length && c == '#' && r[cIndex] == '#') return true
             }
@@ -54,11 +61,11 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
     }
 
     fun intesects(other: PlacedBidimensionalShape): Boolean {
-        return checkCommonSpots(other, 0)
+        return checkCommonSpots(other)
     }
 
     fun onTopOf(other: PlacedBidimensionalShape): Boolean {
-        return checkCommonSpots(other, 1)
+        return tryMove(0,1).checkCommonSpots(other)
     }
 
     val minX = { anchorPoint.x }
@@ -69,8 +76,8 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
     private val tryMove = { x: Int, y: Int -> PlacedBidimensionalShape( anchorPoint.clone().move(x,y), shape) }
 
     companion object {
-        fun verticalValues(pbs: PlacedBidimensionalShape, delta: Int = 0): IntRange {
-            return pbs.anchorPoint.y + delta..pbs.shape.visualDescription.size + pbs.anchorPoint.y + delta
+        fun verticalValues(pbs: PlacedBidimensionalShape): IntRange {
+            return pbs.anchorPoint.y ..pbs.shape.visualDescription.size + pbs.anchorPoint.y  - 1
         }
     }
 

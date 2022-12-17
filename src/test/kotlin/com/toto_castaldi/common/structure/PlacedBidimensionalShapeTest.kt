@@ -18,29 +18,39 @@ class PlacedBidimensionalShapeTest {
     private fun d(pds : PlacedBidimensionalShape, freeD : Int) { pds.moveInBounderies(0,1,freeL..freeR, Int.MIN_VALUE..freeD)  }
 
     @Test
-    @Ignore
     fun testIntersects() {
-        val line = PlacedBidimensionalShape(Coordinates(1,2), hLineShape)
-        val cross = PlacedBidimensionalShape(Coordinates(1,0), crossShape)
-        assertFalse { cross.intesects(line) }
-        assertFalse { line.intesects(cross) }
+        val line = PlacedBidimensionalShape(Coordinates(2,1), hLineShape)
+        val cross = PlacedBidimensionalShape(Coordinates(0,0), crossShape)
 
-        cross.move(0,1)
-        assertTrue { cross.intesects(line) }
         assertTrue { line.intesects(cross) }
+        assertTrue { cross.intesects(line) }
+
+        line.move(1,0)
+
+        assertFalse { line.intesects(cross) }
+        assertFalse { cross.intesects(line) }
+
+        line.move(10,20)
+
+        assertFalse { line.intesects(cross) }
+        assertFalse { cross.intesects(line) }
     }
 
     @Test
-    @Ignore
     fun testOnTop() {
-        val line = PlacedBidimensionalShape(Coordinates(1,2), hLineShape)
-        val cross = PlacedBidimensionalShape(Coordinates(1,-1), crossShape)
-        assertFalse { line.onTopOf(cross) }
-        assertFalse { cross.onTopOf(line) }
+        val cross = PlacedBidimensionalShape(Coordinates(0,0), crossShape)
+        val line = PlacedBidimensionalShape(Coordinates(2,2), hLineShape)
 
-        cross.move(0,1)
+        assertFalse { line.onTopOf(cross) }
         assertTrue { cross.onTopOf(line) }
-        assertFalse { line.intesects(cross) }
+
+        cross.move(0,-1)
+        assertFalse { cross.onTopOf(line) }
+        assertFalse { line.onTopOf(cross) }
+
+        cross.move(-1,1)
+        assertFalse { cross.onTopOf(line) }
+        assertFalse { line.onTopOf(cross) }
     }
 
     @Test
