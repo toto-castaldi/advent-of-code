@@ -11,8 +11,8 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, val shape: Bidimens
         anchorPoint.move(x,y)
     }
 
-    fun touch(stack: PlacedBidimensionalShape): Boolean {
-        TODO("Not yet implemented")
+    fun touch(other: PlacedBidimensionalShape): Boolean {
+        return shape.containingSquare().touch(other.shape.containingSquare()) || shape.containingSquare().intersects(other.shape.containingSquare())
     }
 
 

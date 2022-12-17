@@ -7,6 +7,9 @@ package com.toto_castaldi.common.structure
 .#.
  */
 class BidimensionalShape(visualDescription: Array<String>) {
+    fun containingSquare(): PlacedRectangle {
+        TODO()
+    }
 
     val height: Int
     val width: Int

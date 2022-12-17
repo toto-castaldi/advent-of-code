@@ -34,6 +34,14 @@ class Numbers {
             return result
         }
 
+        fun touch(a: IntRange, b: IntRange): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        fun intersects(xBounderies: IntRange, xBounderies1: IntRange): Boolean {
+            TODO("Not yet implemented")
+        }
+
         val includes = { big: IntRange, small: IntRange -> big.first <= small.first && big.last >= small.last }
     }
 
