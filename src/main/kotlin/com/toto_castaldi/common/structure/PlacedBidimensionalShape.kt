@@ -19,12 +19,29 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
     }
 
 
-    operator fun plus(currentPiece: PlacedBidimensionalShape): PlacedBidimensionalShape {
-        var newLines = shape.visualDescription.toMutableList()
-        for (i in currentPiece.shape.visualDescription.indices.reversed()) {
-            newLines.add(0, currentPiece.shape.visualDescription[i])
+    operator fun plus(other: PlacedBidimensionalShape): PlacedBidimensionalShape {
+        val shiftX = other.anchorPoint.x - anchorPoint.x
+        var first = other
+        var second = this
+        if (this.anchorPoint.y < other.anchorPoint.y) {
+            first = this
+            second = other
         }
-        anchorPoint.move(0, -currentPiece.shape.getHeight())
+
+        var newLines = mutableListOf<String>()
+        for (line in first.shape.visualDescription) {
+            var l = line
+            if (shiftX > 0) l = l.padEnd(shiftX + l.length, BidimensionalShape.NULL_CHAR)
+            if (shiftX < 0) l = l.padStart(-shiftX + l.length, BidimensionalShape.NULL_CHAR)
+            newLines.add(l)
+        }
+        for (line in second.shape.visualDescription) {
+            var l = line
+            if (shiftX < 0) l = l.padEnd(-shiftX + l.length, BidimensionalShape.NULL_CHAR)
+            if (shiftX > 0) l = l.padStart(shiftX + l.length, BidimensionalShape.NULL_CHAR)
+            newLines.add(l)
+        }
+        anchorPoint.move(shiftX, -other.shape.getHeight())
         shape = BidimensionalShape(newLines.toTypedArray())
         return this
     }
@@ -46,15 +63,15 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
         for (i in checkIndeces) {
             var l = shape.visualDescription[i - anchorPoint.y]
             var r = other.shape.visualDescription[i - other.anchorPoint.y]
-            if (shiftX < 0) {
-                r = r.padStart(-shiftX + r.length, BidimensionalShape.NULL_CHAR)
-            } else {
+            if (shiftX > 0) {
                 l = l.padStart(shiftX + l.length, BidimensionalShape.NULL_CHAR)
+            } else {
+                r = r.padStart(-shiftX + r.length, BidimensionalShape.NULL_CHAR)
             }
 
             println("$l vs $r")
             for ((cIndex, c) in l.withIndex()) {
-                if (cIndex < r.length && c == '#' && r[cIndex] == '#') return true
+                if (cIndex < r.length && c == BidimensionalShape.POINT_CHAR && r[cIndex] == BidimensionalShape.POINT_CHAR) return true
             }
         }
         return false
