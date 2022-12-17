@@ -1,5 +1,7 @@
 package com.toto_castaldi.common.structure
 
+import com.toto_castaldi.common.Numbers
+
 /**
  * the anchor point is top left in the containing box of the shapr
  */
@@ -7,10 +9,6 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, val shape: Bidimens
 
     fun move(x: Int, y: Int) {
         anchorPoint.move(x,y)
-    }
-
-    fun height(): Int {
-        TODO("Not yet implemented")
     }
 
     fun touch(stack: PlacedBidimensionalShape): Boolean {
@@ -23,10 +21,19 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, val shape: Bidimens
         return this
     }
 
+    fun moveInBounderies(x: Int, y: Int, boundX: IntRange, boundY: IntRange) {
+        val tm = tryMove(x, y)
+        if (Numbers.includes(boundX, tm.minX() .. tm.maxX()) && Numbers.includes(boundY, tm.minY() .. tm.maxY())) {
+            move(x, y)
+        }
+    }
+
+    val minX = { anchorPoint.x }
+    val minY = { anchorPoint.y }
     val maxX = { anchorPoint.x + shape.width - 1}
     val maxY = { anchorPoint.y + shape.height - 1}
 
 
-    val tryMove = { x: Int, y: Int -> PlacedBidimensionalShape( anchorPoint.clone().move(x,y), shape) }
+    private val tryMove = { x: Int, y: Int -> PlacedBidimensionalShape( anchorPoint.clone().move(x,y), shape) }
 
 }

@@ -6,6 +6,8 @@ import java.io.File
 class Aoc202217(movements: String) {
     private var stack: PlacedBidimensionalShape = PlacedBidimensionalShape(Coordinates(3, 0), BidimensionalShape.EMPTY)
     private var stackedPiecesCount: Int = 0
+    private val freeR = 7
+    private val freeL = 1
     
     val pieces = listOf<BidimensionalShape>(
         BidimensionalShape(arrayOf("####")),
@@ -31,13 +33,16 @@ class Aoc202217(movements: String) {
     )
 
     fun towerHeight(maxStackedPiecesCount: Int): Int {
+        val boundX = freeL .. freeR
         var currentPiece = nextPiece()
         var movement = nextMovement()
         while (stackedPiecesCount < maxStackedPiecesCount) {
+            val boundY = Int.MIN_VALUE .. (if (stack.maxY() > 0) stack.maxY()  else 3)
             when (movement) {
-                '>' -> currentPiece.move(1, 0)
-                '<' -> currentPiece.move(-1, 0)
+                '>' -> currentPiece.moveInBounderies(1, 0, boundX, boundY )
+                '<' -> currentPiece.moveInBounderies(-1, 0, boundX, boundY)
             }
+            currentPiece.moveInBounderies(0, 1 , boundX, boundY)
             if (currentPiece.touch(stack)) {
                 stack + currentPiece
                 stackedPiecesCount ++
@@ -45,7 +50,7 @@ class Aoc202217(movements: String) {
             }
             movement = nextMovement()
         }
-        return stack.height()
+        return stack.shape.height
     }
 
     private fun nextMovement(): Char {
