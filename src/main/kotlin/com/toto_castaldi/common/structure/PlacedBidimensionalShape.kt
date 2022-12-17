@@ -25,9 +25,9 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
         val xs = horizontalValues(this).union(horizontalValues(other))
         val newWith = xs.count()
 
-        println(newWith)
-
         val shiftX = anchorPoint.x - other.anchorPoint.x
+
+        println("$newWith $shiftX")
 
         var first = other
         var second = this
@@ -38,15 +38,18 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
 
         var newLines = mutableListOf<String>()
         for (line in first.shape.visualDescription) {
-            var l = line
-            if (shiftX < 0) l = l.padStart(newWith, BidimensionalShape.NULL_CHAR)
-            if (shiftX > 0) l = l.padEnd(newWith, BidimensionalShape.NULL_CHAR)
+            var l = ""
+            if (shiftX < 0) for (i in 1..-shiftX) l = BidimensionalShape.NULL_CHAR + l
+            l = l + line
+            for (i in 1..(newWith - l.length)) l = l + BidimensionalShape.NULL_CHAR
+
             newLines.add(l)
         }
         for (line in second.shape.visualDescription) {
-            var l = line
-            if (shiftX < 0) l = l.padEnd(newWith, BidimensionalShape.NULL_CHAR)
-            if (shiftX > 0) l = l.padStart(newWith, BidimensionalShape.NULL_CHAR)
+            var l = ""
+            if (shiftX > 0) for (i in 1..shiftX) l = BidimensionalShape.NULL_CHAR + l
+            l = l + line
+            for (i in 1..(newWith - l.length)) l = l + BidimensionalShape.NULL_CHAR
             newLines.add(l)
         }
         anchorPoint = Coordinates(xs.min(), anchorPoint.y - other.shape.getHeight())

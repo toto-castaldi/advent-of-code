@@ -76,13 +76,21 @@ class PlacedBidimensionalShapeTest {
 
     @Test
     fun testSum202217() {
-        var rock =  PlacedBidimensionalShape(Coordinates(3,3), hLineShape)
-        var stack =  PlacedBidimensionalShape(Coordinates(1,4), hLongLineShape)
+        var rock =  PlacedBidimensionalShape(Coordinates(0,3), hLineShape)
+        var stack =  PlacedBidimensionalShape(Coordinates(0,4), hLongLineShape)
 
         stack + rock
 
         assertEquals(2, stack.shape.getHeight())
-        assertEquals("...####", stack.shape.visualDescription[0])
+        assertEquals("####...", stack.shape.visualDescription[0])
+        assertEquals("#######", stack.shape.visualDescription[1])
+
+        rock =  PlacedBidimensionalShape(Coordinates(1,3), hLineShape)
+        stack =  PlacedBidimensionalShape(Coordinates(0,4), hLongLineShape)
+
+        stack + rock
+
+        assertEquals(".####..", stack.shape.visualDescription[0])
         assertEquals("#######", stack.shape.visualDescription[1])
 
     }
