@@ -76,7 +76,7 @@ class PlacedBidimensionalShapeTest {
 
     @Test
     fun testSum202217() {
-        var rock =  PlacedBidimensionalShape(Coordinates(4,3), hLineShape)
+        var rock =  PlacedBidimensionalShape(Coordinates(3,3), hLineShape)
         var stack =  PlacedBidimensionalShape(Coordinates(1,4), hLongLineShape)
 
         stack + rock
@@ -88,25 +88,15 @@ class PlacedBidimensionalShapeTest {
     }
 
     @Test
-    fun testSum() {
-        val line1 = PlacedBidimensionalShape(Coordinates(-1,-1), hLineShape)
-        val line0 = PlacedBidimensionalShape(Coordinates(0,0), hLineShape)
-        val stack = PlacedBidimensionalShape(Coordinates(0,1), hLineShape)
+    fun testSumA() {
+        val lineA = PlacedBidimensionalShape(Coordinates(0,0), hLineShape)
+        val stack = PlacedBidimensionalShape(Coordinates(2,1), hLineShape)
 
-        assertEquals(4, stack.shape.getWidth())
-        assertEquals(1, stack.shape.getHeight())
+        stack + lineA
 
-        stack + line0
-
-        assertEquals(4, stack.shape.getWidth())
         assertEquals(2, stack.shape.getHeight())
-
-        stack + line1
-
-        assertEquals(5, stack.shape.getWidth())
-        assertEquals(3, stack.shape.getHeight())
-
-
+        assertEquals("####..", stack.shape.visualDescription[0])
+        assertEquals("..####", stack.shape.visualDescription[1])
     }
 
     @Test

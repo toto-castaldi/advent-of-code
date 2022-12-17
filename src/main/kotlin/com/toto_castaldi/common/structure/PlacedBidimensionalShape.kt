@@ -7,7 +7,7 @@ import kotlin.math.max
 /**
  * the anchor point is top left in the containing box of the shapr
  */
-class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: BidimensionalShape) {
+class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: BidimensionalShape) {
 
     fun move(x: Int, y: Int) {
         anchorPoint.move(x,y)
@@ -22,13 +22,13 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
 
 
     operator fun plus(other: PlacedBidimensionalShape): PlacedBidimensionalShape {
-        val shiftX = other.anchorPoint.x - anchorPoint.x
-        var newWidth = 1
-        if (other.anchorPoint.x < anchorPoint.x) {
-            newWidth = abs(other.anchorPoint.x - anchorPoint.x - shape.getWidth())
-        } else {
-            newWidth = abs(anchorPoint.x - other.anchorPoint.x - other.shape.getWidth())
-        }
+        val xs = horizontalValues(this).union(horizontalValues(other))
+        val newWith = xs.count()
+
+        println(newWith)
+
+        val shiftX = anchorPoint.x - other.anchorPoint.x
+
         var first = other
         var second = this
         if (this.anchorPoint.y < other.anchorPoint.y) {
@@ -39,17 +39,17 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
         var newLines = mutableListOf<String>()
         for (line in first.shape.visualDescription) {
             var l = line
-            if (shiftX > 0) l = l.padStart(newWidth, BidimensionalShape.NULL_CHAR)
-            if (shiftX < 0) l = l.padEnd(newWidth, BidimensionalShape.NULL_CHAR)
+            if (shiftX < 0) l = l.padStart(newWith, BidimensionalShape.NULL_CHAR)
+            if (shiftX > 0) l = l.padEnd(newWith, BidimensionalShape.NULL_CHAR)
             newLines.add(l)
         }
         for (line in second.shape.visualDescription) {
             var l = line
-            if (shiftX < 0) l = l.padStart(newWidth, BidimensionalShape.NULL_CHAR)
-            if (shiftX > 0) l = l.padEnd(newWidth, BidimensionalShape.NULL_CHAR)
+            if (shiftX < 0) l = l.padEnd(newWith, BidimensionalShape.NULL_CHAR)
+            if (shiftX > 0) l = l.padStart(newWith, BidimensionalShape.NULL_CHAR)
             newLines.add(l)
         }
-        anchorPoint.move(shiftX, -other.shape.getHeight())
+        anchorPoint = Coordinates(xs.min(), anchorPoint.y - other.shape.getHeight())
         shape = BidimensionalShape(newLines.toTypedArray())
         return this
     }
@@ -105,6 +105,10 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
     companion object {
         fun verticalValues(pbs: PlacedBidimensionalShape): IntRange {
             return pbs.anchorPoint.y ..pbs.shape.visualDescription.size + pbs.anchorPoint.y  - 1
+        }
+
+        fun horizontalValues(pbs: PlacedBidimensionalShape): IntRange {
+            return pbs.anchorPoint.x ..pbs.shape.getWidth() + pbs.anchorPoint.x  - 1
         }
     }
 

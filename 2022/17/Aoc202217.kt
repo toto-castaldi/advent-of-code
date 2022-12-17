@@ -42,8 +42,9 @@ class Aoc202217(val movements: String) {
         var currentPiece = nextPiece()
         var movement = nextMovement()
         var time = 0
+        debug(currentPiece)
         while (stackedPiecesCount < maxStackedPiecesCount && (debug == -1 || time < debug)) {
-            debug(currentPiece)
+
             time ++
 
             val boundY = Int.MIN_VALUE .. stack.maxY()
@@ -58,11 +59,21 @@ class Aoc202217(val movements: String) {
                 }
             }
 
+            debug(currentPiece)
+
             currentPiece.moveInBounderies(0, 1 , boundX, boundY)
 
-            if (currentPiece.onTopOf(stack)) {
+
+            if (currentPiece.intersect(stack)) { //move back and sum to stack
+                currentPiece.move(0,-1)
+
+                println("${currentPiece.anchorPoint} ${stack.anchorPoint}")
+
                 stack + currentPiece
                 stackedPiecesCount ++
+
+                println("${stack.anchorPoint}")
+
                 currentPiece = nextPiece()
             }
             movement = nextMovement()
