@@ -3,8 +3,11 @@ import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.PlacedBidimensionalShape
 import java.io.File
 
-class Aoc202217(movements: String) {
-    private var stack: PlacedBidimensionalShape = PlacedBidimensionalShape(Coordinates(3, 0), BidimensionalShape.EMPTY)
+class Aoc202217(val movements: String) {
+    private var pieceIndex = 0
+    private var movIndex = 0
+    private val base = BidimensionalShape(arrayOf("#######"))
+    private var stack = PlacedBidimensionalShape(Coordinates(1, 4), base)
     private var stackedPiecesCount: Int = 0
     private val freeR = 7
     private val freeL = 1
@@ -37,28 +40,36 @@ class Aoc202217(movements: String) {
         var currentPiece = nextPiece()
         var movement = nextMovement()
         while (stackedPiecesCount < maxStackedPiecesCount) {
-            val boundY = Int.MIN_VALUE .. (if (stack.maxY() > 0) stack.maxY()  else 3)
+            val boundY = Int.MIN_VALUE .. stack.maxY()
             when (movement) {
                 '>' -> currentPiece.moveInBounderies(1, 0, boundX, boundY )
                 '<' -> currentPiece.moveInBounderies(-1, 0, boundX, boundY)
             }
-            currentPiece.moveInBounderies(0, 1 , boundX, boundY)
-            if (currentPiece.touch(stack)) {
+            if (currentPiece.intesects(stack)) { //illegal move. Go back
+                when (movement) {
+                    '<' -> currentPiece.move(1, 0)
+                    '>' -> currentPiece.move(-1, 0)
+                }
+            }
+
+            if (currentPiece.onTopOf(stack)) {
                 stack + currentPiece
                 stackedPiecesCount ++
                 currentPiece = nextPiece()
+            } else {
+                currentPiece.moveInBounderies(0, 1 , boundX, boundY)
             }
             movement = nextMovement()
         }
-        return stack.shape.height
+        return stack.shape.getHeight()
     }
 
     private fun nextMovement(): Char {
-        TODO("Not yet implemented")
+        return movements[movIndex ++]
     }
 
     private fun nextPiece(): PlacedBidimensionalShape {
-        TODO("Not yet implemented")
+        return PlacedBidimensionalShape(Coordinates(2, stack.minY() - 4), pieces[(pieceIndex ++) % pieces.size])
     }
 
     companion object {

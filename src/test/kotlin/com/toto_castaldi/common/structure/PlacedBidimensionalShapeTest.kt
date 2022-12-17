@@ -1,40 +1,46 @@
 package com.toto_castaldi.common.structure
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class PlacedBidimensionalShapeTest {
 
     private val freeR = 7
     private val freeL = 1
     private val hLineShape = BidimensionalShape(arrayOf("####"))
-    private val cross = BidimensionalShape(arrayOf(
+    private val crossShape = BidimensionalShape(arrayOf(
     ".#.",
     "###",
     ".#."
     ))
 
-    fun r(pds : PlacedBidimensionalShape) { pds.moveInBounderies(1,0,freeL..freeR, Int.MIN_VALUE..Int.MAX_VALUE) }
-    fun l(pds : PlacedBidimensionalShape) { pds.moveInBounderies(-1,0,freeL..freeR, Int.MIN_VALUE..Int.MAX_VALUE)  }
-    fun d(pds : PlacedBidimensionalShape, freeD : Int) { pds.moveInBounderies(0,1,freeL..freeR, Int.MIN_VALUE..freeD)  }
+    private fun r(pds : PlacedBidimensionalShape) { pds.moveInBounderies(1,0,freeL..freeR, Int.MIN_VALUE..Int.MAX_VALUE) }
+    private fun l(pds : PlacedBidimensionalShape) { pds.moveInBounderies(-1,0,freeL..freeR, Int.MIN_VALUE..Int.MAX_VALUE)  }
+    private fun d(pds : PlacedBidimensionalShape, freeD : Int) { pds.moveInBounderies(0,1,freeL..freeR, Int.MIN_VALUE..freeD)  }
 
     @Test
-    fun testTouch() {
-        val freeD = Int.MAX_VALUE
-        val pds = PlacedBidimensionalShape(Coordinates(3,0),cross)
-        val static = PlacedBidimensionalShape(Coordinates(3,6),cross)
+    @Ignore
+    fun testIntersects() {
+        val line = PlacedBidimensionalShape(Coordinates(1,2), hLineShape)
+        val cross = PlacedBidimensionalShape(Coordinates(1,0), crossShape)
+        assertFalse { cross.intesects(line) }
+        assertFalse { line.intesects(cross) }
 
-        l(pds)
-        d(pds,freeD)
+        cross.move(0,1)
+        assertTrue { cross.intesects(line) }
+        assertTrue { line.intesects(cross) }
+    }
 
-        r(pds)
-        d(pds,freeD)
+    @Test
+    @Ignore
+    fun testOnTop() {
+        val line = PlacedBidimensionalShape(Coordinates(1,2), hLineShape)
+        val cross = PlacedBidimensionalShape(Coordinates(1,-1), crossShape)
+        assertFalse { line.onTopOf(cross) }
+        assertFalse { cross.onTopOf(line) }
 
-        l(pds)
-        d(pds,freeD)
-
-        assertTrue { pds.touch(static) }
+        cross.move(0,1)
+        assertTrue { cross.onTopOf(line) }
+        assertFalse { line.intesects(cross) }
     }
 
     @Test
