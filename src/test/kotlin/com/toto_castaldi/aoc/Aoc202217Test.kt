@@ -8,7 +8,7 @@ class Aoc202217Test {
     @Test
     fun part1() {
         val aoc = Aoc202217(">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>")
-        assertEquals(3068, aoc.towerHeight(2022, 1))
+        assertEquals(3068, aoc.towerHeight(2022, 5))
     }
 
 

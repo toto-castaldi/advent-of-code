@@ -58,12 +58,12 @@ class Aoc202217(val movements: String) {
                 }
             }
 
+            currentPiece.moveInBounderies(0, 1 , boundX, boundY)
+
             if (currentPiece.onTopOf(stack)) {
                 stack + currentPiece
                 stackedPiecesCount ++
                 currentPiece = nextPiece()
-            } else {
-                currentPiece.moveInBounderies(0, 1 , boundX, boundY)
             }
             movement = nextMovement()
 
@@ -86,6 +86,7 @@ class Aoc202217(val movements: String) {
             }
             println()
         }
+        println()
     }
 
     private fun nextMovement(): Char {
@@ -93,7 +94,7 @@ class Aoc202217(val movements: String) {
     }
 
     private fun nextPiece(): PlacedBidimensionalShape {
-        return PlacedBidimensionalShape(Coordinates(2, stack.minY() - 4), pieces[(pieceIndex ++) % pieces.size])
+        return PlacedBidimensionalShape(Coordinates(3, stack.minY() - 4), pieces[(pieceIndex ++) % pieces.size])
     }
 
     companion object {

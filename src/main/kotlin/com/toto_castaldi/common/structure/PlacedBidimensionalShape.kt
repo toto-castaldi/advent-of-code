@@ -1,6 +1,8 @@
 package com.toto_castaldi.common.structure
 
 import com.toto_castaldi.common.Numbers
+import kotlin.math.abs
+import kotlin.math.max
 
 /**
  * the anchor point is top left in the containing box of the shapr
@@ -21,6 +23,12 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
 
     operator fun plus(other: PlacedBidimensionalShape): PlacedBidimensionalShape {
         val shiftX = other.anchorPoint.x - anchorPoint.x
+        var newWidth = 1
+        if (other.anchorPoint.x < anchorPoint.x) {
+            newWidth = abs(other.anchorPoint.x - anchorPoint.x - shape.getWidth())
+        } else {
+            newWidth = abs(anchorPoint.x - other.anchorPoint.x - other.shape.getWidth())
+        }
         var first = other
         var second = this
         if (this.anchorPoint.y < other.anchorPoint.y) {
@@ -31,14 +39,14 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
         var newLines = mutableListOf<String>()
         for (line in first.shape.visualDescription) {
             var l = line
-            if (shiftX > 0) l = l.padEnd(shiftX + l.length, BidimensionalShape.NULL_CHAR)
-            if (shiftX < 0) l = l.padStart(-shiftX + l.length, BidimensionalShape.NULL_CHAR)
+            if (shiftX > 0) l = l.padStart(newWidth, BidimensionalShape.NULL_CHAR)
+            if (shiftX < 0) l = l.padEnd(newWidth, BidimensionalShape.NULL_CHAR)
             newLines.add(l)
         }
         for (line in second.shape.visualDescription) {
             var l = line
-            if (shiftX < 0) l = l.padEnd(-shiftX + l.length, BidimensionalShape.NULL_CHAR)
-            if (shiftX > 0) l = l.padStart(shiftX + l.length, BidimensionalShape.NULL_CHAR)
+            if (shiftX < 0) l = l.padStart(newWidth, BidimensionalShape.NULL_CHAR)
+            if (shiftX > 0) l = l.padEnd(newWidth, BidimensionalShape.NULL_CHAR)
             newLines.add(l)
         }
         anchorPoint.move(shiftX, -other.shape.getHeight())
@@ -77,9 +85,11 @@ class PlacedBidimensionalShape(val anchorPoint: Coordinates, var shape: Bidimens
     operator fun contains(coordinates: Coordinates): Boolean {
         val c = coordinates.clone().move(-anchorPoint.x, -anchorPoint.y)
         if (shape.visualDescription.size > c.y) {
-            val l = shape.visualDescription[c.y]
-            if (l.length > c.x) {
-                return l[c.x] == BidimensionalShape.POINT_CHAR
+            if (c.y >= 0) {
+                val l = shape.visualDescription[c.y]
+                if (c.x >= 0 && l.length > c.x) {
+                    return l[c.x] == BidimensionalShape.POINT_CHAR
+                }
             }
         }
         return false
