@@ -1,9 +1,10 @@
 import com.toto_castaldi.common.structure.BidimensionalShape
+import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.PlacedBidimensionalShape
 import java.io.File
 
 class Aoc202217(movements: String) {
-    private var stack: PlacedBidimensionalShape = PlacedBidimensionalShape()
+    private var stack: PlacedBidimensionalShape = PlacedBidimensionalShape(Coordinates(3, 0), BidimensionalShape.EMPTY)
     private var stackedPiecesCount: Int = 0
     
     val pieces = listOf<BidimensionalShape>(
