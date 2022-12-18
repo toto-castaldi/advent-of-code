@@ -12,5 +12,16 @@ class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) {
         return values[y * ny + x]
     }
 
+    override fun toString(): String {
+        var result = ""
+        for (y in 0 until ny) {
+            for (x in 0 until nx) {
+                result += (this[x,y].toString() + " ")
+            }
+            result + "\n"
+        }
+        return result
+    }
+
 
 }

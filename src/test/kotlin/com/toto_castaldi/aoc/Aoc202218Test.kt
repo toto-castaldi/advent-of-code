@@ -7,6 +7,7 @@ import kotlin.test.*
 class Aoc202218Test {
 
     @Test
+    @Ignore
     fun part1() {
         var aoc = Aoc202218()
         aoc.add(1,1,1)
