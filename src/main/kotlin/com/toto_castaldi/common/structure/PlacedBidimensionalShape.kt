@@ -140,6 +140,21 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
         fun horizontalValues(pbs: PlacedBidimensionalShape): IntRange {
             return pbs.anchorPoint.x ..pbs.shape.getWidth() + pbs.anchorPoint.x  - 1
         }
+
+        fun print(shape: PlacedBidimensionalShape) {
+            val minX = shape.minX()
+            val maxX = shape.maxX()
+            val minY = shape.minY()
+            val maxY = shape.maxY()
+            for (y in minY..maxY) {
+                for (x in minX..maxX) {
+                    if (Coordinates(x,y) in shape) {
+                        print("#")
+                    } else print(".")
+                }
+                println()
+            }
+        }
     }
 
 }

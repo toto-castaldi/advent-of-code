@@ -11,5 +11,13 @@ class Aoc202217Test {
         assertEquals(3068, aoc.towerHeight(2022))
     }
 
+    @Test
+    @Ignore
+    fun part2() {
+        val aoc = Aoc202217(">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>")
+        assertEquals(1514285714288, aoc.towerHeight(1000000000000))
+    }
+
+
 
 }

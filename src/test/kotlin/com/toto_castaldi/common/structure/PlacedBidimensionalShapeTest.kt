@@ -62,6 +62,27 @@ class PlacedBidimensionalShapeTest {
     }
 
     @Test
+    fun testBase() {
+        val original = PlacedBidimensionalShape(Coordinates(1,5) , hLineShape)
+        original + PlacedBidimensionalShape(Coordinates(1,4) , hLineShape)
+        original + PlacedBidimensionalShape(Coordinates(1,1) , crossShape)
+
+        PlacedBidimensionalShape.print(original)
+
+        val base = PlacedBidimensionalShape(original.anchorPoint, BidimensionalShape.base(original.shape))
+
+        println()
+        PlacedBidimensionalShape.print(base)
+
+        assertEquals(4, base.shape.getHeight())
+        assertEquals(".#..", base.shape.visualDescription[0])
+        assertEquals("###.", base.shape.visualDescription[1])
+        assertEquals(".#..", base.shape.visualDescription[2])
+        assertEquals("####", base.shape.visualDescription[3])
+
+    }
+
+    @Test
     fun testSumLCross(){
         val cross =  PlacedBidimensionalShape(Coordinates(2,2), crossShape)
         val l =  PlacedBidimensionalShape(Coordinates(0,0), lShape)

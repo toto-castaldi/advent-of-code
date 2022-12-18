@@ -2,13 +2,16 @@ import com.toto_castaldi.common.structure.BidimensionalShape
 import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.PlacedBidimensionalShape
 import java.io.File
+import java.lang.Math.max
+import java.lang.Math.min
 
 class Aoc202217(val movements: String) {
+    private var cuttedStack: Long = 0
     private var pieceIndex = 0
     private var movIndex = 0
     private val base = BidimensionalShape(arrayOf("#######"))
     private var stack = PlacedBidimensionalShape(Coordinates(1, 4), base)
-    private var stackedPiecesCount: Int = 0
+    private var stackedPiecesCount: Long = 0
     private val freeR = 7
     private val freeL = 1
     
@@ -36,12 +39,11 @@ class Aoc202217(val movements: String) {
         ))
     )
 
-    fun towerHeight(maxStackedPiecesCount: Int, debug : Int = -1): Int {
+    fun towerHeight(maxStackedPiecesCount: Long, debug : Int = -1): Long {
         val boundX = freeL .. freeR
         var currentPiece = nextPiece()
         var movement = nextMovement()
         var time = 0
-        //debug(currentPiece)
         while (stackedPiecesCount < maxStackedPiecesCount && (debug == -1 || time < debug)) {
 
             time ++
@@ -57,7 +59,6 @@ class Aoc202217(val movements: String) {
                     '>' -> currentPiece.move(-1, 0)
                 }
             }
-            //debug(currentPiece)
 
             currentPiece.moveInBounderies(0, 1 , boundX, boundY)
 
@@ -68,18 +69,22 @@ class Aoc202217(val movements: String) {
                 stack + currentPiece
                 stackedPiecesCount ++
                 currentPiece = nextPiece()
-
-                //debug(currentPiece)
             }
             movement = nextMovement()
 
+            val newStackShape = BidimensionalShape.base(stack.shape)
+
+            cuttedStack += stack.shape.getHeight() - newStackShape.getHeight()
+
+            stack =  PlacedBidimensionalShape(stack.anchorPoint, newStackShape )
+
+            if (debug == 1) debugPrint(currentPiece)
         }
-        return stack.shape.getHeight() - 1
+        return stack.shape.getHeight() - 1 + cuttedStack
     }
 
-    /*
-    private fun debug(currentPiece: PlacedBidimensionalShape) {
 
+    private fun debugPrint(currentPiece: PlacedBidimensionalShape) {
         val minX = min(currentPiece.minX(), stack.minX())
         val maxX = max(currentPiece.maxX(), stack.maxX())
         val minY = min(currentPiece.minY(), stack.minY())
@@ -95,11 +100,8 @@ class Aoc202217(val movements: String) {
             println()
         }
         println()
-
-
     }
 
-     */
 
     private fun nextMovement(): Char {
         return movements[(movIndex ++) % movements.length]
@@ -111,7 +113,7 @@ class Aoc202217(val movements: String) {
     }
 
     companion object {
-        fun run1(fileName: String, maxStackedPiecesCount: Int) {
+        fun run(fileName: String, maxStackedPiecesCount: Long) {
             println( Aoc202217(File(fileName).readLines().first()).towerHeight(maxStackedPiecesCount))
         }
     }
