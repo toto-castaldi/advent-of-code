@@ -38,11 +38,6 @@ data class Coordinates(var x: Int, var y: Int) {
         return this.move(1,1)
     }
 
-    /**
-     * the index in a Matrix width points
-     */
-    val linearIndex = { width : Int -> y * width + x }
-
     companion object {
         val isHorizontal = { pFrom: Coordinates, pTo: Coordinates -> pFrom.x != pTo.x && pFrom.y == pTo.y}
         val isVertical = { pFrom: Coordinates, pTo: Coordinates -> pFrom.x == pTo.x && pFrom.y != pTo.y}

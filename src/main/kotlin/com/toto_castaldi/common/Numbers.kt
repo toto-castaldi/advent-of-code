@@ -34,7 +34,7 @@ class Numbers {
             return result
         }
 
-        val includes = { big: IntRange, small: IntRange -> big.first <= small.first && big.last >= small.last }
+        val includes = { big: IntRange, small: IntRange ->  big.first <= small.first && big.last >= small.last }
     }
 
 }

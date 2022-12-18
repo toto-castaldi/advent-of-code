@@ -18,7 +18,7 @@ class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) {
             for (x in 0 until nx) {
                 result += (this[x,y].toString() + " ")
             }
-            result + "\n"
+            result += "\n"
         }
         return result
     }
