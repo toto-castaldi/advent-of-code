@@ -9,17 +9,51 @@ class Matrix3DTest {
     fun testX() {
         val matrix3D = twoTwo()
 
-        val x0 = matrix3D.getX(0)
-        assertEquals(7, x0[0,0] )
-        assertEquals(5, x0[1,0] )
-        assertEquals(3, x0[0,1] )
-        assertEquals(1, x0[1,1] )
+        val slice0 = matrix3D.getX(0)
+        assertEquals(7, slice0[0,0] )
+        assertEquals(5, slice0[1,0] )
+        assertEquals(3, slice0[0,1] )
+        assertEquals(1, slice0[1,1] )
 
-        val x1 = matrix3D.getX(1)
-        assertEquals(8, x1[0,0] )
-        assertEquals(6, x1[1,0] )
-        assertEquals(4, x1[0,1] )
-        assertEquals(2, x1[1,1] )
+        val slice1 = matrix3D.getX(1)
+        assertEquals(8, slice1[0,0] )
+        assertEquals(6, slice1[1,0] )
+        assertEquals(4, slice1[0,1] )
+        assertEquals(2, slice1[1,1] )
+    }
+
+    @Test
+    fun testY() {
+        val matrix3D = twoTwo()
+
+        val slice0 = matrix3D.getY(0)
+        assertEquals(7, slice0[0,0] )
+        assertEquals(8, slice0[1,0] )
+        assertEquals(3, slice0[0,1] )
+        assertEquals(4, slice0[1,1] )
+
+        val slice1 = matrix3D.getY(1)
+        assertEquals(5, slice1[0,0] )
+        assertEquals(6, slice1[1,0] )
+        assertEquals(1, slice1[0,1] )
+        assertEquals(2, slice1[1,1] )
+    }
+
+    @Test
+    fun testZ() {
+        val matrix3D = twoTwo()
+
+        val slice0 = matrix3D.getZ(0)
+        assertEquals(7, slice0[0,0] )
+        assertEquals(8, slice0[1,0] )
+        assertEquals(5, slice0[0,1] )
+        assertEquals(6, slice0[1,1] )
+
+        val slice1 = matrix3D.getZ(1)
+        assertEquals(3, slice1[0,0] )
+        assertEquals(4, slice1[1,0] )
+        assertEquals(1, slice1[0,1] )
+        assertEquals(2, slice1[1,1] )
     }
 
 
