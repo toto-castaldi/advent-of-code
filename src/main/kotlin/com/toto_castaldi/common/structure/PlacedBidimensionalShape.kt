@@ -1,11 +1,9 @@
 package com.toto_castaldi.common.structure
 
 import com.toto_castaldi.common.Numbers
-import kotlin.math.abs
-import kotlin.math.max
 
 /**
- * the anchor point is top left in the containing box of the shapr
+ * the anchor point is top left in the containing box of the shape
  */
 class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: BidimensionalShape) {
 
@@ -19,7 +17,6 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
             move(x, y)
         }
     }
-
 
     operator fun plus(other: PlacedBidimensionalShape): PlacedBidimensionalShape {
         val sVl = verticalValues(this)
@@ -57,7 +54,7 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
 
         //println(replacedLines)
 
-        var newLines = mutableListOf<String>()
+        val newLines = mutableListOf<String>()
 
         for (y in ys.toList().sorted()) {
             if (y in replacedLines.keys) {
@@ -79,11 +76,8 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
 
     private fun fillWithEmpty(cHl: Set<Int>, y: Int): String {
         var result = ""
-
         val my = horizontalValues(this)
-
         val on = shape.visualDescription[y - anchorPoint.y]
-        //println("fillWithEmpty working on $on $cHl . My $my")
         for (i in cHl.toList().sorted()) {
             if (i in my) {
                 result += on[i - anchorPoint.x]
@@ -91,13 +85,7 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
                 result += BidimensionalShape.NULL_CHAR
             }
         }
-        //println("fillWithEmpty result $result")
-
         return result
-    }
-
-    private fun beforeX(other: PlacedBidimensionalShape): Boolean {
-        return anchorPoint.x < other.anchorPoint.x
     }
 
     private fun checkCommonSpots(other: PlacedBidimensionalShape): Boolean {
@@ -122,10 +110,6 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
 
     fun intersect(other: PlacedBidimensionalShape): Boolean {
         return checkCommonSpots(other)
-    }
-
-    fun onTopOf(other: PlacedBidimensionalShape): Boolean {
-        return tryMove(0,1).checkCommonSpots(other)
     }
 
     operator fun contains(coordinates: Coordinates): Boolean {

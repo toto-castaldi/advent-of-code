@@ -2,8 +2,6 @@ import com.toto_castaldi.common.structure.BidimensionalShape
 import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.PlacedBidimensionalShape
 import java.io.File
-import kotlin.math.max
-import kotlin.math.min
 
 class Aoc202217(val movements: String) {
     private var pieceIndex = 0
@@ -43,7 +41,7 @@ class Aoc202217(val movements: String) {
         var currentPiece = nextPiece()
         var movement = nextMovement()
         var time = 0
-        debug(currentPiece)
+        //debug(currentPiece)
         while (stackedPiecesCount < maxStackedPiecesCount && (debug == -1 || time < debug)) {
 
             time ++
@@ -59,8 +57,7 @@ class Aoc202217(val movements: String) {
                     '>' -> currentPiece.move(-1, 0)
                 }
             }
-
-            debug(currentPiece)
+            //debug(currentPiece)
 
             currentPiece.moveInBounderies(0, 1 , boundX, boundY)
 
@@ -70,10 +67,9 @@ class Aoc202217(val movements: String) {
 
                 stack + currentPiece
                 stackedPiecesCount ++
-
                 currentPiece = nextPiece()
 
-                debug(currentPiece)
+                //debug(currentPiece)
             }
             movement = nextMovement()
 
@@ -81,8 +77,9 @@ class Aoc202217(val movements: String) {
         return stack.shape.getHeight() - 1
     }
 
+    /*
     private fun debug(currentPiece: PlacedBidimensionalShape) {
-        /*
+
         val minX = min(currentPiece.minX(), stack.minX())
         val maxX = max(currentPiece.maxX(), stack.maxX())
         val minY = min(currentPiece.minY(), stack.minY())
@@ -99,8 +96,10 @@ class Aoc202217(val movements: String) {
         }
         println()
 
-         */
+
     }
+
+     */
 
     private fun nextMovement(): Char {
         return movements[(movIndex ++) % movements.length]

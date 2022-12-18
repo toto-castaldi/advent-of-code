@@ -21,7 +21,7 @@ class PlacedBidimensionalShapeTest {
 
     private fun r(pds : PlacedBidimensionalShape) { pds.moveInBounderies(1,0,freeL..freeR, Int.MIN_VALUE..Int.MAX_VALUE) }
     private fun l(pds : PlacedBidimensionalShape) { pds.moveInBounderies(-1,0,freeL..freeR, Int.MIN_VALUE..Int.MAX_VALUE)  }
-    private fun d(pds : PlacedBidimensionalShape, freeD : Int) { pds.moveInBounderies(0,1,freeL..freeR, Int.MIN_VALUE..freeD)  }
+    private fun d(pds : PlacedBidimensionalShape) { pds.moveInBounderies(0,1,freeL..freeR, Int.MIN_VALUE..3)  }
 
     @Test
     fun testIntersects() {
@@ -43,46 +43,28 @@ class PlacedBidimensionalShapeTest {
     }
 
     @Test
-    fun testOnTop() {
-        val cross = PlacedBidimensionalShape(Coordinates(0,0), crossShape)
-        val line = PlacedBidimensionalShape(Coordinates(2,2), hLineShape)
-
-        assertFalse { line.onTopOf(cross) }
-        assertTrue { cross.onTopOf(line) }
-
-        cross.move(0,-1)
-        assertFalse { cross.onTopOf(line) }
-        assertFalse { line.onTopOf(cross) }
-
-        cross.move(-1,1)
-        assertFalse { cross.onTopOf(line) }
-        assertFalse { line.onTopOf(cross) }
-    }
-
-    @Test
     fun testMove() {
-        val freeD = 3
         val pds = PlacedBidimensionalShape(Coordinates(3,0),hLineShape)
 
         r(pds)
-        d(pds,freeD)
+        d(pds)
 
         r(pds)
-        d(pds,freeD)
+        d(pds)
 
         r(pds)
-        d(pds,freeD)
+        d(pds)
 
         l(pds)
-        d(pds,freeD)
+        d(pds)
 
         assertEquals(Coordinates(3,3), pds.anchorPoint)
     }
 
     @Test
     fun testSumLCross(){
-        var cross =  PlacedBidimensionalShape(Coordinates(2,2), crossShape)
-        var l =  PlacedBidimensionalShape(Coordinates(0,0), lShape)
+        val cross =  PlacedBidimensionalShape(Coordinates(2,2), crossShape)
+        val l =  PlacedBidimensionalShape(Coordinates(0,0), lShape)
 
         cross + l
 
