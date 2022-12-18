@@ -29,6 +29,7 @@ class Aoc202217(val movements: String) {
         BidimensionalShape(arrayOf(
             "#",
             "#",
+            "#",
             "#"
         )),
         BidimensionalShape(arrayOf(
@@ -77,10 +78,11 @@ class Aoc202217(val movements: String) {
             movement = nextMovement()
 
         }
-        return stack.shape.getHeight()
+        return stack.shape.getHeight() - 1
     }
 
     private fun debug(currentPiece: PlacedBidimensionalShape) {
+        /*
         val minX = min(currentPiece.minX(), stack.minX())
         val maxX = max(currentPiece.maxX(), stack.maxX())
         val minY = min(currentPiece.minY(), stack.minY())
@@ -96,6 +98,8 @@ class Aoc202217(val movements: String) {
             println()
         }
         println()
+
+         */
     }
 
     private fun nextMovement(): Char {
