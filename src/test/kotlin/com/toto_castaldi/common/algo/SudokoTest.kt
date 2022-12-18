@@ -8,7 +8,6 @@ import kotlin.test.assertTrue
 class SudokoTest {
 
     @Test
-    @Ignore
     fun validTest() {
         val sudoku = Sudoku(
             listOf(
@@ -24,10 +23,10 @@ class SudokoTest {
             )
         )
         println(sudoku)
-        assertFalse { sudoku.valid(7,2, 8) } //invalid square
-        assertFalse { sudoku.valid(0,4, 2) } //invalid row
-        assertFalse { sudoku.valid(8,5, 3) } //invalid column
         assertTrue { sudoku.valid(0,4, 8) }
+        assertFalse { sudoku.valid(8,3, 3) } //invalid column
+        assertFalse { sudoku.valid(0,4, 2) } //invalid row
+        assertFalse { sudoku.valid(7,6, 8) } //invalid square
     }
 
     @Test
