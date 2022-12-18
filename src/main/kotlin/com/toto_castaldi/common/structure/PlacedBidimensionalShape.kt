@@ -22,36 +22,82 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
 
 
     operator fun plus(other: PlacedBidimensionalShape): PlacedBidimensionalShape {
-        val xs = horizontalValues(this).union(horizontalValues(other))
-        val newWith = xs.count()
-        val shiftX = anchorPoint.x - other.anchorPoint.x
+        val sVl = verticalValues(this)
+        val oVl = verticalValues(other)
+        val cVl = sVl.intersect(oVl)
+        val sHl = horizontalValues(this)
+        val oHl = horizontalValues(other)
 
-        var first = other
-        var second = this
-        if (this.anchorPoint.y < other.anchorPoint.y) {
-            first = this
-            second = other
+        //println("hvals $sHl $oHl")
+
+        val xs = sHl.union(oHl)
+        val ys = sVl.union(oVl)
+
+        val replacedLines = mutableMapOf<Int, String>()
+
+        for (y in cVl) {
+
+            val sL:String = fillWithEmpty(xs, y)
+            val oL = other.fillWithEmpty(xs, y)
+
+          //  println("$sL $oL")
+
+            var result = ""
+
+            for ((i, c) in sL.withIndex()) {
+                if (c == BidimensionalShape.POINT_CHAR) {
+                    result += c
+                } else {
+                    result += oL[i]
+                }
+            }
+
+            replacedLines[y] = result
         }
+
+        //println(replacedLines)
 
         var newLines = mutableListOf<String>()
-        for (line in first.shape.visualDescription) {
-            var l = ""
-            if (shiftX < 0) for (i in 1..-shiftX) l = BidimensionalShape.NULL_CHAR + l
-            l = l + line
-            for (i in 1..(newWith - l.length)) l = l + BidimensionalShape.NULL_CHAR
 
-            newLines.add(l)
+        for (y in ys.toList().sorted()) {
+            if (y in replacedLines.keys) {
+             //   println("adding REPLACED ${replacedLines[y]!!}")
+                newLines.add(replacedLines[y]!!)
+            } else if (y in sVl) {
+               // println("adding STACK ${fillWithEmpty(xs, y)}")
+                newLines.add(fillWithEmpty(xs, y))
+            } else {
+               // println("adding OTHER ${other.fillWithEmpty(xs, y)}")
+                newLines.add(other.fillWithEmpty(xs, y))
+            }
         }
-        for (line in second.shape.visualDescription) {
-            var l = ""
-            if (shiftX > 0) for (i in 1..shiftX) l = BidimensionalShape.NULL_CHAR + l
-            l = l + line
-            for (i in 1..(newWith - l.length)) l = l + BidimensionalShape.NULL_CHAR
-            newLines.add(l)
-        }
+
         anchorPoint = Coordinates(xs.min(), anchorPoint.y - other.shape.getHeight() )
         shape = BidimensionalShape(newLines.toTypedArray())
         return this
+    }
+
+    private fun fillWithEmpty(cHl: Set<Int>, y: Int): String {
+        var result = ""
+
+        val my = horizontalValues(this)
+
+        val on = shape.visualDescription[y - anchorPoint.y]
+        //println("fillWithEmpty working on $on $cHl . My $my")
+        for (i in cHl.toList().sorted()) {
+            if (i in my) {
+                result += on[i - anchorPoint.x]
+            } else {
+                result += BidimensionalShape.NULL_CHAR
+            }
+        }
+        //println("fillWithEmpty result $result")
+
+        return result
+    }
+
+    private fun beforeX(other: PlacedBidimensionalShape): Boolean {
+        return anchorPoint.x < other.anchorPoint.x
     }
 
     private fun checkCommonSpots(other: PlacedBidimensionalShape): Boolean {

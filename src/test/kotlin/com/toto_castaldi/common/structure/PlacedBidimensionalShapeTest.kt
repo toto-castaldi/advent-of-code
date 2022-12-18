@@ -13,6 +13,11 @@ class PlacedBidimensionalShapeTest {
     "###",
     ".#."
     ))
+    private val lShape = BidimensionalShape(arrayOf(
+    "..#",
+    "..#",
+    "###"
+    ))
 
     private fun r(pds : PlacedBidimensionalShape) { pds.moveInBounderies(1,0,freeL..freeR, Int.MIN_VALUE..Int.MAX_VALUE) }
     private fun l(pds : PlacedBidimensionalShape) { pds.moveInBounderies(-1,0,freeL..freeR, Int.MIN_VALUE..Int.MAX_VALUE)  }
@@ -72,6 +77,21 @@ class PlacedBidimensionalShapeTest {
         d(pds,freeD)
 
         assertEquals(Coordinates(3,3), pds.anchorPoint)
+    }
+
+    @Test
+    fun testSumLCross(){
+        var cross =  PlacedBidimensionalShape(Coordinates(2,2), crossShape)
+        var l =  PlacedBidimensionalShape(Coordinates(0,0), lShape)
+
+        cross + l
+
+        assertEquals(5, cross.shape.getHeight())
+        assertEquals("..#..", cross.shape.visualDescription[0])
+        assertEquals("..#..", cross.shape.visualDescription[1])
+        assertEquals("####.", cross.shape.visualDescription[2])
+        assertEquals("..###", cross.shape.visualDescription[3])
+        assertEquals("...#.", cross.shape.visualDescription[4])
     }
 
     @Test
