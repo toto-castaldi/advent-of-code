@@ -67,14 +67,12 @@ class Aoc202217(val movements: String) {
             if (currentPiece.intersect(stack)) { //move back and sum to stack
                 currentPiece.move(0,-1)
 
-                println("${currentPiece.anchorPoint} ${stack.anchorPoint}")
-
                 stack + currentPiece
                 stackedPiecesCount ++
 
-                println("${stack.anchorPoint}")
-
                 currentPiece = nextPiece()
+
+                debug(currentPiece)
             }
             movement = nextMovement()
 
@@ -89,10 +87,10 @@ class Aoc202217(val movements: String) {
         val maxY = max(currentPiece.maxY(), stack.maxY())
         for (y in minY..maxY) {
             for (x in minX..maxX) {
-                if (Coordinates(x,y) in currentPiece) {
-                    print("@")
-                } else if (Coordinates(x,y) in stack) {
+                if (Coordinates(x,y) in stack) {
                     print("#")
+                } else if (Coordinates(x,y) in currentPiece) {
+                    print("@")
                 } else print(".")
             }
             println()
@@ -105,7 +103,8 @@ class Aoc202217(val movements: String) {
     }
 
     private fun nextPiece(): PlacedBidimensionalShape {
-        return PlacedBidimensionalShape(Coordinates(3, stack.minY() - 4), pieces[(pieceIndex ++) % pieces.size])
+        val nextShape = pieces[(pieceIndex++) % pieces.size]
+        return PlacedBidimensionalShape(Coordinates(3, stack.minY() - 3 - nextShape.getHeight()), nextShape)
     }
 
     companion object {

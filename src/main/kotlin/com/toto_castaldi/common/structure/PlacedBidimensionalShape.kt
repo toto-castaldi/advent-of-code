@@ -24,10 +24,7 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
     operator fun plus(other: PlacedBidimensionalShape): PlacedBidimensionalShape {
         val xs = horizontalValues(this).union(horizontalValues(other))
         val newWith = xs.count()
-
         val shiftX = anchorPoint.x - other.anchorPoint.x
-
-        println("$newWith $shiftX")
 
         var first = other
         var second = this
@@ -52,7 +49,7 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
             for (i in 1..(newWith - l.length)) l = l + BidimensionalShape.NULL_CHAR
             newLines.add(l)
         }
-        anchorPoint = Coordinates(xs.min(), anchorPoint.y - other.shape.getHeight())
+        anchorPoint = Coordinates(xs.min(), anchorPoint.y - other.shape.getHeight() )
         shape = BidimensionalShape(newLines.toTypedArray())
         return this
     }
