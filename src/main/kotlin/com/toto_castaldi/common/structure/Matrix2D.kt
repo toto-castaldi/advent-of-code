@@ -3,6 +3,7 @@ package com.toto_castaldi.common.structure
 class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T>> {
 
     private var values = MutableList(nx * ny ) { defValue }
+    private var addIndex = 0
 
     operator fun set(x: Int, y: Int, value: T) {
         values[y * ny + x] = value
@@ -68,5 +69,26 @@ class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T
             }
         }
         return result
+    }
+
+    fun add(elements: List<T>): Matrix2D<T> {
+        for (x in 0 until nx) {
+            if (x < elements.size) {
+                this[x, addIndex] = elements[x]
+            }
+        }
+        addIndex ++
+        return this
+    }
+
+    val validCoord = { x: Int, y: Int -> x in 0 until nx && y in 0 until ny}
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as Matrix2D<*>
+
+        return values == other.values
     }
 }

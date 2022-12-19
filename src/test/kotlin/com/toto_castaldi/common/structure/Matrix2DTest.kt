@@ -76,6 +76,30 @@ class Matrix2DTest {
         assertFalse { 81 in matrix }
     }
 
+    @Test
+    fun addTest() {
+        val matrix = Matrix2D(2,2,0)
+        matrix.add(listOf(7,8)).add(listOf(3,4))
+
+        assertEquals(listOf(7,8), matrix.rowAt(0))
+        assertEquals(listOf(3,4), matrix.rowAt(1))
+    }
+
+    @Test
+    fun validCoordTest() {
+        val matrix = build9x9()
+        assertTrue { matrix.validCoord(0,0) }
+        assertTrue { matrix.validCoord(8,8) }
+        assertTrue { matrix.validCoord(3,4) }
+        assertFalse { matrix.validCoord(-1,0) }
+        assertFalse { matrix.validCoord(0,-1) }
+        assertFalse { matrix.validCoord(-1,-1) }
+        assertFalse { matrix.validCoord(9,8) }
+        assertFalse { matrix.validCoord(8,9) }
+        assertFalse { matrix.validCoord(9,9) }
+        assertFalse { matrix.validCoord(19,19) }
+    }
+
 
     private fun build2x2(): Matrix2D<Int> {
         val matrix = Matrix2D<Int>(2, 2, 0)
