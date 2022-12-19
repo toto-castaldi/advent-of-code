@@ -35,7 +35,33 @@ class Aoc202218() {
 
 
     fun countSideExposed(): Int {
-        TODO()
+        var result = 0
+        result += countX(1)
+        result += countX(-1)
+        result += countY(1)
+        result += countY(-1)
+        result += countZ(1)
+        result += countZ(-1)
+
+        return result
+    }
+
+    private fun countX(dir: Int): Int {
+        return shrinkX(dir).fold(0) { acc, value ->
+            acc + value.count { v -> v != -1 }
+        }
+    }
+
+    private fun countY(dir: Int): Int {
+        return shrinkY(dir).fold(0) { acc, value ->
+            acc + value.count { v -> v != -1 }
+        }
+    }
+
+    private fun countZ(dir: Int): Int {
+        return shrinkZ(dir).fold(0) { acc, value ->
+            acc + value.count { v -> v != -1 }
+        }
     }
 
     fun navigateY(direction: Int) = sequence() {
@@ -48,16 +74,27 @@ class Aoc202218() {
         }
     }
 
+    fun shrinkX(direction: Int): Matrix2D<Int> {
+        return shrink(direction) { m: Matrix3D<Int>, index: Int -> m.getX(index) }
+    }
 
     fun shrinkY(direction: Int): Matrix2D<Int> {
+        return shrink(direction) { m: Matrix3D<Int>, index: Int -> m.getY(index) }
+    }
+
+    fun shrinkZ(direction: Int): Matrix2D<Int> {
+        return shrink(direction) { m: Matrix3D<Int>, index: Int -> m.getZ(index) }
+    }
+
+    private fun shrink(direction: Int, slice: (Matrix3D<Int>, Int) -> Matrix2D<Int>): Matrix2D<Int> {
         var yProgression : IntProgression = 0 ..  maxY
         if (direction < 0) yProgression = yProgression.reversed()
         var actualFace : Matrix2D<Int>? = null
         for (iY in yProgression) {
             if (actualFace == null) {
-                actualFace = matrix.getY(iY)
+                actualFace = slice(matrix, iY)
             } else {
-                val nextFace = matrix.getY(iY)
+                val nextFace = slice(matrix, iY)
                 val maxX = max(actualFace.nx, nextFace.nx)
                 val maxY = max(actualFace.ny, nextFace.ny)
                 val merged = Matrix2D<Int>(maxX, maxY, -1)

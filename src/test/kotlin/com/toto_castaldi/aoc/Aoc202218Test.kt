@@ -36,15 +36,18 @@ class Aoc202218Test {
     }
 
     @Test
-    @Ignore
-    fun part1() {
-        var aoc = Aoc202218()
-        aoc.add(1,1,1)
-        aoc.add(2,1,1)
+    fun part1Simple() {
+        val aoc = Aoc202218()
+        aoc.add(1, 1, 1)
+        aoc.add(2, 1, 1)
 
         assertEquals(10, aoc.countSideExposed())
+    }
 
-        aoc = Aoc202218()
+    @Test
+    @Ignore
+    fun part1() {
+        val aoc = Aoc202218()
         aoc.add(2,2,2)
         aoc.add(1,2,2)
         aoc.add(3,2,2)
