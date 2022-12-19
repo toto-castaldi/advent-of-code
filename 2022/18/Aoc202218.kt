@@ -37,7 +37,7 @@ class Aoc202218() {
     }
 
 
-    fun countSideExposed(): Int {
+    fun countNotConnectedSides(): Int {
         var result = 0
         result += countX(1)
         result += countX(-1)
@@ -91,6 +91,10 @@ class Aoc202218() {
         return count(dir, sizeZ) { index: Int -> matrix.getZ(index) }
     }
 
+    fun countExteriorSides(): Int {
+        TODO("Not yet implemented")
+    }
+
     companion object {
         fun run1(fileName: String) {
             val aoc = Aoc202218()
@@ -98,7 +102,7 @@ class Aoc202218() {
                 val (x, y, z) = line.trim().split(",").map { it.trim().toInt() }
                 aoc.add(x,y,z)
             }
-            println( aoc.countSideExposed())
+            println( aoc.countNotConnectedSides())
         }
     }
 
