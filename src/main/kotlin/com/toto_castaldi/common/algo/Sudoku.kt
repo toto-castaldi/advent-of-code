@@ -16,7 +16,7 @@ class Sudoku(private val inputGrid: List<String>) {
     }
 
     fun solve() {
-        if (solutionFound()) {
+        if (0 !in grid) {
             solutions.add(grid.bake())
         } else {
             //println(this)
@@ -30,20 +30,11 @@ class Sudoku(private val inputGrid: List<String>) {
                                 grid[x, y] = 0
                             }
                         }
+                        return
                     }
                 }
             }
         }
-    }
-
-    private fun solutionFound(): Boolean {
-        var totalZeros = 0
-        grid.forEach {line ->
-            val zeros = line.filter { it == 0 }
-            totalZeros += zeros.size
-        }
-        //println("found zeros ${totalZeros}")
-        return totalZeros == 0
     }
 
     /**

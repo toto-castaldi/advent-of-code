@@ -19,7 +19,6 @@ class SudokoTest {
                 "004035000"
             )
         )
-        println(sudoku)
         assertEquals (0, sudoku.valid(2,6, 2))
         assertEquals (0, sudoku.valid(1,0, 1))
         assertEquals (-2, sudoku.valid(8,3, 3))
@@ -30,23 +29,21 @@ class SudokoTest {
     }
 
     @Test
-    @Ignore
     fun solveTest() {
         val sudoku = Sudoku(
             listOf(
-                "000000000",
-                "000000000",
-                "000000000",
-                "000000000",
-                "000000000",
-                "000000000",
-                "000000000",
-                "000000000",
-                "000000000"
+                "005200000",
+                "400009730",
+                "908000605",
+                "067800000",
+                "031792504",
+                "049056178",
+                "700000003",
+                "000420850",
+                "004035000"
             )
         )
         sudoku.solve()
-        println(sudoku)
         assertEquals(1, sudoku.solutions.size)
     }
 }

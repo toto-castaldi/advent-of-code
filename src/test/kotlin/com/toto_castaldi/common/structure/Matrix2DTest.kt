@@ -20,7 +20,6 @@ class Matrix2DTest {
     @Test
     fun rowTest() {
         val m = build2x2()
-        println(m)
         assertEquals(listOf(1,2), m.rowAt(0))
         assertEquals(listOf(3,4), m.rowAt(1))
     }
@@ -36,7 +35,6 @@ class Matrix2DTest {
     @Test
     fun columnTest() {
         val m = build2x2()
-        println(m)
         assertEquals(listOf(1,3), m.colAt(0))
         assertEquals(listOf(2,4), m.colAt(1))
     }
@@ -44,7 +42,6 @@ class Matrix2DTest {
     @Test
     fun transposeTest() {
         val m = build2x2().transpose()
-        println(m)
         assertEquals(listOf(1,3), m.rowAt(0))
         assertEquals(listOf(2,4), m.rowAt(1))
     }
@@ -52,21 +49,17 @@ class Matrix2DTest {
     @Test
     fun subMatrixTest() {
         val matrix = build9x9()
-        println(matrix)
         var sub = matrix.sub(0,0,3,3)
-        println(sub)
         assertEquals(listOf(0,1,2), sub.rowAt(0))
         assertEquals(listOf(9,10,11), sub.rowAt(1))
         assertEquals(listOf(18,19,20), sub.rowAt(2))
 
         sub = matrix.sub(1,1,3,3)
-        println(sub)
         assertEquals(listOf(10,11,12), sub.rowAt(0))
         assertEquals(listOf(19,20,21), sub.rowAt(1))
         assertEquals(listOf(28,29,30), sub.rowAt(2))
 
         sub = matrix.sub(3,3,3,3)
-        println(sub)
         assertEquals(listOf(30,31,32), sub.rowAt(0))
         assertEquals(listOf(39,40,41), sub.rowAt(1))
         assertEquals(listOf(48,49,50), sub.rowAt(2))
