@@ -6,12 +6,14 @@ class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T
     private var addIndex = 0
 
     operator fun set(x: Int, y: Int, value: T) {
-        values[y * ny + x] = value
+        values[index(x,y)] = value
     }
 
     operator fun get(x: Int, y: Int): T {
-        return values[y * ny + x]
+        return values[index(x,y)]
     }
+
+    private fun index(x: Int, y: Int) = y * nx + x
 
     operator fun contains(value: T):Boolean {
         return value in values

@@ -6,10 +6,26 @@ import kotlin.test.assertEquals
 class Matrix3DTest {
 
     @Test
-    fun testX() {
-        val matrix3D = twoTwo()
+    fun setGetTest() {
+        val matrix3D = Matrix3D<Int>(2, 2, 2, 0)
+        matrix3D[0,0,0] = 1
+        assertEquals(1, matrix3D[0,0,0])
 
+        matrix3D[1,0,1] = 2
+        assertEquals(2, matrix3D[1,0,1])
+
+        matrix3D[0,1,1] = 3
+        assertEquals(3, matrix3D[0,1,1])
+
+        matrix3D[1,1,1] = 4
+        assertEquals(4, matrix3D[1,1,1])
+    }
+
+    @Test
+    fun xTest() {
+        val matrix3D = twoTwo()
         val slice0 = matrix3D.getX(0)
+
         assertEquals(7, slice0[0,0] )
         assertEquals(5, slice0[1,0] )
         assertEquals(3, slice0[0,1] )
@@ -23,7 +39,7 @@ class Matrix3DTest {
     }
 
     @Test
-    fun testY() {
+    fun yTest() {
         val matrix3D = twoTwo()
 
         val slice0 = matrix3D.getY(0)
@@ -40,7 +56,7 @@ class Matrix3DTest {
     }
 
     @Test
-    fun testZ() {
+    fun zTest() {
         val matrix3D = twoTwo()
 
         val slice0 = matrix3D.getZ(0)

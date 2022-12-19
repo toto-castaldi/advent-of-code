@@ -1,13 +1,12 @@
 import com.toto_castaldi.common.structure.Matrix2D
 import com.toto_castaldi.common.structure.Matrix3D
-import kotlin.math.max
-import kotlin.math.sign
+import java.io.File
 
 class Aoc202218() {
     private lateinit var matrix: Matrix3D<Int>
-    private var maxZ: Int = 0
-    private var maxY: Int = 0
-    private var maxX: Int = 0
+    private var sizeZ: Int = 0
+    private var sizeY: Int = 0
+    private var sizeX: Int = 0
     val points = mutableMapOf<XYZ, Int>()
     data class XYZ (val x: Int, val y:Int, val z:Int)
 
@@ -19,17 +18,23 @@ class Aoc202218() {
      * 1 base numeration
      */
     fun add(x: Int, y: Int, z: Int, marker: Int) {
-        points[XYZ(x-1,y-1,z-1)] = marker
+        points[XYZ(x,y,z)] = marker
         update()
     }
 
     private fun update() {
-        maxX = points.keys.maxBy { it.x }.x
-        maxY = points.keys.maxBy { it.y }.y
-        maxZ = points.keys.maxBy { it.z }.z
-        matrix = Matrix3D<Int>(maxX + 1, maxY + 1, maxZ + 1, -1)
+        val minX = points.keys.minBy { it.x }.x
+        val minY = points.keys.minBy { it.y }.y
+        val minZ = points.keys.minBy { it.z }.z
+        sizeX = points.keys.maxBy { it.x }.x - minX + 1
+        sizeY = points.keys.maxBy { it.y }.y - minY + 1
+        sizeZ = points.keys.maxBy { it.z }.z - minZ + 1
+
+        println("size $sizeX $sizeY $sizeZ")
+
+        matrix = Matrix3D<Int>(sizeX , sizeY , sizeZ , -1)
         points.entries.forEach {entry ->
-            matrix[entry.key.x, entry.key.y, entry.key.z] = entry.value
+            matrix[entry.key.x - minX, entry.key.y - minY, entry.key.z - minZ] = entry.value
         }
     }
 
@@ -46,78 +51,56 @@ class Aoc202218() {
         return result
     }
 
-    private fun countX(dir: Int): Int {
-        return shrinkX(dir).fold(0) { acc, value ->
+    private fun count(direction: Int, maxAxis : Int, slice: (Int) -> Matrix2D<Int>): Int {
+        var count = 0
+        var sliceB : Matrix2D<Int>? = null
+        var axisProgression : IntProgression = 0 until maxAxis
+        if (direction < 0) axisProgression = axisProgression.reversed()
+        for (axisIndex in axisProgression) {
+            if (sliceB == null) {
+                sliceB = slice(axisIndex)
+                count += countFilled(sliceB)
+            } else {
+                val sliceA = slice(axisIndex)
+                for (y in 0 until sliceA.ny) {
+                    for (x in 0 until sliceA.nx) {
+                        if (sliceA[x,y] != -1 && sliceB[x,y] == -1) {
+                            count ++
+                        }
+                    }
+                }
+                sliceB = sliceA
+            }
+        }
+        return count
+    }
+
+    private fun countFilled(slice: Matrix2D<Int>): Int {
+        return slice.fold(0) { acc, value ->
             acc + value.count { v -> v != -1 }
         }
     }
 
     private fun countY(dir: Int): Int {
-        return shrinkY(dir).fold(0) { acc, value ->
-            acc + value.count { v -> v != -1 }
-        }
+        return count(dir, sizeY) { index: Int -> matrix.getY(index) }
+    }
+
+    private fun countX(dir: Int): Int {
+        return count(dir, sizeX) { index: Int -> matrix.getX(index) }
     }
 
     private fun countZ(dir: Int): Int {
-        return shrinkZ(dir).fold(0) { acc, value ->
-            acc + value.count { v -> v != -1 }
-        }
-    }
-
-    fun navigateY(direction: Int) = sequence() {
-        val dir = sign(direction.toDouble()).toInt()
-        var indexY = if (dir > 0) 0 else maxY
-        while (indexY <= maxY && indexY >=0) {
-            val res = matrix.getY(indexY)
-            indexY += dir
-            yield(res)
-        }
-    }
-
-    fun shrinkX(direction: Int): Matrix2D<Int> {
-        return shrink(direction) { m: Matrix3D<Int>, index: Int -> m.getX(index) }
-    }
-
-    fun shrinkY(direction: Int): Matrix2D<Int> {
-        return shrink(direction) { m: Matrix3D<Int>, index: Int -> m.getY(index) }
-    }
-
-    fun shrinkZ(direction: Int): Matrix2D<Int> {
-        return shrink(direction) { m: Matrix3D<Int>, index: Int -> m.getZ(index) }
-    }
-
-    private fun shrink(direction: Int, slice: (Matrix3D<Int>, Int) -> Matrix2D<Int>): Matrix2D<Int> {
-        var yProgression : IntProgression = 0 ..  maxY
-        if (direction < 0) yProgression = yProgression.reversed()
-        var actualFace : Matrix2D<Int>? = null
-        for (iY in yProgression) {
-            if (actualFace == null) {
-                actualFace = slice(matrix, iY)
-            } else {
-                val nextFace = slice(matrix, iY)
-                val maxX = max(actualFace.nx, nextFace.nx)
-                val maxY = max(actualFace.ny, nextFace.ny)
-                val merged = Matrix2D<Int>(maxX, maxY, -1)
-                for (x in 0 until maxX) {
-                    for (y in 0 until maxY) {
-                        merged[x,y] = if (actualFace.validCoord(x,y) && actualFace[x,y] != -1) {
-                            actualFace[x,y]
-                        } else if (nextFace.validCoord(x,y) && nextFace[x,y] != -1) {
-                            nextFace[x,y]
-                        } else {
-                            -1
-                        }
-                    }
-                }
-                actualFace = merged
-            }
-        }
-        return actualFace!!
+        return count(dir, sizeZ) { index: Int -> matrix.getZ(index) }
     }
 
     companion object {
         fun run1(fileName: String) {
-            println( fileName)
+            val aoc = Aoc202218()
+            File(fileName).forEachLine {line ->
+                val (x, y, z) = line.trim().split(",").map { it.trim().toInt() }
+                aoc.add(x,y,z)
+            }
+            println( aoc.countSideExposed())
         }
     }
 
