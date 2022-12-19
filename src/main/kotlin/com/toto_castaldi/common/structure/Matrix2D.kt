@@ -1,6 +1,6 @@
 package com.toto_castaldi.common.structure
 
-class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) {
+class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T>> {
 
     private val values = MutableList(nx * ny ) { defValue }
 
@@ -23,5 +23,13 @@ class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) {
         return result
     }
 
+    fun bake(): Matrix2D<T> {
+        val result = Matrix2D<T>(nx, ny, defValue)
+        result.values.addAll(values)
+        return result
+    }
 
+    override fun iterator(): Iterator<List<T>> {
+        return values.chunked(ny).iterator()
+    }
 }

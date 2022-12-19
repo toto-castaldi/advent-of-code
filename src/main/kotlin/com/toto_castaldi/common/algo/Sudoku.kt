@@ -4,6 +4,7 @@ import com.toto_castaldi.common.structure.Matrix2D
 import kotlin.math.floor
 
 class Sudoku(private val inputGrid: List<String>) {
+    public val solutions = mutableListOf<Matrix2D<Int>>()
     private val grid = Matrix2D<Int>(9,9, 0)
 
     init {
@@ -15,18 +16,34 @@ class Sudoku(private val inputGrid: List<String>) {
     }
 
     fun solve() {
-        for (y in 0 until 9) {
-            for (x in 0 until 9) {
-                if (grid[x,y] == 0) {
-                    for (v in 1..9) {
-                        if (valid(x,y,v)) grid[x,y] = v
-                        solve()
-                        grid[x,y] = 0
+        if (solutionFound()) {
+            solutions.add(grid.bake())
+        } else {
+            //println(this)
+            for (y in 0 until 9) {
+                for (x in 0 until 9) {
+                    if (grid[x, y] == 0) {
+                        for (v in 1..9) {
+                            if (valid(x, y, v)) {
+                                grid[x, y] = v
+                                solve()
+                                grid[x, y] = 0
+                            }
+                        }
                     }
-                    return
                 }
             }
         }
+    }
+
+    private fun solutionFound(): Boolean {
+        var totalZeros = 0
+        grid.forEach {line ->
+            val zeros = line.filter { it == 0 }
+            totalZeros += zeros.size
+        }
+        println("found zeros ${totalZeros}")
+        return totalZeros == 0
     }
 
     fun valid(x: Int, y: Int, v: Int): Boolean {

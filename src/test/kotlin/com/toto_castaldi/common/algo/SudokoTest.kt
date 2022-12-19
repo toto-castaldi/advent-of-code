@@ -1,9 +1,6 @@
 package com.toto_castaldi.common.algo
 
-import kotlin.test.Ignore
-import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class SudokoTest {
 
@@ -47,5 +44,6 @@ class SudokoTest {
         )
         sudoku.solve()
         println(sudoku)
+        assertEquals(1, sudoku.solutions.size)
     }
 }
