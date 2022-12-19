@@ -18,25 +18,11 @@ class Aoc202218Test {
         aoc.add(1,2,2, 1)
         aoc.add(2,2,2, 2)
 
-        var faceIndex = 0
-        val face0 = Matrix2D<Int>(2,2,0).add(listOf(7,8)).add(listOf(3,4))
-        val face1 = Matrix2D<Int>(2,2,0).add(listOf(5,6)).add(listOf(1,2))
-
-        aoc.navigateY(1).forEach {face ->
-            assertEquals(if (faceIndex ++ == 0) face0 else face1, face)
-        }
-        assertEquals(face0, aoc.shrinkY(1))
-
-        faceIndex = 1
-        aoc.navigateY(-1).forEach {face ->
-            assertEquals(if (faceIndex -- == 0) face0 else face1, face)
-        }
-        assertEquals(face1, aoc.shrinkY(-1))
-
+        assertEquals(24, aoc.countSideExposed())
     }
 
     @Test
-    fun part1Simple() {
+    fun part1SimpleTest() {
         val aoc = Aoc202218()
         aoc.add(1, 1, 1)
         aoc.add(2, 1, 1)
@@ -45,7 +31,6 @@ class Aoc202218Test {
     }
 
     @Test
-    @Ignore
     fun part1() {
         val aoc = Aoc202218()
         aoc.add(2,2,2)
@@ -62,7 +47,7 @@ class Aoc202218Test {
         aoc.add(2,1,5)
         aoc.add(2,3,5)
 
-        assertEquals(10, aoc.countSideExposed())
+        assertEquals(64, aoc.countSideExposed())
     }
 
 

@@ -30,8 +30,6 @@ class Aoc202218() {
         sizeY = points.keys.maxBy { it.y }.y - minY + 1
         sizeZ = points.keys.maxBy { it.z }.z - minZ + 1
 
-        println("size $sizeX $sizeY $sizeZ")
-
         matrix = Matrix3D<Int>(sizeX , sizeY , sizeZ , -1)
         points.entries.forEach {entry ->
             matrix[entry.key.x - minX, entry.key.y - minY, entry.key.z - minZ] = entry.value
