@@ -2,7 +2,7 @@ package com.toto_castaldi.common.structure
 
 class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T>> {
 
-    private val values = MutableList(nx * ny ) { defValue }
+    private var values = MutableList(nx * ny ) { defValue }
 
     operator fun set(x: Int, y: Int, value: T) {
         values[y * ny + x] = value
@@ -11,6 +11,11 @@ class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T
     operator fun get(x: Int, y: Int): T {
         return values[y * ny + x]
     }
+
+    operator fun contains(value: T):Boolean {
+        return value in values
+    }
+
 
     override fun toString(): String {
         var result = ""
@@ -25,11 +30,43 @@ class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T
 
     fun bake(): Matrix2D<T> {
         val result = Matrix2D<T>(nx, ny, defValue)
-        result.values.addAll(values)
+        val newValues = mutableListOf<T>()
+        newValues.addAll(values)
+        result.values = newValues
         return result
     }
 
     override fun iterator(): Iterator<List<T>> {
         return values.chunked(ny).iterator()
+    }
+
+    fun rowAt(i : Int): List<T> {
+        return values.chunked(ny)[i]
+    }
+
+    fun colAt(i: Int): List<T> {
+        return bake().transpose().rowAt(i)
+    }
+
+    fun transpose(): Matrix2D<T> {
+        val result = Matrix2D<T>(ny,nx, defValue)
+
+        for (y in 0 until ny) {
+            for (x in 0 until nx) {
+                result[y,x] = this[x,y]
+            }
+        }
+
+        return result
+    }
+
+    fun sub(x: Int, y: Int, w: Int, h: Int): Matrix2D<T> {
+        val result = Matrix2D(w, h, defValue)
+        for (iy in y until y + h) {
+            for (ix in x until x + w) {
+                result[ix - x,iy - y] = this[ix, iy]
+            }
+        }
+        return result
     }
 }

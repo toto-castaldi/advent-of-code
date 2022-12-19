@@ -4,7 +4,7 @@ import com.toto_castaldi.common.structure.Matrix2D
 import kotlin.math.floor
 
 class Sudoku(private val inputGrid: List<String>) {
-    public val solutions = mutableListOf<Matrix2D<Int>>()
+    val solutions = mutableListOf<Matrix2D<Int>>()
     private val grid = Matrix2D<Int>(9,9, 0)
 
     init {
@@ -24,7 +24,7 @@ class Sudoku(private val inputGrid: List<String>) {
                 for (x in 0 until 9) {
                     if (grid[x, y] == 0) {
                         for (v in 1..9) {
-                            if (valid(x, y, v)) {
+                            if (valid(x, y, v) == 0) {
                                 grid[x, y] = v
                                 solve()
                                 grid[x, y] = 0
@@ -42,24 +42,27 @@ class Sudoku(private val inputGrid: List<String>) {
             val zeros = line.filter { it == 0 }
             totalZeros += zeros.size
         }
-        println("found zeros ${totalZeros}")
+        //println("found zeros ${totalZeros}")
         return totalZeros == 0
     }
 
-    fun valid(x: Int, y: Int, v: Int): Boolean {
-        for (i in 0 until 9) if (grid[i, y] == v && i != x) return false
-        for (i in 0 until 9) if (grid[x, i] == v && i != y) return false
+    /**
+     * -1 row
+     * -2 column
+     * -3 square
+     *
+     * 0 VALID
+     */
+    fun valid(x: Int, y: Int, v: Int): Int {
+        if (v in grid.rowAt(y)) return -1
+        if (v in grid.colAt(x)) return -2
 
         val x0 = floor(x.toDouble() / 3.0).toInt() * 3
         val y0 = floor(y.toDouble() / 3.0).toInt() * 3
 
-        for (i in 0 until 3) {
-            for (j in 0 until 3) {
-                val g = grid[x0 + j, y0 + i]
-                if (g == v) return false
-            }
-        }
-        return true
+        if (v in grid.sub(x0,y0,3,3)) return -3
+
+        return 0
     }
 
     override fun toString(): String {
