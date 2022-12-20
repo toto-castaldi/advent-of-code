@@ -42,12 +42,12 @@ class PrevNextNode<T>(val data: T) {
     }
 
     fun setNext(node: PrevNextNode<T>?) {
-        if (node == this) throw Exception("circular error !!!")
+        if (node == this) throw Exception("circular error !!! $this -> $node")
         nNode = node
     }
 
     fun setPrev(node: PrevNextNode<T>?) {
-        if (node == this) throw Exception("circular error !!!")
+        if (node == this) throw Exception("circular error !!! $this <- $node")
         pNode = node
     }
 

@@ -27,20 +27,23 @@ class CircularArray<T> {
     }
 
     fun moveRigth(element: PrevNextNode<T>, steps: Int) {
-        if (steps % size != 0) {
+        if (steps  != 0) {
             val op = element.prev()
             val on = element.next()
-            val np = element.next(steps % size)
+            val np = element.next(steps )
             val nn = np?.next()
 
-            op?.setNext(on)
-            on?.setPrev(op)
+            if (np != element && nn != element) {
 
-            np?.setNext(element)
-            element.setPrev(np)
+                op?.setNext(on)
+                on?.setPrev(op)
 
-            nn?.setPrev(element)
-            element.setNext(nn)
+                np?.setNext(element)
+                element.setPrev(np)
+
+                nn?.setPrev(element)
+                element.setNext(nn)
+            }
         }
     }
 

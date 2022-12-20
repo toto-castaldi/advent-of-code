@@ -16,7 +16,9 @@ class Aoc202220() {
     }
 
     fun numberAfter0(pos: Int): Int? {
-        return index0?.next(pos)?.data?.value
+        val value = index0?.next(pos)?.data?.value
+        println("0 el is $index0 . Search after $pos : $value")
+        return value
     }
 
     fun arrangeAllElements() {
@@ -29,9 +31,10 @@ class Aoc202220() {
             circle.moveRigth(element, element.data.value)
             if (element.data.value == 0) {
                 index0 = element
+                println("found 0 el $index0")
             }
             count ++
-            println("${element} $count $total")
+            //println("${element} $count $total")
         }
         println("arranged")
     }

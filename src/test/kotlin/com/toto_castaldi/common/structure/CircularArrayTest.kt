@@ -78,6 +78,8 @@ class CircularArrayTest {
         val valuesBefore = a.values(nodeOne)
         a.moveRigth(nodeOne, 700) //nothing
         assertEquals(valuesBefore, a.values(nodeOne))
+
+        a.moveRigth(nodeOne, 6)
     }
 
     private fun check(ca: CircularArray<Int>, p: Int, a: Int, n: Int) {
