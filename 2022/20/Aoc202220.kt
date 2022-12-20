@@ -20,6 +20,8 @@ class Aoc202220() {
     }
 
     fun arrangeAllElements() {
+        var count = 0
+        val total = ids.size
         for (o in ids) {
             val element  = circle.findBy {
                 it.id == o
@@ -28,13 +30,16 @@ class Aoc202220() {
             if (element.data.value == 0) {
                 index0 = element
             }
+            count ++
+            println("${element} $count $total")
         }
+        println("arranged")
     }
 
     class IdAndValue(val value: Int) {
         val id = UUID.randomUUID().toString()
         override fun toString(): String {
-            return value.toString()
+            return "$id $value"
         }
     }
 

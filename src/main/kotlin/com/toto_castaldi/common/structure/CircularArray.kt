@@ -4,6 +4,7 @@ class CircularArray<T> {
 
     var firstNode : PrevNextNode<T>? = null
     var addingNode : PrevNextNode<T>? = null
+    var size = 0
 
     fun add(element: T): PrevNextNode<T> {
         if (firstNode == null) {
@@ -12,41 +13,42 @@ class CircularArray<T> {
         } else {
             val nextNode = PrevNextNode(element)
 
-            addingNode?.nextNode = nextNode
+            addingNode?.setNext(nextNode)
 
-            nextNode.prevNode = addingNode!!
-            nextNode.nextNode = firstNode!!
+            nextNode.setPrev(addingNode!!)
+            nextNode.setNext(firstNode!!)
 
-            firstNode?.prevNode = nextNode
+            firstNode?.setPrev(nextNode)
 
             addingNode = nextNode
         }
+        size ++
         return addingNode!!
     }
 
     fun moveRigth(element: PrevNextNode<T>, steps: Int) {
-        if (steps != 0) {
-            val op = element.prevNode
-            val on = element.nextNode
-            val np = element.next(steps)
-            val nn = np?.nextNode
+        if (steps % size != 0) {
+            val op = element.prev()
+            val on = element.next()
+            val np = element.next(steps % size)
+            val nn = np?.next()
 
-            op?.nextNode = on
-            on?.prevNode = op
+            op?.setNext(on)
+            on?.setPrev(op)
 
-            np?.nextNode = element
-            element.prevNode = np
+            np?.setNext(element)
+            element.setPrev(np)
 
-            nn?.prevNode = element
-            element.nextNode = nn
+            nn?.setPrev(element)
+            element.setNext(nn)
         }
     }
 
     fun findBy(testData: (it : T) -> Boolean): PrevNextNode<T>? {
         var p : PrevNextNode<T>?= firstNode
-        while (p!= null && p.nextNode != firstNode) {
+        while (p!= null && p.next() != firstNode) {
             if (testData(p.data)) return p
-            p = p.nextNode
+            p = p.next()
         }
         if (p!= null && testData(p.data)) return p
         return null
@@ -55,9 +57,9 @@ class CircularArray<T> {
     fun values(printFrom : PrevNextNode<T>): List<T> {
         val result = mutableListOf<T>()
         var p: PrevNextNode<T>? = printFrom
-        while (p!= null && p.nextNode != printFrom) {
+        while (p!= null && p.next() != printFrom) {
             result.add(p.data)
-            p = p.nextNode
+            p = p.next()
         }
         result.add(p!!.data)
         return result
