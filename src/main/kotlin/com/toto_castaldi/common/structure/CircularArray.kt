@@ -26,9 +26,9 @@ class CircularArray<T> {
         return addingNode!!
     }
 
-    fun moveRigth(element: PrevNextNode<T>, steps: Int) {
-        if (steps  != 0) {
-            val count = steps
+    fun moveRigth(element: PrevNextNode<T>, steps: Long) {
+        if (steps  != 0L) {
+            val count = steps % (size - 1)
             if (count > 0) {
                 for (i in 0 until count) {
                     moveStep(element, 1)
@@ -82,5 +82,15 @@ class CircularArray<T> {
         result.add(p!!.data)
         return result
     }
+
+    fun over() = sequence<T> {
+        var p: PrevNextNode<T>? = firstNode
+        while (p!= null && p.next() != firstNode) {
+            yield(p.data)
+            p = p.next()
+        }
+        yield(p!!.data)
+    }
+
 
 }

@@ -9,13 +9,13 @@ class Aoc202220() {
     val circle = CircularArray<IdAndValue>()
     val ids = mutableListOf<String>()
 
-    operator fun plus(value: Int) {
+    operator fun plus(value: Long) {
         val idAndValue = IdAndValue(value)
         circle.add(idAndValue)
         ids.add(idAndValue.id)
     }
 
-    fun numberAfter0(pos: Int): Int? {
+    fun numberAfter0(pos: Int): Long? {
         return index0?.next(pos)?.data?.value
     }
 
@@ -26,7 +26,7 @@ class Aoc202220() {
                 it.id == o
             }!!
             circle.moveRigth(element, element.data.value)
-            if (element.data.value == 0) {
+            if (element.data.value == 0L) {
                 index0 = element
             }
             count ++
@@ -34,7 +34,13 @@ class Aoc202220() {
         //println(circle.values(circle.findBy { it.value == 1 }!!))
     }
 
-    class IdAndValue(val value: Int) {
+    fun decryptionKey(decryptionKey: Long) {
+        for (c in circle.over()) {
+            c.value *= decryptionKey
+        }
+    }
+
+    class IdAndValue(var value: Long) {
         val id = UUID.randomUUID().toString()
         override fun toString(): String {
             return "$value"
@@ -42,12 +48,24 @@ class Aoc202220() {
     }
 
     companion object {
-        fun run(fileName: String) {
+        fun run1(fileName: String) {
             val aoc = Aoc202220()
             File(fileName).forEachLine {line ->
-                aoc + line.trim().toInt()
+                aoc + line.trim().toLong()
             }
             aoc.arrangeAllElements()
+            println( aoc.numberAfter0(1000)!! + aoc.numberAfter0(2000)!! + aoc.numberAfter0(3000)!!)
+        }
+        fun run2(fileName: String) {
+            val aoc = Aoc202220()
+            File(fileName).forEachLine {line ->
+                aoc + line.trim().toLong()
+            }
+            aoc.decryptionKey(811589153)
+            for (i in 1 .. 10) {
+                aoc.arrangeAllElements()
+            }
+
             println( aoc.numberAfter0(1000)!! + aoc.numberAfter0(2000)!! + aoc.numberAfter0(3000)!!)
         }
     }
