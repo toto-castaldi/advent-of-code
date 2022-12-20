@@ -11,47 +11,56 @@ class CircularArray<T> {
             addingNode = firstNode
         } else {
             val nextNode = PrevNextNode(element)
-            addingNode!!.nextNode = nextNode
+
+            addingNode?.nextNode = nextNode
+
             nextNode.prevNode = addingNode!!
             nextNode.nextNode = firstNode!!
+
+            firstNode?.prevNode = nextNode
 
             addingNode = nextNode
         }
         return addingNode!!
     }
 
-    operator fun get(steps: Int): T {
-        var current = firstNode
-        for (i in 0 until steps) {
-            current = current!!.nextNode
-        }
-        return current!!.data
-    }
+    fun moveRigth(element: PrevNextNode<T>, steps: Int) {
+        if (steps != 0) {
+            val op = element.prevNode
+            val on = element.nextNode
+            val np = element.next(steps)
+            val nn = np?.nextNode
 
-    fun moveRigth(elment: PrevNextNode<T>, steps: Int): Int {
-        TODO("Not yet implemented")
+            op?.nextNode = on
+            on?.prevNode = op
+
+            np?.nextNode = element
+            element.prevNode = np
+
+            nn?.prevNode = element
+            element.nextNode = nn
+        }
     }
 
     fun findBy(testData: (it : T) -> Boolean): PrevNextNode<T>? {
         var p : PrevNextNode<T>?= firstNode
         while (p!= null && p.nextNode != firstNode) {
-            if (p!= null && testData(p!!.data)) return p
-            if (p == null) p = firstNode else p = p.nextNode
+            if (testData(p.data)) return p
+            p = p.nextNode
         }
-        if (p!= null && testData(p!!.data)) return p
+        if (p!= null && testData(p.data)) return p
         return null
     }
 
-    fun values(): List<T> {
+    fun values(printFrom : PrevNextNode<T>): List<T> {
         val result = mutableListOf<T>()
-        var p = firstNode
-        while (p!= null && p.nextNode != firstNode) {
+        var p: PrevNextNode<T>? = printFrom
+        while (p!= null && p.nextNode != printFrom) {
             result.add(p.data)
             p = p.nextNode
         }
         result.add(p!!.data)
         return result
     }
-
 
 }
