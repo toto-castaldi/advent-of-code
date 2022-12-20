@@ -1,9 +1,11 @@
 import com.toto_castaldi.common.structure.CircularArray
+import com.toto_castaldi.common.structure.PrevNextNode
+import java.io.File
 import java.util.*
 
 class Aoc202220() {
 
-    var index0: Int = -1
+    var index0: PrevNextNode<IdAndValue>? = null
     val circle = CircularArray<IdAndValue>()
     val ids = mutableListOf<String>()
 
@@ -13,8 +15,8 @@ class Aoc202220() {
         ids.add(idAndValue.id)
     }
 
-    fun nmberAfter0(pos: Int): Int {
-        return circle[index0 + pos].value
+    fun numberAfter0(pos: Int): Int? {
+        return index0?.next(pos)?.data?.value
     }
 
     fun arrangeAllElements() {
@@ -22,20 +24,28 @@ class Aoc202220() {
             val element  = circle.findBy {
                 it.id == o
             }!!
-            val newIndex = circle.moveRigth(element, element.data.value)
+            circle.moveRigth(element, element.data.value)
             if (element.data.value == 0) {
-                index0 = newIndex
+                index0 = element
             }
         }
     }
 
     class IdAndValue(val value: Int) {
         val id = UUID.randomUUID().toString()
+        override fun toString(): String {
+            return value.toString()
+        }
     }
 
     companion object {
         fun run(fileName: String) {
-            println( fileName)
+            val aoc = Aoc202220()
+            File(fileName).forEachLine {line ->
+                aoc + line.trim().toInt()
+            }
+            aoc.arrangeAllElements()
+            println( aoc.numberAfter0(1000)!! + aoc.numberAfter0(2000)!! + aoc.numberAfter0(3000)!!)
         }
     }
 
