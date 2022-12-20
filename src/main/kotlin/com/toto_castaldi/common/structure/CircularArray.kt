@@ -28,23 +28,38 @@ class CircularArray<T> {
 
     fun moveRigth(element: PrevNextNode<T>, steps: Int) {
         if (steps  != 0) {
-            val op = element.prev()
-            val on = element.next()
-            val np = element.next(steps )
-            val nn = np?.next()
-
-            if (np != element && nn != element) {
-
-                op?.setNext(on)
-                on?.setPrev(op)
-
-                np?.setNext(element)
-                element.setPrev(np)
-
-                nn?.setPrev(element)
-                element.setNext(nn)
+            val count = steps
+            if (count > 0) {
+                for (i in 0 until count) {
+                    moveStep(element, 1)
+                }
+            } else {
+                for (i in 0 until -count) {
+                    moveStep(element, -1)
+                }
             }
         }
+    }
+
+    fun moveStep(element: PrevNextNode<T>, dir : Int) {
+        val op = element.prev()
+        val on = element.next()
+        val np = element.next(dir)
+        val nn = np?.next()
+
+        if (np == element || nn == element) {
+            throw Exception("next produce a wrong element !!! ")
+        }
+
+        op?.setNext(on)
+        on?.setPrev(op)
+
+        np?.setNext(element)
+        element.setPrev(np)
+
+        nn?.setPrev(element)
+        element.setNext(nn)
+
     }
 
     fun findBy(testData: (it : T) -> Boolean): PrevNextNode<T>? {

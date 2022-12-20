@@ -74,12 +74,6 @@ class CircularArrayTest {
         a.moveRigth(a.findBy { it == 0 }!!, 0)
 
         a.moveRigth(a.findBy { it == 4 }!!, 4)
-
-        val valuesBefore = a.values(nodeOne)
-        a.moveRigth(nodeOne, 700) //nothing
-        assertEquals(valuesBefore, a.values(nodeOne))
-
-        a.moveRigth(nodeOne, 6)
     }
 
     private fun check(ca: CircularArray<Int>, p: Int, a: Int, n: Int) {

@@ -16,14 +16,11 @@ class Aoc202220() {
     }
 
     fun numberAfter0(pos: Int): Int? {
-        val value = index0?.next(pos)?.data?.value
-        println("0 el is $index0 . Search after $pos : $value")
-        return value
+        return index0?.next(pos)?.data?.value
     }
 
     fun arrangeAllElements() {
         var count = 0
-        val total = ids.size
         for (o in ids) {
             val element  = circle.findBy {
                 it.id == o
@@ -31,18 +28,16 @@ class Aoc202220() {
             circle.moveRigth(element, element.data.value)
             if (element.data.value == 0) {
                 index0 = element
-                println("found 0 el $index0")
             }
             count ++
-            //println("${element} $count $total")
         }
-        println("arranged")
+        //println(circle.values(circle.findBy { it.value == 1 }!!))
     }
 
     class IdAndValue(val value: Int) {
         val id = UUID.randomUUID().toString()
         override fun toString(): String {
-            return "$id $value"
+            return "$value"
         }
     }
 
