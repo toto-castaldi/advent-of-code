@@ -1,57 +1,57 @@
 package com.toto_castaldi.common.structure
 
-import kotlin.math.abs
+class CircularArray<T> {
 
-class CircularArray<T> : ArrayList<T>() {
+    var firstNode : PrevNextNode<T>? = null
+    var addingNode : PrevNextNode<T>? = null
 
-    fun moveRight(index: Int, steps: Int): Int {
-        if (steps > 0) {
-            val movedValue = this[index]
-            for (movingIndex in index + 1..(index + steps)) {
-                this[movingIndex - 1] = this[movingIndex]
-            }
-            this[index + steps] = movedValue
-            return index + steps
+    fun add(element: T): PrevNextNode<T> {
+        if (firstNode == null) {
+            firstNode = PrevNextNode(element)
+            addingNode = firstNode
         } else {
-            return moveLeft(index, -steps)
+            val nextNode = PrevNextNode(element)
+            addingNode!!.nextNode = nextNode
+            nextNode.prevNode = addingNode!!
+            nextNode.nextNode = firstNode!!
+
+            addingNode = nextNode
         }
+        return addingNode!!
     }
 
-    fun moveLeft(index: Int, steps: Int): Int {
-        if (steps > 0) {
-            val movedValue = this[index]
-            for (movingIndex in index downTo (index - steps + 1)) {
-                this[movingIndex] = this[movingIndex - 1]
-            }
-            this[index - steps] = movedValue
-            return index - steps
-        } else {
-            return moveRight(index, -steps)
+    operator fun get(steps: Int): T {
+        var current = firstNode
+        for (i in 0 until steps) {
+            current = current!!.nextNode
         }
+        return current!!.data
     }
 
-    override fun set(index: Int, element: T): T {
-        if (index < 0) {
-            if (size + index > 0) {
-                return super.set(size + index, element)
-            } else {
-                return set(index % size, element)
-            }
-        } else {
-            return super.set(index % size, element)
-        }
+    fun moveRigth(elment: PrevNextNode<T>, steps: Int): Int {
+        TODO("Not yet implemented")
     }
 
-    override fun get(index: Int): T {
-        if (index < 0) {
-            if (size + index > 0) {
-                return super.get(size + index)
-            } else {
-                return get(index % size)
-            }
-        } else {
-            return super.get(index % size)
+    fun findBy(testData: (it : T) -> Boolean): PrevNextNode<T>? {
+        var p : PrevNextNode<T>?= firstNode
+        while (p!= null && p.nextNode != firstNode) {
+            if (p!= null && testData(p!!.data)) return p
+            if (p == null) p = firstNode else p = p.nextNode
         }
+        if (p!= null && testData(p!!.data)) return p
+        return null
     }
+
+    fun values(): List<T> {
+        val result = mutableListOf<T>()
+        var p = firstNode
+        while (p!= null && p.nextNode != firstNode) {
+            result.add(p.data)
+            p = p.nextNode
+        }
+        result.add(p!!.data)
+        return result
+    }
+
 
 }

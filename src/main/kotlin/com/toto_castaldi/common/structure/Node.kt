@@ -1,8 +1,8 @@
 package com.toto_castaldi.common.structure
 
-class Node<T>(val name: String, val data : T) : Iterable<Node<T>> {
+open class Node<T>(val name: String, val data : T) : Iterable<Node<T>> {
 
-    private val neighbors = mutableSetOf<Node<T>>()
+    private var neighbors = mutableSetOf<Node<T>>()
 
     fun addNeighbor(node: Node<T>) {
         neighbors.add(node)
@@ -14,6 +14,10 @@ class Node<T>(val name: String, val data : T) : Iterable<Node<T>> {
 
     override fun toString(): String {
         return name
+    }
+
+    fun clearNeighbors() {
+        neighbors = mutableSetOf<Node<T>>()
     }
 
 }
