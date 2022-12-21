@@ -105,7 +105,7 @@ class Aoc202218() {
             println( aoc.countNotConnectedSides())
 
             //openscad
-            val openScadFileName = "$fileName.scad"
+            val openScadFileName = "${fileName.replace("input.txt", "droplet")}.scad"
             val openscadScript = File(openScadFileName).printWriter()
             openscadScript.println("module Droplet() {")
             for (cube in aoc.points.keys) {
