@@ -29,7 +29,6 @@ class Aoc202221Test {
     }
 
     @Test
-    @Ignore
     fun part2() {
         val aoc = Aoc202221()
         aoc + "root: pppw + sjmn"
@@ -48,9 +47,7 @@ class Aoc202221Test {
         aoc + "drzm: hmdt - zczc"
         aoc + "hmdt: 32"
 
-        aoc.human("humn")
-
-        assertEquals(301, aoc.humanYellForMonkeyEquality("root"))
+        assertEquals(301,aoc.resolve("root", null))
     }
 
 }

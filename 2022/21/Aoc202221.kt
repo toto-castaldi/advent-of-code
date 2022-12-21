@@ -89,13 +89,69 @@ class Aoc202221() {
         }
     }
 
-    private fun monkeyOperandNames(name: String): List<String> {
-        return listOf(dictionary[name]?.getLeftName()!!,dictionary[name]?.getRightName()!!)
+    private fun contains(startName: String, name: String): Boolean {
+        if (startName == name) return true
+        val node = dictionary[startName]!!
+        if (node.getLeftName() != null && contains(node.getLeftName()!!, name)) return true
+        if (node.getRightName() != null && contains(node.getRightName()!!, name)) return true
+        return false
     }
+
 
     fun monkeyYells(monkeyName: String): Long {
         return dictionary[monkeyName]!!.compute()
     }
+
+
+    fun resolve(rootName: String, reachValue : Long?): Long {
+        val human = "humn"
+        val operation = dictionary[rootName]!!
+
+        if (operation.getLeftName() != null && operation.getRightName() != null) {
+            val leftName = operation.getLeftName()!!
+            val rightName = operation.getRightName()!!
+            val leftContainsHuman = contains(leftName, human)
+            val rightContainsHuman = contains(rightName , human)
+            if (leftContainsHuman && rightContainsHuman) throw Exception("impossible !")
+            var costantValue = if (leftContainsHuman) {
+                monkeyYells(rightName)
+            } else {
+                monkeyYells(leftName)
+            }
+            if (reachValue == null) { //equality
+                return if (leftContainsHuman) {
+                    resolve(leftName, costantValue)
+                } else {
+                    resolve(rightName, costantValue)
+                }
+            } else {
+                return when (val opSymbol = operation.getOperation()!!) {
+                    "+" -> if (leftContainsHuman) resolve(leftName, reachValue - costantValue) else resolve(rightName, reachValue - costantValue)
+                    "-" -> if (leftContainsHuman) resolve(leftName, reachValue + costantValue) else resolve(rightName, reachValue + costantValue)
+                    "*" -> if (leftContainsHuman) resolve(leftName, reachValue / costantValue) else resolve(rightName, reachValue / costantValue)
+                    "/" -> if (leftContainsHuman) resolve(leftName, reachValue * costantValue) else resolve(rightName, reachValue * costantValue)
+                    else -> throw Exception("unknow operation $opSymbol")
+                }
+            }
+        } else {
+            return reachValue!!
+        }
+
+
+
+        /*
+        println("############## $leftName ##############")
+        CsAcademyGraph.printGraph(convert(dictionary, root), leftName)
+        println("############## $rightName ##############")
+        CsAcademyGraph.printGraph(convert(dictionary, root), rightName)
+        */
+
+    }
+
+    private fun humanYellForValue(startName: String, humanName: String, valueToReach: Long): Long {
+        TODO("Not yet implemented")
+    }
+
 
 
     companion object {
@@ -106,56 +162,21 @@ class Aoc202221() {
         }
 
         fun run2(fileName: String) {
-            val root = "root"
-            val human = "humn"
             val aoc = Aoc202221()
             File(fileName).forEachLine {aoc + it}
-
-            val (leftName, rightName) = aoc.monkeyOperandNames(root)
-
-            aoc.removeMonkey(root)
-
-            println("############## $leftName ##############")
-            CsAcademyGraph.printGraph(convert(aoc.dictionary), leftName)
-            println("############## $rightName ##############")
-            CsAcademyGraph.printGraph(convert(aoc.dictionary), rightName)
-
-            val leftContainsHuman = aoc.contains(leftName, human)
-            val rightContainsHuman = aoc.contains(rightName, human)
-            if (leftContainsHuman && rightContainsHuman) throw Exception("impossible !")
-            val valueToReach = if (leftContainsHuman) {
-                aoc.monkeyYells(rightName)
-            } else {
-                aoc.monkeyYells(leftName)
-            }
-            println("human must yells to reach $valueToReach")
-            println(if (leftContainsHuman) {
-                aoc.humanYellForValue(rightName, human, valueToReach)
-            } else {
-                aoc.humanYellForValue(leftName, human, valueToReach)
-            })
+            aoc.resolve("root", null)
         }
 
-        private fun convert(dictionary: MutableMap<String, Operation>): MutableMap<String, CsAcademyGraph.CsAcademyGraphNode> {
+        private fun convert(dictionary: MutableMap<String, Operation>, exclude : String): MutableMap<String, CsAcademyGraph.CsAcademyGraphNode> {
             val result = mutableMapOf<String, CsAcademyGraph.CsAcademyGraphNode>()
             for (entry in dictionary.entries) {
-                result[entry.key] = entry.value
+                if (entry.key != exclude) result[entry.key] = entry.value
             }
             return result
         }
 
     }
 
-    private fun humanYellForValue(startName: String, humanName: String, valueToReach: Long): Long {
-        TODO("Not yet implemented")
-    }
 
-    private fun contains(startName: String, name: String): Boolean {
-        if (startName == name) return true
-        val node = dictionary[startName]!!
-        if (node.getLeftName() != null && contains(node.getLeftName()!!, name)) return true
-        if (node.getRightName() != null && contains(node.getRightName()!!, name)) return true
-        return false
-    }
 
 }
