@@ -103,6 +103,20 @@ class Aoc202218() {
                 aoc.add(x,y,z)
             }
             println( aoc.countNotConnectedSides())
+
+            //openscad
+            val openScadFileName = "$fileName.scad"
+            val openscadScript = File(openScadFileName).printWriter()
+            openscadScript.println("module Droplet() {")
+            for (cube in aoc.points.keys) {
+                openscadScript.println("\ttranslate([${cube.x},${cube.y},${cube.z}])")
+                openscadScript.println("\t\tcube([1,1,1],true);")
+            }
+            openscadScript.println("}")
+            openscadScript.println("Droplet();")
+            openscadScript.flush()
+            openscadScript.close()
+            println(openScadFileName)
         }
     }
 

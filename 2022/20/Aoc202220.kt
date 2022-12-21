@@ -35,7 +35,7 @@ class Aoc202220() {
     }
 
     fun decryptionKey(decryptionKey: Long) {
-        for (c in circle.over()) {
+        for (c in circle.nodes()) {
             c.value *= decryptionKey
         }
     }

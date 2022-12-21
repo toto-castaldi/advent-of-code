@@ -83,7 +83,7 @@ class CircularArray<T> {
         return result
     }
 
-    fun over() = sequence<T> {
+    fun nodes() = sequence<T> {
         var p: PrevNextNode<T>? = firstNode
         while (p!= null && p.next() != firstNode) {
             yield(p.data)
