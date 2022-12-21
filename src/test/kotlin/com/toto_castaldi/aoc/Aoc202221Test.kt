@@ -47,7 +47,7 @@ class Aoc202221Test {
         aoc + "drzm: hmdt - zczc"
         aoc + "hmdt: 32"
 
-        assertEquals(301,aoc.resolve("root", null))
+        assertEquals(301,aoc.resolve("root", "humn", null))
     }
 
 }

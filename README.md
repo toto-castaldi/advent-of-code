@@ -72,4 +72,4 @@ https://en.wikipedia.org/wiki/Modulo_operation
 
 ![2021 Calendar](./2021.12.1-calendar.png?&raw=true "2021 Calendar")
 
-![2022 Calendar](./2022.21.1-calendar.png?&raw=true "2021 Calendar")
+![2022 Calendar](./2022.21.2-calendar.png?&raw=true "2021 Calendar")
