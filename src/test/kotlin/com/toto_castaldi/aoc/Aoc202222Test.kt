@@ -6,7 +6,6 @@ import kotlin.test.*
 class Aoc202222Test {
 
     @Test
-    @Ignore
     fun part1() {
         val aoc = Aoc202222()
         aoc + "        ...#"

@@ -34,7 +34,7 @@ class Aoc202222() {
         init()
         var time = 0
         while (hasMoreAction() && (debug == -1 || time < debug)) {
-            var action = nextAction()
+            val action = nextAction()
             if (action.isRotating) {
                 when (val r = action.rotateCommand) {
                     RotateDir.CLOCKWISE -> rotateRight()
@@ -45,6 +45,7 @@ class Aoc202222() {
                 printDebug()
             } else {
                 move(action.steps!!)
+                printDebug()
             }
             time ++
         }
@@ -89,7 +90,7 @@ class Aoc202222() {
     }
 
     fun finalPassword(): Int {
-        return 1000 * y + 4 * x + value(direction)
+        return 1000 * (y + 1) + 4 * (x + 1) + value(direction)
     }
 
     private fun value(facing: Direction): Int {
@@ -139,12 +140,11 @@ class Aoc202222() {
 
     private fun move(steps: Int) {
         for (i in 0 until steps) {
-            val coord = nextNotEmpty()
-            if (map[coord.x, coord.y] != MapPoint.WALL && map[coord.x, coord.y] != MapPoint.EMPTY) {
+            val coord = nextSpot()
+            if (map[coord.x, coord.y] != MapPoint.WALL) {
                 x = coord.x
                 y = coord.y
                 markMap()
-                printDebug()
             }
         }
     }
@@ -158,58 +158,45 @@ class Aoc202222() {
         }
     }
 
-    private fun nextNotEmpty(): Coordinates {
+    private fun nextSpot(): Coordinates {
         return when (direction) {
             Direction.R -> {
-                var checkX = if (x + 1 < map.nx) x + 1 else 0
-                if (map[checkX, y] == MapPoint.EMPTY) checkX = otherHSide(checkX, y, Direction.R)
-                Coordinates(checkX, y)
+                if (x + 1 == map.nx || map[x + 1, y]  == MapPoint.EMPTY) {
+                    var i = 0
+                    while (map[i, y] == MapPoint.EMPTY) i ++
+                    Coordinates(i , y)
+                } else {
+                    Coordinates(x + 1, y)
+                }
             }
             Direction.L -> {
-                var checkX = if (x - 1 > 0) x - 1 else map.nx - 1
-                if (map[checkX, y] == MapPoint.EMPTY) checkX = otherHSide(checkX, y, Direction.L)
-                Coordinates(checkX, y)
+                if (x == 0 || map[x - 1, y]  == MapPoint.EMPTY) {
+                    var i = map.nx - 1
+                    while (map[i - 1, y] == MapPoint.EMPTY) i --
+                    Coordinates(i, y)
+                } else {
+                    Coordinates(x - 1, y)
+                }
             }
             Direction.D -> {
-                var checkY = if (y + 1 < map.ny) y + 1 else 0
-                if (map[x, checkY] == MapPoint.EMPTY) checkY = otherVSide(x, checkY, Direction.D)
-                Coordinates(x, checkY)
+                if (y + 1 == map.ny || map[x, y + 1]  == MapPoint.EMPTY) {
+                    var i = 0
+                    while (map[x, i] == MapPoint.EMPTY) i ++
+                    Coordinates(x, i)
+                } else {
+                    Coordinates(x , y + 1)
+                }
             }
             Direction.U -> {
-                var checkY = if (y - 1 > 0) y - 1 else map.ny - 1
-                if (map[x, checkY] == MapPoint.EMPTY) checkY = otherVSide(x, checkY, Direction.U)
-                Coordinates(x, checkY)
+                if (y == 0 || map[x , y - 1]  == MapPoint.EMPTY) {
+                    var i = map.ny - 1
+                    while (map[x, i - 1] == MapPoint.EMPTY) i --
+                    Coordinates(x , i )
+                } else {
+                    Coordinates(x , y - 1)
+                }
             }
-        }
-    }
 
-    private fun otherHSide(x : Int, y :Int,dir: Direction): Int {
-        var res = x
-        return if (dir == Direction.R) {
-            while (res > 1 && map[res - 1, y] != MapPoint.EMPTY) {
-                res--
-            }
-            res - 1
-        } else {
-            while (res < map.nx - 1 && map[res + 1, y] != MapPoint.EMPTY) {
-                res++
-            }
-            res + 1
-        }
-    }
-
-    private fun otherVSide(x : Int, y :Int, dir: Direction): Int {
-        var res = y
-        return if (dir == Direction.D) {
-            while (res > 1 && map[x, res - 1] != MapPoint.EMPTY) {
-                res--
-            }
-            res - 1
-        } else {
-            while (res < map.ny - 1 && map[x, res + 1] != MapPoint.EMPTY) {
-                res++
-            }
-            res + 1
         }
     }
 

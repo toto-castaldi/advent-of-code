@@ -13,11 +13,6 @@ class Aoc202221() {
 
     var dictionary = mutableMapOf<String, Operation>()
 
-    private fun removeMonkey(name: String) {
-        dictionary.remove(name)
-    }
-
-
     operator fun plus(rule: String) {
         val monkeyName = rule.trim().split(":")[0]
         val operators = rule.trim().split(":")[1].trim().split(" ")
@@ -31,7 +26,7 @@ class Aoc202221() {
                     return operators[0].trim()
                 }
 
-                override fun getOperation(): String? {
+                override fun getOperation(): String {
                     return operators[1].trim()
                 }
 
@@ -60,7 +55,32 @@ class Aoc202221() {
                 }
             }
         } else { //costant
-            dictionary[monkeyName] = constantOperation(operators[0].trim().toLong())
+            dictionary[monkeyName] = object : Operation {
+                override fun compute(): Long { return  operators[0].trim().toLong() }
+                override fun getRightName(): String? {
+                    return null
+                }
+
+                override fun getLeftName(): String? {
+                    return null
+                }
+
+                override fun getOperation(): String? {
+                    return null
+                }
+
+                override fun noChild(): Boolean {
+                    return true
+                }
+
+                override fun constantValue(): String {
+                    return compute().toString()
+                }
+
+                override fun children(): List<String> {
+                    return emptyList()
+                }
+            }
         }
     }
 
@@ -86,14 +106,11 @@ class Aoc202221() {
             val rightName = operation.getRightName()!!
 
             /*
-
             println("############## $leftName ##############")
             CsAcademyGraph.printGraph(convert(dictionary, rootName), leftName)
             println("############## $rightName ##############")
             CsAcademyGraph.printGraph(convert(dictionary, rootName), rightName)
-
             */
-
 
             val leftContainsHuman = contains(leftName, human)
             val rightContainsHuman = contains(rightName , human)
@@ -115,7 +132,6 @@ class Aoc202221() {
                     "-" -> if (leftContainsHuman) resolve(leftName, human, reachValue + costantValue) else resolve(rightName, human,costantValue - reachValue)
                     "+" -> if (leftContainsHuman) resolve(leftName, human, reachValue - costantValue) else resolve(rightName, human,reachValue - costantValue)
                     "*" -> if (leftContainsHuman) resolve(leftName, human, reachValue / costantValue) else resolve(rightName, human, reachValue / costantValue )
-
                     else -> throw Exception("unknow operation $opSymbol")
                 }
             }
@@ -146,38 +162,5 @@ class Aoc202221() {
             return result
         }
         */
-
-        fun constantOperation(value: Long): Operation {
-            return object : Operation {
-                override fun compute(): Long { return  value }
-                override fun getRightName(): String? {
-                    return null
-                }
-
-                override fun getLeftName(): String? {
-                    return null
-                }
-
-                override fun getOperation(): String? {
-                    return null
-                }
-
-                override fun noChild(): Boolean {
-                    return true
-                }
-
-                override fun constantValue(): String? {
-                    return compute().toString()
-                }
-
-                override fun children(): List<String> {
-                    return emptyList()
-                }
-            }
-        }
-
     }
-
-
-
 }
