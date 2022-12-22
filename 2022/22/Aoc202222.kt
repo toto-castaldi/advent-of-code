@@ -1,5 +1,6 @@
 import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.Matrix2D
+import java.io.File
 
 class Aoc202222() {
     private lateinit var map: Matrix2D<MapPoint>
@@ -42,13 +43,14 @@ class Aoc202222() {
                     else -> throw Exception("Unknown rotation $r")
                 }
                 markMap()
-                printDebug()
+                //printDebug()
             } else {
                 move(action.steps!!)
-                printDebug()
+                //printDebug()
             }
             time ++
         }
+        printDebug()
     }
 
     private fun printDebug() {
@@ -63,6 +65,7 @@ class Aoc202222() {
                 MapPoint.S_D -> "v"
             }
         })
+
     }
 
 
@@ -117,11 +120,19 @@ class Aoc202222() {
     }
 
     private fun rotateLeft() {
-        direction = Direction.values()[(direction.ordinal - 1) % Direction.values().size]
+        if (direction.ordinal == 0) {
+            direction = Direction.values().last()
+        } else {
+            direction = Direction.values()[direction.ordinal - 1]
+        }
     }
 
     private fun rotateRight() {
-        direction = Direction.values()[(direction.ordinal + 1) % Direction.values().size]
+        if (direction.ordinal == Direction.values().size -1) {
+            direction = Direction.values().first()
+        } else {
+            direction = Direction.values()[(direction.ordinal + 1)]
+        }
     }
 
     data class Action(val isRotating : Boolean, val rotateCommand : RotateDir?, val steps : Int?) {
@@ -142,6 +153,7 @@ class Aoc202222() {
         for (i in 0 until steps) {
             val coord = nextSpot()
             if (map[coord.x, coord.y] != MapPoint.WALL) {
+                if (map[coord.x, coord.y] == MapPoint.EMPTY) throw Exception("empty.....$direction")
                 x = coord.x
                 y = coord.y
                 markMap()
@@ -172,7 +184,7 @@ class Aoc202222() {
             Direction.L -> {
                 if (x == 0 || map[x - 1, y]  == MapPoint.EMPTY) {
                     var i = map.nx - 1
-                    while (map[i - 1, y] == MapPoint.EMPTY) i --
+                    while (map[i, y] == MapPoint.EMPTY) i --
                     Coordinates(i, y)
                 } else {
                     Coordinates(x - 1, y)
@@ -190,7 +202,7 @@ class Aoc202222() {
             Direction.U -> {
                 if (y == 0 || map[x , y - 1]  == MapPoint.EMPTY) {
                     var i = map.ny - 1
-                    while (map[x, i - 1] == MapPoint.EMPTY) i --
+                    while (map[x, i] == MapPoint.EMPTY) i --
                     Coordinates(x , i )
                 } else {
                     Coordinates(x , y - 1)
@@ -202,7 +214,13 @@ class Aoc202222() {
 
     companion object {
         fun run(fileName: String) {
-            println(fileName)
+            val aoc = Aoc202222()
+            var map = true
+            File(fileName).forEachLine {
+                if (map) aoc + it else aoc.navigate(it)
+                if (it.isBlank()) map = false
+            }
+            println( aoc.finalPassword())
         }
 
     }
