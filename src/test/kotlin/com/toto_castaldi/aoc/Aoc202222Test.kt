@@ -26,4 +26,25 @@ class Aoc202222Test {
         assertEquals(6032, aoc.finalPassword())
     }
 
+    @Test
+    fun part2() {
+        val aoc = Aoc202222()
+        aoc + "        ...#"
+        aoc + "        .#.."
+        aoc + "        #..."
+        aoc + "        ...."
+        aoc + "...#.......#"
+        aoc + "........#..."
+        aoc + "..#....#...."
+        aoc + "..........#."
+        aoc + "        ...#...."
+        aoc + "        .....#.."
+        aoc + "        .#......"
+        aoc + "        ......#."
+
+        aoc.set3DConf(Aoc202222.EXAMPLE_MAP)
+        aoc.navigate("10R5L5R10L4R5L5", 5)
+        assertEquals(5031, aoc.finalPassword())
+    }
+
 }

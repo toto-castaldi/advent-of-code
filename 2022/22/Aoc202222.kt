@@ -3,16 +3,28 @@ import com.toto_castaldi.common.structure.Matrix2D
 import java.io.File
 
 class Aoc202222() {
-    private lateinit var map: Matrix2D<MapPoint>
+    private lateinit var navigation2D: Matrix2D<MapPoint>
     private lateinit var route: String
-    private lateinit var direction: Direction
 
+    private var navigation3Ds = mutableListOf<Matrix2D<MapPoint>>()
+    private var cubeMap: CubeMap? = null
+    private var direction: Direction = Direction.R
     private var actionIndex = -1
     private var y: Int = 0
     private var x: Int = -1
     private val lines = mutableListOf<String>()
-    private var maxLen = 0
+    private var maxLen = Int.MIN_VALUE
+    private var minLen = Int.MAX_VALUE
 
+    interface CubeMap {
+        fun subMap0(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
+        fun subMap1(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
+        fun subMap2(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
+        fun subMap3(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
+        fun subMap4(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
+        fun subMap5(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
+
+    }
     enum class Direction {
         R, D, L, U
     }
@@ -28,7 +40,9 @@ class Aoc202222() {
     operator fun plus(mapLine: String) {
         lines.add(mapLine)
         if (mapLine.length > maxLen) maxLen = mapLine.length
+        if (mapLine.trim().length < minLen) minLen = mapLine.trim().length
     }
+
 
     fun navigate(inputRoute: String, debug : Int = -1) {
         route = inputRoute
@@ -43,18 +57,16 @@ class Aoc202222() {
                     else -> throw Exception("Unknown rotation $r")
                 }
                 markMap()
-                //printDebug()
             } else {
                 move(action.steps!!)
-                //printDebug()
             }
             time ++
         }
-        printDebug()
+        println(format(navigation2D))
     }
 
-    private fun printDebug() {
-        println(map.format() {
+    private fun format(map : Matrix2D<MapPoint>): String {
+        return map.format() {
             when (it) {
                 MapPoint.EMPTY -> " "
                 MapPoint.FLOOR -> "."
@@ -64,8 +76,7 @@ class Aoc202222() {
                 MapPoint.S_U -> "^"
                 MapPoint.S_D -> "v"
             }
-        })
-
+        }
     }
 
 
@@ -74,22 +85,34 @@ class Aoc202222() {
     }
 
     private fun init() {
-        map = Matrix2D(maxLen, lines.size, MapPoint.EMPTY)
+        (0..6).forEach { _ -> navigation3Ds.add(Matrix2D(0,0,MapPoint.EMPTY))}
+        navigation2D = Matrix2D(maxLen, lines.size, MapPoint.EMPTY)
         for ((y, line) in lines.withIndex()) {
             for ((x, char) in line.toCharArray().toList().withIndex()) {
-                map[x,y] = when (char) {
+                navigation2D[x, y] = when (char) {
                     ' ' -> MapPoint.EMPTY
                     '.' -> {
                         if (this.x == -1) this.x = x
                         MapPoint.FLOOR
                     }
+
                     '#' -> MapPoint.WALL
                     else -> throw Exception("unknown point ($char)")
                 }
             }
         }
-        direction = Direction.R
-        map[x,y] = MapPoint.S_R
+        if (cubeMap == null) {
+            navigation2D[x, y] = MapPoint.S_R
+        } else {
+            cubeMap!!.subMap0(this, navigation2D)
+            cubeMap!!.subMap1(this, navigation2D)
+            cubeMap!!.subMap2(this, navigation2D)
+            cubeMap!!.subMap3(this, navigation2D)
+            cubeMap!!.subMap4(this, navigation2D)
+            cubeMap!!.subMap5(this, navigation2D)
+
+
+        }
     }
 
     fun finalPassword(): Int {
@@ -152,8 +175,8 @@ class Aoc202222() {
     private fun move(steps: Int) {
         for (i in 0 until steps) {
             val coord = nextSpot()
-            if (map[coord.x, coord.y] != MapPoint.WALL) {
-                if (map[coord.x, coord.y] == MapPoint.EMPTY) throw Exception("empty.....$direction")
+            if (navigation2D[coord.x, coord.y] != MapPoint.WALL) {
+                if (navigation2D[coord.x, coord.y] == MapPoint.EMPTY) throw Exception("empty.....$direction")
                 x = coord.x
                 y = coord.y
                 markMap()
@@ -162,47 +185,51 @@ class Aoc202222() {
     }
 
     private fun markMap() {
-        map[x, y] = when (direction) {
-            Direction.D -> MapPoint.S_D
-            Direction.U -> MapPoint.S_U
-            Direction.L -> MapPoint.S_L
-            Direction.R -> MapPoint.S_R
+        if (cubeMap == null) {
+            navigation2D[x, y] = when (direction) {
+                Direction.D -> MapPoint.S_D
+                Direction.U -> MapPoint.S_U
+                Direction.L -> MapPoint.S_L
+                Direction.R -> MapPoint.S_R
+            }
+        } else {
+
         }
     }
 
     private fun nextSpot(): Coordinates {
         return when (direction) {
             Direction.R -> {
-                if (x + 1 == map.nx || map[x + 1, y]  == MapPoint.EMPTY) {
+                if (x + 1 == navigation2D.nx || navigation2D[x + 1, y]  == MapPoint.EMPTY) {
                     var i = 0
-                    while (map[i, y] == MapPoint.EMPTY) i ++
+                    while (navigation2D[i, y] == MapPoint.EMPTY) i ++
                     Coordinates(i , y)
                 } else {
                     Coordinates(x + 1, y)
                 }
             }
             Direction.L -> {
-                if (x == 0 || map[x - 1, y]  == MapPoint.EMPTY) {
-                    var i = map.nx - 1
-                    while (map[i, y] == MapPoint.EMPTY) i --
+                if (x == 0 || navigation2D[x - 1, y]  == MapPoint.EMPTY) {
+                    var i = navigation2D.nx - 1
+                    while (navigation2D[i, y] == MapPoint.EMPTY) i --
                     Coordinates(i, y)
                 } else {
                     Coordinates(x - 1, y)
                 }
             }
             Direction.D -> {
-                if (y + 1 == map.ny || map[x, y + 1]  == MapPoint.EMPTY) {
+                if (y + 1 == navigation2D.ny || navigation2D[x, y + 1]  == MapPoint.EMPTY) {
                     var i = 0
-                    while (map[x, i] == MapPoint.EMPTY) i ++
+                    while (navigation2D[x, i] == MapPoint.EMPTY) i ++
                     Coordinates(x, i)
                 } else {
                     Coordinates(x , y + 1)
                 }
             }
             Direction.U -> {
-                if (y == 0 || map[x , y - 1]  == MapPoint.EMPTY) {
-                    var i = map.ny - 1
-                    while (map[x, i] == MapPoint.EMPTY) i --
+                if (y == 0 || navigation2D[x , y - 1]  == MapPoint.EMPTY) {
+                    var i = navigation2D.ny - 1
+                    while (navigation2D[x, i] == MapPoint.EMPTY) i --
                     Coordinates(x , i )
                 } else {
                     Coordinates(x , y - 1)
@@ -212,8 +239,41 @@ class Aoc202222() {
         }
     }
 
+    fun set3DConf(map: CubeMap) {
+        cubeMap = map
+    }
+
     companion object {
-        fun run(fileName: String) {
+
+
+        val EXAMPLE_MAP: CubeMap = object : CubeMap {
+            override fun subMap0(aoc: Aoc202222, rawData: Matrix2D<MapPoint>) {
+                aoc.navigation3Ds[0] = rawData.sub(aoc.minLen * 2,0, aoc.minLen, aoc.minLen)
+            }
+
+            override fun subMap1(aoc: Aoc202222, rawData: Matrix2D<MapPoint>) {
+                aoc.navigation3Ds[1] = rawData.sub(0,aoc.minLen, aoc.minLen, aoc.minLen)
+            }
+
+            override fun subMap2(aoc: Aoc202222, rawData: Matrix2D<MapPoint>) {
+                aoc.navigation3Ds[2] = rawData.sub(aoc.minLen,aoc.minLen, aoc.minLen, aoc.minLen)
+            }
+
+            override fun subMap3(aoc: Aoc202222, rawData: Matrix2D<MapPoint>) {
+                aoc.navigation3Ds[3] = rawData.sub(aoc.minLen * 2,aoc.minLen, aoc.minLen, aoc.minLen)
+            }
+
+            override fun subMap4(aoc: Aoc202222, rawData: Matrix2D<MapPoint>) {
+                aoc.navigation3Ds[4] = rawData.sub(aoc.minLen * 2,aoc.minLen * 2, aoc.minLen, aoc.minLen)
+            }
+
+            override fun subMap5(aoc: Aoc202222, rawData: Matrix2D<MapPoint>) {
+                aoc.navigation3Ds[5] = rawData.sub(aoc.minLen * 3,aoc.minLen * 2, aoc.minLen, aoc.minLen)
+            }
+
+        }
+
+        fun run1(fileName: String) {
             val aoc = Aoc202222()
             var map = true
             File(fileName).forEachLine {
@@ -221,6 +281,10 @@ class Aoc202222() {
                 if (it.isBlank()) map = false
             }
             println( aoc.finalPassword())
+        }
+
+        fun run2(fileName: String, example : Boolean = false) {
+            TODO("Not yet implemented")
         }
 
     }
