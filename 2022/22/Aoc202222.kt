@@ -66,7 +66,7 @@ class Aoc202222() {
 
 
     private fun hasMoreAction(): Boolean {
-        return actionIndex < route.length
+        return actionIndex < route.length - 1
     }
 
     private fun init() {
@@ -107,7 +107,7 @@ class Aoc202222() {
             return Action.rotating(route[actionIndex])
         } else {
             var a = ""
-            while (route[actionIndex].isDigit()) {
+            while (actionIndex < route.length && route[actionIndex].isDigit()) {
                 a += route[actionIndex ++]
             }
             actionIndex --
@@ -140,7 +140,7 @@ class Aoc202222() {
     private fun move(steps: Int) {
         for (i in 0 until steps) {
             val coord = nextNotEmpty()
-            if (map[coord.x, coord.y] != MapPoint.WALL) {
+            if (map[coord.x, coord.y] != MapPoint.WALL && map[coord.x, coord.y] != MapPoint.EMPTY) {
                 x = coord.x
                 y = coord.y
                 markMap()
@@ -161,34 +161,56 @@ class Aoc202222() {
     private fun nextNotEmpty(): Coordinates {
         return when (direction) {
             Direction.R -> {
-                var checkCol = if (x + 1 < map.nx) x + 1 else 0
-                if (map[checkCol, y] == MapPoint.EMPTY) checkCol = otherHSide(Direction.R)
-                Coordinates(checkCol, y)
+                var checkX = if (x + 1 < map.nx) x + 1 else 0
+                if (map[checkX, y] == MapPoint.EMPTY) checkX = otherHSide(checkX, y, Direction.R)
+                Coordinates(checkX, y)
             }
             Direction.L -> {
-                var checkCol = if (x - 1 > 0) x - 1 else map.nx - 1
-                if (map[checkCol, y] == MapPoint.EMPTY) checkCol = otherHSide(Direction.L)
-                Coordinates(checkCol, y)
+                var checkX = if (x - 1 > 0) x - 1 else map.nx - 1
+                if (map[checkX, y] == MapPoint.EMPTY) checkX = otherHSide(checkX, y, Direction.L)
+                Coordinates(checkX, y)
             }
             Direction.D -> {
-                var checkRow = if (y + 1 < map.ny) y + 1 else 0
-                if (map[x, checkRow] == MapPoint.EMPTY) checkRow = otherVSide(Direction.D)
-                Coordinates(x, checkRow)
+                var checkY = if (y + 1 < map.ny) y + 1 else 0
+                if (map[x, checkY] == MapPoint.EMPTY) checkY = otherVSide(x, checkY, Direction.D)
+                Coordinates(x, checkY)
             }
             Direction.U -> {
-                var checkRow = if (y - 1 > 0) y - 1 else map.ny - 1
-                if (map[x, checkRow] == MapPoint.EMPTY) checkRow = otherVSide(Direction.U)
-                Coordinates(x, checkRow)
+                var checkY = if (y - 1 > 0) y - 1 else map.ny - 1
+                if (map[x, checkY] == MapPoint.EMPTY) checkY = otherVSide(x, checkY, Direction.U)
+                Coordinates(x, checkY)
             }
         }
     }
 
-    private fun otherHSide(dir: Direction): Int {
-        TODO("Not yet implemented")
+    private fun otherHSide(x : Int, y :Int,dir: Direction): Int {
+        var res = x
+        return if (dir == Direction.R) {
+            while (res > 1 && map[res - 1, y] != MapPoint.EMPTY) {
+                res--
+            }
+            res - 1
+        } else {
+            while (res < map.nx - 1 && map[res + 1, y] != MapPoint.EMPTY) {
+                res++
+            }
+            res + 1
+        }
     }
 
-    private fun otherVSide(dir: Direction): Int {
-        TODO("Not yet implemented")
+    private fun otherVSide(x : Int, y :Int, dir: Direction): Int {
+        var res = y
+        return if (dir == Direction.D) {
+            while (res > 1 && map[x, res - 1] != MapPoint.EMPTY) {
+                res--
+            }
+            res - 1
+        } else {
+            while (res < map.ny - 1 && map[x, res + 1] != MapPoint.EMPTY) {
+                res++
+            }
+            res + 1
+        }
     }
 
     companion object {
