@@ -21,14 +21,7 @@ class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T
 
 
     override fun toString(): String {
-        var result = ""
-        for (y in 0 until ny) {
-            for (x in 0 until nx) {
-                result += (this[x,y].toString() + " ")
-            }
-            result += "\n"
-        }
-        return result
+        return format { it -> it.toString() }
     }
 
     fun bake(): Matrix2D<T> {
@@ -92,5 +85,16 @@ class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T
         other as Matrix2D<*>
 
         return values == other.values
+    }
+
+    fun format(fmt : (T) -> String): String {
+        var result = ""
+        for (y in 0 until ny) {
+            for (x in 0 until nx) {
+                result += (fmt(this[x,y]) + " ")
+            }
+            result += "\n"
+        }
+        return result
     }
 }

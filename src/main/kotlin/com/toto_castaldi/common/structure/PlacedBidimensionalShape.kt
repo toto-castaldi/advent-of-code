@@ -25,8 +25,6 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
         val sHl = horizontalValues(this)
         val oHl = horizontalValues(other)
 
-        //println("hvals $sHl $oHl")
-
         val xs = sHl.union(oHl)
         val ys = sVl.union(oVl)
 
@@ -36,8 +34,6 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
 
             val sL:String = fillWithEmpty(xs, y)
             val oL = other.fillWithEmpty(xs, y)
-
-          //  println("$sL $oL")
 
             var result = ""
 
@@ -52,19 +48,14 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
             replacedLines[y] = result
         }
 
-        //println(replacedLines)
-
         val newLines = mutableListOf<String>()
 
         for (y in ys.toList().sorted()) {
             if (y in replacedLines.keys) {
-             //   println("adding REPLACED ${replacedLines[y]!!}")
                 newLines.add(replacedLines[y]!!)
             } else if (y in sVl) {
-               // println("adding STACK ${fillWithEmpty(xs, y)}")
                 newLines.add(fillWithEmpty(xs, y))
             } else {
-               // println("adding OTHER ${other.fillWithEmpty(xs, y)}")
                 newLines.add(other.fillWithEmpty(xs, y))
             }
         }
