@@ -1,81 +1,87 @@
 package com.toto_castaldi.common.structure
 
-//"BLU", "WHITE", "GREEN", "YELLOW", "RED", "ORANGE"
-// 0         1      2         3       4         5
+import kotlin.math.abs
+
+
+/**
+ * https://en.wikipedia.org/wiki/Rubik%27s_Cube#Move_notation
+ * BLU WHITE GREEN YELLOW RED ORANGE
+*    0     1     2      3   4      5
+ */
+
 class Rubik<T>(vararg val faces : T) {
-    var f = FACE.Y
-    var u = FACE.G
-    var upper = mapOf(
-        FACE.B to listOf(FACE.R, FACE.Y, FACE.O, FACE.W),
-        FACE.W to listOf(FACE.G, FACE.R, FACE.B, FACE.O),
-        FACE.G to listOf(FACE.O, FACE.Y, FACE.R, FACE.W),
-        FACE.Y to listOf(FACE.G, FACE.O, FACE.B, FACE.R),
-        FACE.R to listOf(FACE.W, FACE.G, FACE.Y, FACE.B),
-        FACE.O to listOf(FACE.Y, FACE.G, FACE.W, FACE.B)
+    private var currentFront = FACE.Y
+    private var currentUp = FACE.G
+
+    private enum class FACE {
+        B, W, G, Y, R, O
+    }
+
+    private val cross = mapOf(
+        FACE.G to Cross(FACE.W, FACE.R, FACE.Y, FACE.O),
+        FACE.W to Cross(FACE.B, FACE.R, FACE.G, FACE.O),
+        FACE.B to Cross(FACE.Y, FACE.R, FACE.W, FACE.O),
+        FACE.Y to Cross(FACE.G, FACE.R, FACE.B, FACE.O),
+        FACE.R to Cross(FACE.W, FACE.B, FACE.Y, FACE.G),
+        FACE.O to Cross(FACE.W, FACE.G, FACE.Y, FACE.B)
     )
 
     init {
         if (faces.size != 6) throw Exception("Provide 6 different faces instead $faces")
     }
 
-    enum class FACE {
-        B, W, G, Y, R, O
-    }
-
-    fun set(iF: T, iU : T) {
-        f = FACE.values()[faces.indexOf(iF)]
-        u = FACE.values()[faces.indexOf(iU)]
+    fun set(front: T, up : T) {
+        currentFront = FACE.values()[faces.indexOf(front)]
+        currentUp = FACE.values()[faces.indexOf(up)]
         checkFU()
     }
 
     private fun checkFU() {
-        if (u !in upper[f]!!) throw Exception("$u can't be on top of $f")
+        if (currentUp !in cross[currentFront]!!) throw Exception("${this.currentUp} can't be on top of $currentFront")
     }
 
-    fun currentFace(): T {
-        return faces[f.ordinal]
+    fun currentFront(): T {
+        return faces[currentFront.ordinal]
     }
 
     fun currentUp(): T {
-        return faces[u.ordinal]
+        return faces[this.currentUp.ordinal]
     }
 
-    fun rotateY(dir : Int = 1) {
-        for (i in 0 until dir) {
+    fun rotateUp(dir : Int = 1) {
+        for (i in 0 until abs(dir)) {
             if (dir > 0) {
-                rotateX(1)
-                u = prev(upper[f]!!, u)
-                rotateX(-1)
+                currentFront = cross[currentUp]!!.moveToDown(currentFront).right
             } else {
-                rotateX(+1)
-                u = next(upper[f]!!, u)
-                rotateX(-1)
+                currentFront = cross[currentUp]!!.moveToDown(currentFront).left
             }
         }
     }
 
-    fun rotateX(dir : Int = 1) {
-        for (i in 0 until dir) {
+    fun rotateFront(dir : Int = 1) {
+        for (i in 0 until abs(dir)) {
             if (dir > 0) {
-                f = next(upper[u]!!, f)
+                currentUp = cross[currentFront]!!.moveToUp(currentUp).left
             } else {
-                f = prev(upper[u]!!, f)
+                currentUp = cross[currentFront]!!.moveToUp(currentUp).right
             }
         }
     }
 
-
-
-
-    private fun next(theFaceList: List<FACE>, theFace: FACE): FACE {
-        val i = theFaceList.indexOf(theFace) + 1
-        return if (i < theFaceList.size) theFaceList[i] else theFaceList.first()
+    fun rotateRight(dir : Int = 1) {
+        for (i in 0 until abs(dir)) {
+            if (dir > 0) {
+                rotateUp()
+                rotateFront()
+                rotateUp(-1)
+            } else {
+                rotateUp(-1)
+                rotateFront()
+                rotateUp()
+            }
+        }
     }
 
-    private fun prev(theFaceList: List<FACE>, theFace: FACE): FACE {
-        val i = theFaceList.indexOf(theFace) - 1
-        return if (i > 0) theFaceList[i] else theFaceList.last()
-    }
 
 
 }
