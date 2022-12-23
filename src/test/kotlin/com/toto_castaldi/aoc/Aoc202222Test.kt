@@ -27,6 +27,7 @@ class Aoc202222Test {
     }
 
     @Test
+    @Ignore
     fun part2() {
         val aoc = Aoc202222()
         aoc + "        ...#"

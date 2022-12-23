@@ -9,6 +9,7 @@ class Aoc202222() {
     private var navigation3Ds = mutableListOf<Matrix2D<MapPoint>>()
     private var cubeMap: CubeMap? = null
     private var direction: Direction = Direction.R
+    private var index3D = 0
     private var actionIndex = -1
     private var y: Int = 0
     private var x: Int = -1
@@ -23,6 +24,7 @@ class Aoc202222() {
         fun subMap3(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
         fun subMap4(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
         fun subMap5(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
+        fun adjacent(aoc202222: Aoc202222, currentIndex : Int,  direction: Direction, x: Int, y: Int): Proposal3D
 
     }
     enum class Direction {
@@ -174,68 +176,115 @@ class Aoc202222() {
 
     private fun move(steps: Int) {
         for (i in 0 until steps) {
-            val coord = nextSpot()
-            if (navigation2D[coord.x, coord.y] != MapPoint.WALL) {
-                if (navigation2D[coord.x, coord.y] == MapPoint.EMPTY) throw Exception("empty.....$direction")
-                x = coord.x
-                y = coord.y
-                markMap()
+            if (cubeMap == null) {
+                val coord = nextSpot2D()
+                if (resolveMap()[coord.x, coord.y] != MapPoint.WALL) {
+                    x = coord.x
+                    y = coord.y
+                }
+            } else {
+                val proposal3D = nextSpot3D()
+                if (resolveMap(proposal3D.indexMap)[proposal3D.coord.x, proposal3D.coord.y] != MapPoint.WALL) {
+                    x = proposal3D.coord.x
+                    y = proposal3D.coord.y
+                    index3D = proposal3D.indexMap
+                    direction = proposal3D.direction
+                }
             }
+            markMap()
         }
+    }
+
+    data class Proposal3D (val indexMap : Int, val coord : Coordinates, val direction : Direction)
+
+    private fun resolveMap(index3Dmap : Int = index3D): Matrix2D<MapPoint> {
+        return if (cubeMap == null) navigation2D else navigation3Ds[index3Dmap]
     }
 
     private fun markMap() {
-        if (cubeMap == null) {
-            navigation2D[x, y] = when (direction) {
-                Direction.D -> MapPoint.S_D
-                Direction.U -> MapPoint.S_U
-                Direction.L -> MapPoint.S_L
-                Direction.R -> MapPoint.S_R
-            }
-        } else {
-
+        resolveMap()[x, y] = when (direction) {
+            Direction.D -> MapPoint.S_D
+            Direction.U -> MapPoint.S_U
+            Direction.L -> MapPoint.S_L
+            Direction.R -> MapPoint.S_R
         }
     }
 
-    private fun nextSpot(): Coordinates {
+    private fun nextSpot3D(): Proposal3D {
+        val resolveMap = resolveMap()
         return when (direction) {
             Direction.R -> {
-                if (x + 1 == navigation2D.nx || navigation2D[x + 1, y]  == MapPoint.EMPTY) {
+                if (x + 1 == resolveMap.nx) {
+                    cubeMap!!.adjacent(this, index3D, direction, x, y)
+                } else {
+                    Proposal3D(index3D, Coordinates(x + 1, y), direction)
+                }
+            }
+            Direction.L -> {
+                if (x == 0) {
+                    cubeMap!!.adjacent(this, index3D, direction, x, y)
+                } else {
+                    Proposal3D(index3D, Coordinates(x - 1, y), direction)
+                }
+            }
+            Direction.D -> {
+                if (y + 1 == resolveMap.ny) {
+                    cubeMap!!.adjacent(this, index3D, direction, x, y)
+                } else {
+                    Proposal3D(index3D, Coordinates(x , y + 1), direction)
+                }
+            }
+            Direction.U -> {
+                if (y == 0) {
+                    cubeMap!!.adjacent(this, index3D, direction, x, y)
+                } else {
+                    Proposal3D(index3D, Coordinates(x , y - 1), direction)
+                }
+            }
+        }
+    }
+
+    private fun nextSpot2D(): Coordinates {
+        return when (direction) {
+            Direction.R -> {
+                if (x + 1 == navigation2D.nx || navigation2D[x + 1, y] == MapPoint.EMPTY) {
                     var i = 0
-                    while (navigation2D[i, y] == MapPoint.EMPTY) i ++
-                    Coordinates(i , y)
+                    while (navigation2D[i, y] == MapPoint.EMPTY) i++
+                    Coordinates(i, y)
                 } else {
                     Coordinates(x + 1, y)
                 }
             }
+
             Direction.L -> {
-                if (x == 0 || navigation2D[x - 1, y]  == MapPoint.EMPTY) {
+                if (x == 0 || navigation2D[x - 1, y] == MapPoint.EMPTY) {
                     var i = navigation2D.nx - 1
-                    while (navigation2D[i, y] == MapPoint.EMPTY) i --
+                    while (navigation2D[i, y] == MapPoint.EMPTY) i--
                     Coordinates(i, y)
                 } else {
                     Coordinates(x - 1, y)
                 }
             }
+
             Direction.D -> {
-                if (y + 1 == navigation2D.ny || navigation2D[x, y + 1]  == MapPoint.EMPTY) {
+                if (y + 1 == navigation2D.ny || navigation2D[x, y + 1] == MapPoint.EMPTY) {
                     var i = 0
-                    while (navigation2D[x, i] == MapPoint.EMPTY) i ++
+                    while (navigation2D[x, i] == MapPoint.EMPTY) i++
                     Coordinates(x, i)
                 } else {
-                    Coordinates(x , y + 1)
-                }
-            }
-            Direction.U -> {
-                if (y == 0 || navigation2D[x , y - 1]  == MapPoint.EMPTY) {
-                    var i = navigation2D.ny - 1
-                    while (navigation2D[x, i] == MapPoint.EMPTY) i --
-                    Coordinates(x , i )
-                } else {
-                    Coordinates(x , y - 1)
+                    Coordinates(x, y + 1)
                 }
             }
 
+            Direction.U -> {
+                if (y == 0 || navigation2D[x, y - 1] == MapPoint.EMPTY) {
+                    var i = navigation2D.ny - 1
+                    while (navigation2D[x, i] == MapPoint.EMPTY) i--
+                    Coordinates(x, i)
+                } else {
+                    Coordinates(x, y - 1)
+                }
+            }
         }
     }
 
@@ -269,6 +318,37 @@ class Aoc202222() {
 
             override fun subMap5(aoc: Aoc202222, rawData: Matrix2D<MapPoint>) {
                 aoc.navigation3Ds[5] = rawData.sub(aoc.minLen * 3,aoc.minLen * 2, aoc.minLen, aoc.minLen)
+            }
+
+            override fun adjacent(
+                aoc: Aoc202222,
+                currentIndex: Int,
+                direction: Direction,
+                x: Int,
+                y: Int
+            ): Proposal3D {
+                val m = aoc.minLen
+                val o = { value : Int -> m - value}
+                return when (currentIndex) {
+                    0 -> {
+                        when (direction) {
+                            Direction.R -> Proposal3D(5, Coordinates(m , o(y)), Direction.L)
+                            Direction.L -> Proposal3D(2, Coordinates(y , 0), Direction.D)
+                            Direction.U -> Proposal3D(1, Coordinates(o(x) , 0), Direction.D)
+                            Direction.D -> Proposal3D(3, Coordinates(x , 0), Direction.D)
+                        }
+                    }
+                    1 -> {
+                        when (direction) {
+                            Direction.R -> Proposal3D(2, Coordinates(0, y), Direction.R)
+                            Direction.L -> Proposal3D(5, Coordinates(o(y) , m), Direction.U)
+                            Direction.U -> Proposal3D(0, Coordinates(o(x) , 0), Direction.D)
+                            Direction.D -> Proposal3D(4, Coordinates(x , 0), Direction.U)
+                        }
+                    }
+                    else -> throw Exception("unknown face")
+                }
+
             }
 
         }
