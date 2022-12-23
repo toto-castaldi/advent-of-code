@@ -2,7 +2,6 @@ package com.toto_castaldi.common.structure
 
 import kotlin.math.abs
 
-
 /**
  * https://en.wikipedia.org/wiki/Rubik%27s_Cube#Move_notation
  * BLU WHITE GREEN YELLOW RED ORANGE
@@ -49,27 +48,27 @@ class Rubik<T>(vararg val faces : T) {
     }
 
     fun rotateUp(dir : Int = 1) {
-        for (i in 0 until abs(dir)) {
-            if (dir > 0) {
+        if (dir < 0) {
+            rotateUp(4 - abs(dir) % 4)
+        } else {
+            for (i in 0 until dir % 4) {
                 currentFront = cross[currentUp]!!.moveToDown(currentFront).right
-            } else {
-                currentFront = cross[currentUp]!!.moveToDown(currentFront).left
             }
         }
     }
 
     fun rotateFront(dir : Int = 1) {
-        for (i in 0 until abs(dir)) {
-            if (dir > 0) {
+        if (dir < 0) {
+            rotateFront(4 - abs(dir) % 4)
+        } else {
+            for (i in 0 until dir % 4) {
                 currentUp = cross[currentFront]!!.moveToUp(currentUp).left
-            } else {
-                currentUp = cross[currentFront]!!.moveToUp(currentUp).right
             }
         }
     }
 
     fun rotateRight(dir : Int = 1) {
-        for (i in 0 until abs(dir)) {
+        for (i in 0 until abs(dir % 4)) {
             if (dir > 0) {
                 rotateUp()
                 rotateFront()
@@ -81,7 +80,4 @@ class Rubik<T>(vararg val faces : T) {
             }
         }
     }
-
-
-
 }

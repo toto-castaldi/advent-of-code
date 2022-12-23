@@ -34,6 +34,30 @@ class RubikTest {
         rubik.rotateRight(3)
         assertEquals("BLU", rubik.currentFront())
         assertEquals("ROSSO", rubik.currentUp())
+
+        rubik.rotateRight(4)
+        assertEquals("BLU", rubik.currentFront())
+        assertEquals("ROSSO", rubik.currentUp())
+
+        rubik.rotateRight(-4)
+        assertEquals("BLU", rubik.currentFront())
+        assertEquals("ROSSO", rubik.currentUp())
+
+        rubik.rotateUp(4)
+        assertEquals("BLU", rubik.currentFront())
+        assertEquals("ROSSO", rubik.currentUp())
+
+        rubik.rotateUp(-4)
+        assertEquals("BLU", rubik.currentFront())
+        assertEquals("ROSSO", rubik.currentUp())
+
+        rubik.rotateFront(4)
+        assertEquals("BLU", rubik.currentFront())
+        assertEquals("ROSSO", rubik.currentUp())
+
+        rubik.rotateFront(-4)
+        assertEquals("BLU", rubik.currentFront())
+        assertEquals("ROSSO", rubik.currentUp())
     }
 
 }
