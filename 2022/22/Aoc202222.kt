@@ -1,31 +1,28 @@
 import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.Matrix2D
+import com.toto_castaldi.common.structure.Rubik
 import java.io.File
 
 class Aoc202222() {
-    private lateinit var navigation2D: Matrix2D<MapPoint>
+    private lateinit var rawMap: Matrix2D<MapPoint>
     private lateinit var route: String
 
-    private var navigation3Ds = mutableListOf<Matrix2D<MapPoint>>()
-    private var cubeMap: CubeMap? = null
+    private var rubik: Rubik<Matrix2D<MapPoint>>? = null
     private var direction: Direction = Direction.R
-    private var index3D = 0
     private var actionIndex = -1
     private var y: Int = 0
-    private var x: Int = -1
+    private var x: Int = 0
     private val lines = mutableListOf<String>()
     private var maxLen = Int.MIN_VALUE
     private var minLen = Int.MAX_VALUE
 
     interface CubeMap {
-        fun subMap0(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
-        fun subMap1(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
-        fun subMap2(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
-        fun subMap3(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
-        fun subMap4(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
-        fun subMap5(aoc : Aoc202222, rawData: Matrix2D<MapPoint>)
-        fun adjacent(aoc202222: Aoc202222, currentIndex : Int,  direction: Direction, x: Int, y: Int): Proposal3D
-
+        fun white(rawData: Matrix2D<MapPoint>, edge: Int): Matrix2D<MapPoint>
+        fun orange(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
+        fun green(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
+        fun blu(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
+        fun red(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
+        fun yellow(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
     }
     enum class Direction {
         R, D, L, U
@@ -43,12 +40,25 @@ class Aoc202222() {
         lines.add(mapLine)
         if (mapLine.length > maxLen) maxLen = mapLine.length
         if (mapLine.trim().length < minLen) minLen = mapLine.trim().length
+        rawMap = Matrix2D(maxLen, lines.size, MapPoint.EMPTY)
+        for ((iY, line) in lines.withIndex()) {
+            for ((iX, char) in line.toCharArray().toList().withIndex()) {
+                rawMap[iX, iY] = when (char) {
+                    ' ' -> MapPoint.EMPTY
+                    '.' -> MapPoint.FLOOR
+                    '#' -> MapPoint.WALL
+                    else -> throw Exception("unknown point ($char)")
+                }
+            }
+        }
+
     }
 
 
     fun navigate(inputRoute: String, debug : Int = -1) {
         route = inputRoute
-        init()
+        while (resolveMap()[x,y] == MapPoint.EMPTY) x ++ //part1
+        markMap()
         var time = 0
         while (hasMoreAction() && (debug == -1 || time < debug)) {
             val action = nextAction()
@@ -64,7 +74,11 @@ class Aoc202222() {
             }
             time ++
         }
-        println(format(navigation2D))
+        if (rubik == null) {
+            println(format(rawMap))
+        } else {
+            println(format(rubik!!))
+        }
     }
 
     private fun format(map : Matrix2D<MapPoint>): String {
@@ -81,40 +95,23 @@ class Aoc202222() {
         }
     }
 
+    /**
+
+     */
+    private fun format(rubik : Rubik<Matrix2D<MapPoint>>): String {
+        return format(Matrix2D(maxLen, lines.size, MapPoint.EMPTY)
+            .putSubmap(2*minLen, 0,rubik.white)
+            .putSubmap(0, minLen, rubik.blu)
+            .putSubmap(minLen, minLen, rubik.orange)
+            .putSubmap(minLen * 2, minLen, rubik.green)
+            .putSubmap(minLen * 2, minLen * 2, rubik.yellow)
+            .putSubmap(minLen * 3, minLen * 2, rubik.red)
+        )
+    }
+
 
     private fun hasMoreAction(): Boolean {
         return actionIndex < route.length - 1
-    }
-
-    private fun init() {
-        (0..6).forEach { _ -> navigation3Ds.add(Matrix2D(0,0,MapPoint.EMPTY))}
-        navigation2D = Matrix2D(maxLen, lines.size, MapPoint.EMPTY)
-        for ((y, line) in lines.withIndex()) {
-            for ((x, char) in line.toCharArray().toList().withIndex()) {
-                navigation2D[x, y] = when (char) {
-                    ' ' -> MapPoint.EMPTY
-                    '.' -> {
-                        if (this.x == -1) this.x = x
-                        MapPoint.FLOOR
-                    }
-
-                    '#' -> MapPoint.WALL
-                    else -> throw Exception("unknown point ($char)")
-                }
-            }
-        }
-        if (cubeMap == null) {
-            navigation2D[x, y] = MapPoint.S_R
-        } else {
-            cubeMap!!.subMap0(this, navigation2D)
-            cubeMap!!.subMap1(this, navigation2D)
-            cubeMap!!.subMap2(this, navigation2D)
-            cubeMap!!.subMap3(this, navigation2D)
-            cubeMap!!.subMap4(this, navigation2D)
-            cubeMap!!.subMap5(this, navigation2D)
-
-
-        }
     }
 
     fun finalPassword(): Int {
@@ -176,7 +173,7 @@ class Aoc202222() {
 
     private fun move(steps: Int) {
         for (i in 0 until steps) {
-            if (cubeMap == null) {
+            if (rubik == null) {
                 val coord = nextSpot2D()
                 if (resolveMap()[coord.x, coord.y] != MapPoint.WALL) {
                     x = coord.x
@@ -184,22 +181,20 @@ class Aoc202222() {
                 }
             } else {
                 val proposal3D = nextSpot3D()
-                if (resolveMap(proposal3D.indexMap)[proposal3D.coord.x, proposal3D.coord.y] != MapPoint.WALL) {
-                    x = proposal3D.coord.x
-                    y = proposal3D.coord.y
-                    index3D = proposal3D.indexMap
-                    direction = proposal3D.direction
+                if (proposal3D.newRubik.currentFront()[proposal3D.x, proposal3D.y] != MapPoint.WALL) {
+                    x = proposal3D.x
+                    y = proposal3D.y
+                    rubik = proposal3D.newRubik
                 }
             }
             markMap()
         }
     }
 
-    data class Proposal3D (val indexMap : Int, val coord : Coordinates, val direction : Direction)
+    data class Proposal3D (val x : Int, val y: Int, val newRubik : Rubik<Matrix2D<MapPoint>>)
 
-    private fun resolveMap(index3Dmap : Int = index3D): Matrix2D<MapPoint> {
-        return if (cubeMap == null) navigation2D else navigation3Ds[index3Dmap]
-    }
+    private val resolveMap = { if (rubik == null) rawMap else rubik!!.currentFront()}
+
 
     private fun markMap() {
         resolveMap()[x, y] = when (direction) {
@@ -211,34 +206,36 @@ class Aoc202222() {
     }
 
     private fun nextSpot3D(): Proposal3D {
-        val resolveMap = resolveMap()
+        val map = resolveMap()
+        val newRubik = Rubik(rubik!!.blu, rubik!!.white, rubik!!.green, rubik!!.yellow, rubik!!.red, rubik!!.orange)
+        newRubik.set(rubik!!.currentFront(), rubik!!.currentUp())
         return when (direction) {
             Direction.R -> {
-                if (x + 1 == resolveMap.nx) {
-                    cubeMap!!.adjacent(this, index3D, direction, x, y)
+                if (x + 1 == map.nx) {
+                    Proposal3D(0, y, newRubik.rotateUp())
                 } else {
-                    Proposal3D(index3D, Coordinates(x + 1, y), direction)
+                    Proposal3D(x +1 , y, rubik!!)
                 }
             }
             Direction.L -> {
                 if (x == 0) {
-                    cubeMap!!.adjacent(this, index3D, direction, x, y)
+                    Proposal3D(map.nx - 1, y, newRubik.rotateUp(-1))
                 } else {
-                    Proposal3D(index3D, Coordinates(x - 1, y), direction)
+                    Proposal3D(x -1 , y, rubik!!)
                 }
             }
             Direction.D -> {
-                if (y + 1 == resolveMap.ny) {
-                    cubeMap!!.adjacent(this, index3D, direction, x, y)
+                if (y + 1 == map.ny) {
+                    Proposal3D(x, 0, newRubik.rotateRight())
                 } else {
-                    Proposal3D(index3D, Coordinates(x , y + 1), direction)
+                    Proposal3D(x  , y + 1, rubik!!)
                 }
             }
             Direction.U -> {
                 if (y == 0) {
-                    cubeMap!!.adjacent(this, index3D, direction, x, y)
+                    Proposal3D(x, map.ny - 1, newRubik.rotateRight(-1))
                 } else {
-                    Proposal3D(index3D, Coordinates(x , y - 1), direction)
+                    Proposal3D(x , 0, rubik!!)
                 }
             }
         }
@@ -247,9 +244,9 @@ class Aoc202222() {
     private fun nextSpot2D(): Coordinates {
         return when (direction) {
             Direction.R -> {
-                if (x + 1 == navigation2D.nx || navigation2D[x + 1, y] == MapPoint.EMPTY) {
+                if (x + 1 == rawMap.nx || rawMap[x + 1, y] == MapPoint.EMPTY) {
                     var i = 0
-                    while (navigation2D[i, y] == MapPoint.EMPTY) i++
+                    while (rawMap[i, y] == MapPoint.EMPTY) i++
                     Coordinates(i, y)
                 } else {
                     Coordinates(x + 1, y)
@@ -257,9 +254,9 @@ class Aoc202222() {
             }
 
             Direction.L -> {
-                if (x == 0 || navigation2D[x - 1, y] == MapPoint.EMPTY) {
-                    var i = navigation2D.nx - 1
-                    while (navigation2D[i, y] == MapPoint.EMPTY) i--
+                if (x == 0 || rawMap[x - 1, y] == MapPoint.EMPTY) {
+                    var i = rawMap.nx - 1
+                    while (rawMap[i, y] == MapPoint.EMPTY) i--
                     Coordinates(i, y)
                 } else {
                     Coordinates(x - 1, y)
@@ -267,9 +264,9 @@ class Aoc202222() {
             }
 
             Direction.D -> {
-                if (y + 1 == navigation2D.ny || navigation2D[x, y + 1] == MapPoint.EMPTY) {
+                if (y + 1 == rawMap.ny || rawMap[x, y + 1] == MapPoint.EMPTY) {
                     var i = 0
-                    while (navigation2D[x, i] == MapPoint.EMPTY) i++
+                    while (rawMap[x, i] == MapPoint.EMPTY) i++
                     Coordinates(x, i)
                 } else {
                     Coordinates(x, y + 1)
@@ -277,9 +274,9 @@ class Aoc202222() {
             }
 
             Direction.U -> {
-                if (y == 0 || navigation2D[x, y - 1] == MapPoint.EMPTY) {
-                    var i = navigation2D.ny - 1
-                    while (navigation2D[x, i] == MapPoint.EMPTY) i--
+                if (y == 0 || rawMap[x, y - 1] == MapPoint.EMPTY) {
+                    var i = rawMap.ny - 1
+                    while (rawMap[x, i] == MapPoint.EMPTY) i--
                     Coordinates(x, i)
                 } else {
                     Coordinates(x, y - 1)
@@ -288,69 +285,45 @@ class Aoc202222() {
         }
     }
 
-    fun set3DConf(map: CubeMap) {
-        cubeMap = map
+    fun set3DConf(cubeMap: CubeMap) {
+        val w = cubeMap!!.white(rawMap, minLen)
+        val b = cubeMap!!.blu(rawMap, minLen)
+        rubik = Rubik(
+            b,
+            w,
+            cubeMap!!.green(rawMap, minLen),
+            cubeMap!!.yellow(rawMap, minLen),
+            cubeMap!!.red(rawMap, minLen),
+            cubeMap!!.orange(rawMap, minLen)
+        )
+        rubik?.set(w,b)
     }
 
     companion object {
-
-
         val EXAMPLE_MAP: CubeMap = object : CubeMap {
-            override fun subMap0(aoc: Aoc202222, rawData: Matrix2D<MapPoint>) {
-                aoc.navigation3Ds[0] = rawData.sub(aoc.minLen * 2,0, aoc.minLen, aoc.minLen)
+            override fun white(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
+                return rawData.sub(len * 2,0, len, len)
             }
 
-            override fun subMap1(aoc: Aoc202222, rawData: Matrix2D<MapPoint>) {
-                aoc.navigation3Ds[1] = rawData.sub(0,aoc.minLen, aoc.minLen, aoc.minLen)
+            override fun blu(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
+                return rawData.sub(0,len, len, len)
             }
 
-            override fun subMap2(aoc: Aoc202222, rawData: Matrix2D<MapPoint>) {
-                aoc.navigation3Ds[2] = rawData.sub(aoc.minLen,aoc.minLen, aoc.minLen, aoc.minLen)
+            override fun orange(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
+                return rawData.sub(len,len, len, len)
             }
 
-            override fun subMap3(aoc: Aoc202222, rawData: Matrix2D<MapPoint>) {
-                aoc.navigation3Ds[3] = rawData.sub(aoc.minLen * 2,aoc.minLen, aoc.minLen, aoc.minLen)
+            override fun green(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
+                return rawData.sub(len * 2,len, len, len)
             }
 
-            override fun subMap4(aoc: Aoc202222, rawData: Matrix2D<MapPoint>) {
-                aoc.navigation3Ds[4] = rawData.sub(aoc.minLen * 2,aoc.minLen * 2, aoc.minLen, aoc.minLen)
+            override fun yellow(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
+                return rawData.sub(len * 2,len * 2, len, len)
             }
 
-            override fun subMap5(aoc: Aoc202222, rawData: Matrix2D<MapPoint>) {
-                aoc.navigation3Ds[5] = rawData.sub(aoc.minLen * 3,aoc.minLen * 2, aoc.minLen, aoc.minLen)
+            override fun red(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
+                return rawData.sub(len * 3,len * 2, len, len)
             }
-
-            override fun adjacent(
-                aoc: Aoc202222,
-                currentIndex: Int,
-                direction: Direction,
-                x: Int,
-                y: Int
-            ): Proposal3D {
-                val m = aoc.minLen
-                val o = { value : Int -> m - value}
-                return when (currentIndex) {
-                    0 -> {
-                        when (direction) {
-                            Direction.R -> Proposal3D(5, Coordinates(m , o(y)), Direction.L)
-                            Direction.L -> Proposal3D(2, Coordinates(y , 0), Direction.D)
-                            Direction.U -> Proposal3D(1, Coordinates(o(x) , 0), Direction.D)
-                            Direction.D -> Proposal3D(3, Coordinates(x , 0), Direction.D)
-                        }
-                    }
-                    1 -> {
-                        when (direction) {
-                            Direction.R -> Proposal3D(2, Coordinates(0, y), Direction.R)
-                            Direction.L -> Proposal3D(5, Coordinates(o(y) , m), Direction.U)
-                            Direction.U -> Proposal3D(0, Coordinates(o(x) , 0), Direction.D)
-                            Direction.D -> Proposal3D(4, Coordinates(x , 0), Direction.U)
-                        }
-                    }
-                    else -> throw Exception("unknown face")
-                }
-
-            }
-
         }
 
         fun run1(fileName: String) {

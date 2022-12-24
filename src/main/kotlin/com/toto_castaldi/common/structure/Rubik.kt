@@ -1,5 +1,6 @@
 package com.toto_castaldi.common.structure
 
+import com.toto_castaldi.common.Rolling
 import kotlin.math.abs
 
 /**
@@ -8,7 +9,8 @@ import kotlin.math.abs
 *    0     1     2      3   4      5
  */
 
-class Rubik<T>(vararg val faces : T) {
+class Rubik<T : Rolling>(val blu : T, val  white : T, val  green : T, val  yellow : T, val  red : T, val  orange : T) {
+    private var faces = listOf(blu, white, green, yellow, red, orange)
     private var currentFront = FACE.Y
     private var currentUp = FACE.G
 
@@ -25,9 +27,14 @@ class Rubik<T>(vararg val faces : T) {
         FACE.O to Cross(FACE.W, FACE.G, FACE.Y, FACE.B)
     )
 
-    init {
-        if (faces.size != 6) throw Exception("Provide 6 different faces instead $faces")
-    }
+    private val opposite = mapOf(
+        FACE.W to FACE.Y,
+        FACE.Y to FACE.W,
+        FACE.R to FACE.O,
+        FACE.O to FACE.R,
+        FACE.G to FACE.B,
+        FACE.B to FACE.G
+    )
 
     fun set(front: T, up : T) {
         currentFront = FACE.values()[faces.indexOf(front)]
@@ -47,27 +54,34 @@ class Rubik<T>(vararg val faces : T) {
         return faces[this.currentUp.ordinal]
     }
 
-    fun rotateUp(dir : Int = 1) {
+    fun rotateUp(dir : Int = 1): Rubik<T> {
         if (dir < 0) {
             rotateUp(4 - abs(dir) % 4)
         } else {
             for (i in 0 until dir % 4) {
                 currentFront = cross[currentUp]!!.moveToDown(currentFront).right
+                (faces[currentUp.ordinal]).turnClockwise()
+                (faces[opposite[currentUp]!!.ordinal]).turnUnclockwise()
             }
         }
+        return this
     }
 
-    fun rotateFront(dir : Int = 1) {
+    fun rotateFront(dir : Int = 1): Rubik<T> {
         if (dir < 0) {
             rotateFront(4 - abs(dir) % 4)
         } else {
             for (i in 0 until dir % 4) {
                 currentUp = cross[currentFront]!!.moveToUp(currentUp).left
+                (faces[currentFront.ordinal]).turnClockwise()
+                (faces[opposite[currentFront]!!.ordinal]).turnUnclockwise()
             }
         }
+        return this
     }
 
-    fun rotateRight(dir : Int = 1) {
+
+    fun rotateRight(dir : Int = 1): Rubik<T> {
         for (i in 0 until abs(dir % 4)) {
             if (dir > 0) {
                 rotateUp()
@@ -79,5 +93,6 @@ class Rubik<T>(vararg val faces : T) {
                 rotateUp()
             }
         }
+        return this
     }
 }

@@ -1,6 +1,8 @@
 package com.toto_castaldi.common.structure
 
-class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T>> {
+import com.toto_castaldi.common.Rolling
+
+class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T>>, Rolling {
 
     private var values = MutableList(nx * ny ) { defValue }
     private var addIndex = 0
@@ -77,6 +79,13 @@ class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T
     }
 
     val validCoord = { x: Int, y: Int -> x in 0 until nx && y in 0 until ny}
+    override fun turnUnclockwise() {
+        TODO("Not yet implemented")
+    }
+
+    override fun turnClockwise() {
+        TODO("Not yet implemented")
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -96,5 +105,14 @@ class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T
             result += "\n"
         }
         return result
+    }
+
+    fun putSubmap(x: Int, y: Int, matrix: Matrix2D<T>): Matrix2D<T> {
+        for (iy in 0 until matrix.ny) {
+            for (ix in 0 until matrix.nx) {
+                this[ix + x, iy + y] = matrix[ix, iy]
+            }
+        }
+        return this
     }
 }
