@@ -2,7 +2,18 @@ package com.toto_castaldi.common.structure
 
 import com.toto_castaldi.common.Rolling
 
-class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T>>, Rolling {
+/**
+ *        --------------------> X
+ *        |
+ *        |
+ *        |
+ *        |
+ *        |
+ *        v
+ *
+ *        Y
+ */
+class Matrix2D<T> (var nx: Int, var ny: Int, val defValue : T) : Iterable<List<T>>, Rolling {
 
     private var values = MutableList(nx * ny ) { defValue }
     private var addIndex = 0
@@ -39,7 +50,7 @@ class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T
     }
 
     fun rowAt(i : Int): List<T> {
-        return values.chunked(ny)[i]
+        return values.chunked(nx)[i]
     }
 
     fun colAt(i: Int): List<T> {
@@ -84,7 +95,15 @@ class Matrix2D<T> (val nx: Int, val ny: Int, val defValue : T) : Iterable<List<T
     }
 
     override fun turnClockwise() {
-        TODO("Not yet implemented")
+        val m = Matrix2D(ny,nx, defValue)
+        for (ix in 0 until nx) {
+            for (iy in 0 until ny) {
+                m[iy, ix] = this[ix, ny - iy - 1]
+            }
+        }
+        this.nx = m.nx
+        this.ny = m.ny
+        this.values = m.values
     }
 
     override fun equals(other: Any?): Boolean {

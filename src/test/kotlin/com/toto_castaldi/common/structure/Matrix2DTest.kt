@@ -101,12 +101,46 @@ class Matrix2DTest {
     }
 
 
+    @Test
+    fun rollingClockwiseTest() {
+        val matrix = build3x2()
+        assertEquals(listOf(1,2,3), matrix.rowAt(0))
+        assertEquals(listOf(4,5,6), matrix.rowAt(1))
+        matrix.turnClockwise()
+        assertEquals(listOf(4,1), matrix.rowAt(0))
+        assertEquals(listOf(5,2), matrix.rowAt(1))
+        assertEquals(listOf(6,3), matrix.rowAt(2))
+        matrix.turnClockwise()
+        assertEquals(listOf(6,5,4), matrix.rowAt(0))
+        assertEquals(listOf(3,2,1), matrix.rowAt(1))
+        matrix.turnClockwise()
+        assertEquals(listOf(3,6), matrix.rowAt(0))
+        assertEquals(listOf(2,5), matrix.rowAt(1))
+        assertEquals(listOf(1,4), matrix.rowAt(2))
+        matrix.turnClockwise()
+        assertEquals(listOf(1,2,3), matrix.rowAt(0))
+        assertEquals(listOf(4,5,6), matrix.rowAt(1))
+
+    }
+
+
     private fun build2x2(): Matrix2D<Int> {
         val matrix = Matrix2D<Int>(2, 2, 0)
         matrix[0, 0] = 1
         matrix[1, 0] = 2
         matrix[0, 1] = 3
         matrix[1, 1] = 4
+        return matrix
+    }
+
+    private fun build3x2(): Matrix2D<Int> {
+        val matrix = Matrix2D<Int>(3, 2, 0)
+        matrix[0, 0] = 1
+        matrix[1, 0] = 2
+        matrix[2, 0] = 3
+        matrix[0, 1] = 4
+        matrix[1, 1] = 5
+        matrix[2, 1] = 6
         return matrix
     }
 
