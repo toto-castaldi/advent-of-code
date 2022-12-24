@@ -9,7 +9,7 @@ import kotlin.math.abs
 *    0     1     2      3   4      5
  */
 
-class Rubik<T : Rolling>(val blu : T, val  white : T, val  green : T, val  yellow : T, val  red : T, val  orange : T) {
+class Rubik<T>(val blu : T, val  white : T, val  green : T, val  yellow : T, val  red : T, val  orange : T) {
     private var faces = listOf(blu, white, green, yellow, red, orange)
     private var currentFront = FACE.Y
     private var currentUp = FACE.G
@@ -59,9 +59,7 @@ class Rubik<T : Rolling>(val blu : T, val  white : T, val  green : T, val  yello
             rotateUp(4 - abs(dir) % 4)
         } else {
             for (i in 0 until dir % 4) {
-                currentFront = cross[currentUp]!!.moveToDown(currentFront).right
-                (faces[currentUp.ordinal]).turnClockwise()
-                (faces[opposite[currentUp]!!.ordinal]).turnUnclockwise()
+                currentFront = cross[currentUp]!!.rotateUntilDown(currentFront).right
             }
         }
         return this
@@ -72,9 +70,7 @@ class Rubik<T : Rolling>(val blu : T, val  white : T, val  green : T, val  yello
             rotateFront(4 - abs(dir) % 4)
         } else {
             for (i in 0 until dir % 4) {
-                currentUp = cross[currentFront]!!.moveToUp(currentUp).left
-                (faces[currentFront.ordinal]).turnClockwise()
-                (faces[opposite[currentFront]!!.ordinal]).turnUnclockwise()
+                currentUp = cross[currentFront]!!.rotateUntilUp(currentUp).left
             }
         }
         return this

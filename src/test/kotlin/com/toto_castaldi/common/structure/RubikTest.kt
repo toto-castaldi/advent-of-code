@@ -7,77 +7,68 @@ class RubikTest {
 
     @Test
     fun rotation2Test() {
-        val rubik = Rubik(S("BLU"), S("BIANCO"), S("VERDE"), S("GIALLO"), S("ROSSO"), S("ARANCIONE"))
-        rubik.set(S("BIANCO"), S("BLU"))
+        val rubik = Rubik("B", "BIANCO", "VERDE", "GIALLO", "ROSSO", "ARANCIONE")
+        rubik.set("BIANCO", "B")
         rubik.rotateRight()
-        assertEquals(S("VERDE"), rubik.currentFront())
+        assertEquals("VERDE", rubik.currentFront())
     }
 
     @Test
     fun rotation1Test() {
-        val rubik = Rubik(S("BLU"), S("BIANCO"), S("VERDE"), S("GIALLO"), S("ROSSO"), S("ARANCIONE"))
+        val rubik = Rubik("B", "BIANCO", "VERDE", "GIALLO", "ROSSO", "ARANCIONE")
 
-        rubik.set(S("GIALLO"), S("VERDE"))
-        assertEquals(S("GIALLO"), rubik.currentFront())
+        rubik.set("GIALLO", "VERDE")
+        assertEquals("GIALLO", rubik.currentFront())
 
         rubik.rotateUp()
-        assertEquals(S("ROSSO"), rubik.currentFront())
-        assertEquals(S("VERDE"), rubik.currentUp())
+        assertEquals("ROSSO", rubik.currentFront())
+        assertEquals("VERDE", rubik.currentUp())
 
         rubik.rotateFront(2)
-        assertEquals(S("ROSSO"), rubik.currentFront())
-        assertEquals(S("BLU"), rubik.currentUp())
+        assertEquals("ROSSO", rubik.currentFront())
+        assertEquals("B", rubik.currentUp())
 
         rubik.rotateFront()
-        assertEquals(S("ROSSO"), rubik.currentFront())
-        assertEquals(S("BIANCO"), rubik.currentUp())
+        assertEquals("ROSSO", rubik.currentFront())
+        assertEquals("BIANCO", rubik.currentUp())
 
         rubik.rotateFront(-1)
-        assertEquals(S("ROSSO"), rubik.currentFront())
-        assertEquals(S("BLU"), rubik.currentUp())
+        assertEquals("ROSSO", rubik.currentFront())
+        assertEquals("B", rubik.currentUp())
 
         rubik.rotateUp(-2)
-        assertEquals(S("ARANCIONE"), rubik.currentFront())
-        assertEquals(S("BLU"), rubik.currentUp())
+        assertEquals("ARANCIONE", rubik.currentFront())
+        assertEquals("B", rubik.currentUp())
 
         rubik.rotateRight(3)
-        assertEquals(S("BLU"), rubik.currentFront())
-        assertEquals(S("ROSSO"), rubik.currentUp())
+        assertEquals("B", rubik.currentFront())
+        assertEquals("ROSSO", rubik.currentUp())
 
         rubik.rotateRight(4)
-        assertEquals(S("BLU"), rubik.currentFront())
-        assertEquals(S("ROSSO"), rubik.currentUp())
+        assertEquals("B", rubik.currentFront())
+        assertEquals("ROSSO", rubik.currentUp())
 
         rubik.rotateRight(-4)
-        assertEquals(S("BLU"), rubik.currentFront())
-        assertEquals(S("ROSSO"), rubik.currentUp())
+        assertEquals("B", rubik.currentFront())
+        assertEquals("ROSSO", rubik.currentUp())
 
         rubik.rotateUp(4)
-        assertEquals(S("BLU"), rubik.currentFront())
-        assertEquals(S("ROSSO"), rubik.currentUp())
+        assertEquals("B", rubik.currentFront())
+        assertEquals("ROSSO", rubik.currentUp())
 
         rubik.rotateUp(-4)
-        assertEquals(S("BLU"), rubik.currentFront())
-        assertEquals(S("ROSSO"), rubik.currentUp())
+        assertEquals("B", rubik.currentFront())
+        assertEquals("ROSSO", rubik.currentUp())
 
         rubik.rotateFront(4)
-        assertEquals(S("BLU"), rubik.currentFront())
-        assertEquals(S("ROSSO"), rubik.currentUp())
+        assertEquals("B", rubik.currentFront())
+        assertEquals("ROSSO", rubik.currentUp())
 
         rubik.rotateFront(-4)
-        assertEquals(S("BLU"), rubik.currentFront())
-        assertEquals(S("ROSSO"), rubik.currentUp())
+        assertEquals("B", rubik.currentFront())
+        assertEquals("ROSSO", rubik.currentUp())
     }
 
-    private data class S(val value: String) : Rolling {
-        override fun turnUnclockwise() {
-            
-        }
-
-        override fun turnClockwise() {
-            
-        }
-
-    }
+ 
 
 }

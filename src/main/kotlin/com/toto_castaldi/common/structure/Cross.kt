@@ -13,13 +13,13 @@ data class Cross<T> (val up: T, val right: T, val down: T, val left: T) {
         return Cross(right, down, left, up)
     }
 
-    fun moveToDown(searchFor: T): Cross<T> {
+    fun rotateUntilDown(searchFor: T): Cross<T> {
         var c = this
         while (c.down != searchFor) c = c.clockWise()
         return c
     }
 
-    fun moveToUp(searchFor: T): Cross<T> {
+    fun rotateUntilUp(searchFor: T): Cross<T> {
         var c = this
         while (c.up != searchFor) c = c.clockWise()
         return c
