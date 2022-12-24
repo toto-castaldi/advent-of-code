@@ -91,7 +91,15 @@ class Matrix2D<T> (var nx: Int, var ny: Int, val defValue : T) : Iterable<List<T
 
     val validCoord = { x: Int, y: Int -> x in 0 until nx && y in 0 until ny}
     override fun turnUnclockwise() {
-        TODO("Not yet implemented")
+        val m = Matrix2D(ny,nx, defValue)
+        for (ix in 0 until nx) {
+            for (iy in 0 until ny) {
+                m[iy, ix] = this[nx - ix - 1, iy]
+            }
+        }
+        this.nx = m.nx
+        this.ny = m.ny
+        this.values = m.values
     }
 
     override fun turnClockwise() {

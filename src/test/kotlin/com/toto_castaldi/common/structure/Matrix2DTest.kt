@@ -123,6 +123,28 @@ class Matrix2DTest {
 
     }
 
+    @Test
+    fun rollingUnclockwiseTest() {
+        val matrix = build3x2()
+        assertEquals(listOf(1,2,3), matrix.rowAt(0))
+        assertEquals(listOf(4,5,6), matrix.rowAt(1))
+        matrix.turnUnclockwise()
+        assertEquals(listOf(3,6), matrix.rowAt(0))
+        assertEquals(listOf(2,5), matrix.rowAt(1))
+        assertEquals(listOf(1,4), matrix.rowAt(2))
+        matrix.turnUnclockwise()
+        assertEquals(listOf(6,5,4), matrix.rowAt(0))
+        assertEquals(listOf(3,2,1), matrix.rowAt(1))
+        matrix.turnUnclockwise()
+        assertEquals(listOf(4,1), matrix.rowAt(0))
+        assertEquals(listOf(5,2), matrix.rowAt(1))
+        assertEquals(listOf(6,3), matrix.rowAt(2))
+        matrix.turnUnclockwise()
+        assertEquals(listOf(1,2,3), matrix.rowAt(0))
+        assertEquals(listOf(4,5,6), matrix.rowAt(1))
+
+    }
+
 
     private fun build2x2(): Matrix2D<Int> {
         val matrix = Matrix2D<Int>(2, 2, 0)
