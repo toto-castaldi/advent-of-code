@@ -1,6 +1,4 @@
 import com.toto_castaldi.common.CrossDirection
-import com.toto_castaldi.common.RotateDirection
-import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.Matrix2D
 import com.toto_castaldi.common.structure.Rubik
 import java.io.File
@@ -55,7 +53,7 @@ class Aoc202222Part1() : Aoc202222() {
         return format(rawMap)
     }
 
-    override fun changeCurrentMap(proposal: NavigationProposal) {
+    override fun proposalApplied(proposal: NavigationProposal) {
 
     }
 

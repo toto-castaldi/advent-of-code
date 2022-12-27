@@ -52,18 +52,18 @@ abstract class Aoc202222() {
             if (proposal.map[proposal.x, proposal.y] != MapPoint.WALL) {
                 x = proposal.x
                 y = proposal.y
-                changeCurrentMap(proposal)
                 direction = proposal.direction
+                proposalApplied(proposal)
             }
             markMap()
         }
     }
 
-    abstract fun changeCurrentMap(proposal: NavigationProposal)
+    abstract fun proposalApplied(proposal: NavigationProposal)
 
     abstract fun nextSpot(x : Int, y : Int, direction: CrossDirection): NavigationProposal
 
-    data class NavigationProposal(val map: Matrix2D<MapPoint>, val x : Int, val y: Int, val direction: CrossDirection)
+    open class NavigationProposal(val map: Matrix2D<MapPoint>, val x: Int, val y: Int, val direction: CrossDirection)
 
     abstract fun resolveMap(): Matrix2D<MapPoint>
 

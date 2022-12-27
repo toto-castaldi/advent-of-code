@@ -1,9 +1,8 @@
 import com.toto_castaldi.common.CrossDirection
-import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.Matrix2D
 import com.toto_castaldi.common.structure.Rubik
 
-class Aoc202222Part2(cubeMap: CubeMap) : Aoc202222() {
+class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
     val rubik : Rubik<Matrix2D<MapPoint>>
     var cubeFaceWidth = Integer.MAX_VALUE
     
@@ -29,96 +28,45 @@ class Aoc202222Part2(cubeMap: CubeMap) : Aoc202222() {
         super.plus(mapLine)
         if (mapLine.trim().length < cubeFaceWidth) cubeFaceWidth = mapLine.trim().length
     }
-    
-  /*  
 
+    override fun nextSpot(x: Int, y: Int, direction: CrossDirection): NavigationProposal {
+        val map = rubik.currentFront()
 
-    private fun move(steps: Int) {
-        for (i in 0 until steps) {
-                val proposal3D = nextSpot3D()
-                if (proposal3D.newRubik.currentFront()[proposal3D.x, proposal3D.y] != MapPoint.WALL) {
-                    x = proposal3D.x
-                    y = proposal3D.y
-                    rubik = proposal3D.newRubik
-                }
-            }
-            markMap()
-        }
-    }
+        val newRubik = Rubik(rubik.blu, rubik.white, rubik.green, rubik.yellow, rubik.red, rubik.orange)
+        newRubik.set(rubik.currentFront(), rubik.currentUp())
 
-    data class Proposal3D (val x : Int, val y: Int, val newRubik : Rubik<Matrix2D<MapPoint>>, val newDirection: Direction)
-
-
-    private fun nextSpot3D(): Proposal3D {
-        val map = resolveMap()
-        val newRubik = Rubik(rubik!!.blu, rubik!!.white, rubik!!.green, rubik!!.yellow, rubik!!.red, rubik!!.orange)
-        newRubik.set(rubik!!.currentFront(), rubik!!.currentUp())
         return when (direction) {
-            Direction.R -> {
+            CrossDirection.R -> {
                 if (x + 1 == map.nx) {
-                    Proposal3D.build(x, y, direction, rubik!!.currentFront(), newRubik.rotateUp().currentFront())
+                    newRubik.rotateUp()
+                    RubikNavigationProposal.build(cubeMap, rubik, newRubik, x, y)
                 } else {
-                    Proposal3D.build(x +1 , y, rubik!!)
+                    NavigationProposal(newRubik.currentFront(), x + 1 , y, direction)
                 }
             }
-            Direction.L -> {
+            CrossDirection.L -> {
                 if (x == 0) {
-                    Proposal3D(map.nx - 1, y, newRubik.rotateUp(-1))
+                    newRubik.rotateUp(-1)
+                    RubikNavigationProposal.build(cubeMap, rubik, newRubik, x, y)
                 } else {
-                    Proposal3D(x -1 , y, rubik!!)
+                    NavigationProposal(newRubik.currentFront(), x - 1 , y, direction)
                 }
             }
-            Direction.D -> {
+            CrossDirection.D -> {
                 if (y + 1 == map.ny) {
-                    Proposal3D(x, 0, newRubik.rotateRight())
+                    newRubik.rotateRight()
+                    RubikNavigationProposal.build(cubeMap, rubik, newRubik, x, y)
                 } else {
-                    Proposal3D(x  , y + 1, rubik!!)
+                    NavigationProposal(newRubik.currentFront(), x , y + 1, direction)
                 }
             }
-            Direction.U -> {
+            CrossDirection.U -> {
                 if (y == 0) {
-                    Proposal3D(x, map.ny - 1, newRubik.rotateRight(-1))
+                    newRubik.rotateRight(-1)
+                    RubikNavigationProposal.build(cubeMap, rubik, newRubik, x, y)
                 } else {
-                    Proposal3D(x , 0, rubik!!)
+                    NavigationProposal(newRubik.currentFront(), x , y - 1, direction)
                 }
-            }
-        }
-    }
-
-*/
-    interface CubeMap {
-        fun white(rawData: Matrix2D<MapPoint>, edge: Int): Matrix2D<MapPoint>
-        fun orange(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
-        fun green(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
-        fun blu(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
-        fun red(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
-        fun yellow(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
-    }
-
-    companion object {
-        val EXAMPLE_MAP: CubeMap = object : CubeMap {
-            override fun white(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
-                return rawData.sub(len * 2,0, len, len)
-            }
-
-            override fun blu(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
-                return rawData.sub(0,len, len, len)
-            }
-
-            override fun orange(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
-                return rawData.sub(len,len, len, len)
-            }
-
-            override fun green(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
-                return rawData.sub(len * 2,len, len, len)
-            }
-
-            override fun yellow(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
-                return rawData.sub(len * 2,len * 2, len, len)
-            }
-
-            override fun red(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
-                return rawData.sub(len * 3,len * 2, len, len)
             }
         }
     }
@@ -135,11 +83,114 @@ class Aoc202222Part2(cubeMap: CubeMap) : Aoc202222() {
         )
     }
 
-    override fun changeCurrentMap(proposal: NavigationProposal) {
-        TODO("Not yet implemented")
+    class RubikNavigationProposal private constructor (
+        newRubik: Rubik<Matrix2D<MapPoint>>,
+        x: Int,
+        y: Int,
+        direction: CrossDirection) : NavigationProposal(newRubik.currentFront(), x, y, direction ) {
+
+        lateinit var rubik: Rubik<Matrix2D<MapPoint>>
+        companion object {
+
+            fun build(
+                cubeMap: CubeMap,
+                r: Rubik<Matrix2D<MapPoint>>,
+                newR: Rubik<Matrix2D<MapPoint>>,
+                x: Int,
+                y: Int
+            ): RubikNavigationProposal {
+                val navigation = cubeMap.navigate(r.currentFront(), newR.currentFront(), x, y)
+                return RubikNavigationProposal(
+                    newR,
+                    navigation.x,
+                    navigation.y,
+                    navigation.direction
+                )
+            }
+        }
+
     }
 
-    override fun nextSpot(x: Int, y: Int, direction: CrossDirection): NavigationProposal {
-        TODO("Not yet implemented")
+    override fun proposalApplied(proposal: NavigationProposal) {
+        proposal as RubikNavigationProposal
+        rubik.set(proposal.rubik.currentFront(), proposal.rubik.currentUp())
     }
+
+
+    interface CubeMap {
+        fun white(rawData: Matrix2D<MapPoint>, edge: Int): Matrix2D<MapPoint>
+        fun orange(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
+        fun green(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
+        fun blu(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
+        fun red(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
+        fun yellow(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
+        fun navigate(
+            currentFront: Matrix2D<MapPoint>,
+            currentFront1: Matrix2D<MapPoint>,
+            x: Int,
+            y: Int
+        ): CubeMapNavigation
+
+        data class CubeMapNavigation(val x: Int, val y: Int, val direction: CrossDirection)
+    }
+
+    companion object {
+        val EXAMPLE_MAP: CubeMap = object : CubeMap {
+            private lateinit var r: Matrix2D<MapPoint>
+            private lateinit var w: Matrix2D<MapPoint>
+            private lateinit var b: Matrix2D<MapPoint>
+            private lateinit var o: Matrix2D<MapPoint>
+            private lateinit var g: Matrix2D<MapPoint>
+            private lateinit var y: Matrix2D<MapPoint>
+
+            override fun white(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
+                w = rawData.sub(len * 2,0, len, len)
+                return w
+            }
+
+            override fun blu(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
+                b = rawData.sub(0,len, len, len)
+                return b
+            }
+
+            override fun orange(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
+                o = rawData.sub(len,len, len, len)
+                return o
+            }
+
+            override fun green(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
+                g = rawData.sub(len * 2,len, len, len)
+                return g
+            }
+
+            override fun yellow(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
+                y = rawData.sub(len * 2,len * 2, len, len)
+                return y
+            }
+
+            override fun red(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
+                r = rawData.sub(len * 3,len * 2, len, len)
+                return r
+            }
+
+            override fun navigate(
+                faceFrom: Matrix2D<MapPoint>,
+                faceTo: Matrix2D<MapPoint>,
+                x: Int,
+                y: Int
+            ): CubeMap.CubeMapNavigation {
+                return when(faceFrom) {
+                    r -> {
+                        if (faceTo == w) return CubeMap.CubeMapNavigation(x, endY(w), CrossDirection.U)
+                        throw Exception("invalid $faceTo")
+                    }
+                    else -> throw Exception("invalid $faceFrom")
+                }
+            }
+
+            val endY = { m: Matrix2D<MapPoint> -> m.ny - 1 }
+
+        }
+    }
+
 }
