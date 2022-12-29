@@ -23,7 +23,14 @@ abstract class Aoc202222() {
     }
 
     fun finalPassword(): Int {
-        return 1000 * (y + 1) + 4 * (x + 1) + direction.ordinal
+        return 1000 * (finalRow(y) + 1) + 4 * (finalColumn(x) + 1) + direction.ordinal
+    }
+
+    open fun finalRow(y: Int): Int {
+        return y
+    }
+    open fun finalColumn(x: Int): Int {
+        return x
     }
 
     fun navigate(inputRoute: String, debug : Int = -1) {

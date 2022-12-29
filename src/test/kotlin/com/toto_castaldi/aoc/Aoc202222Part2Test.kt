@@ -6,7 +6,6 @@ import kotlin.test.*
 class Aoc202222Part2Test {
 
     @Test
-    @Ignore
     fun part2() {
         val aoc = Aoc202222Part2(Aoc202222Part2.EXAMPLE_MAP)
         aoc + "        ...#"
@@ -22,7 +21,7 @@ class Aoc202222Part2Test {
         aoc + "        .#......"
         aoc + "        ......#."
 
-        aoc.navigate("10R5L5R10L4R5L5", 11)
+        aoc.navigate("10R5L5R10L4R5L5")
         assertEquals(5031, aoc.finalPassword())
     }
 
