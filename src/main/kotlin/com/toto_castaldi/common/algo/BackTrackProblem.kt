@@ -14,27 +14,24 @@ abstract class BackTrackProblem<W, S, O> {
         if (isComplete(workInProgress)) {
             solutions.add(workInProgress)
         } else {
-            for (stepIdentifier in stepIdentifiers()) {
-                if (isNewStep(stepIdentifier)) {
-                    for (stepOption in stepOptions(stepIdentifier)) {
-                        if (isValid(stepIdentifier, stepOption)) {
-                            applyStep(stepIdentifier, stepOption)
-                            solve()
-                            revertStep(stepIdentifier)
-                        }
+            for (step in nextSteps()) {
+                for (stepOption in stepOptions(step)) {
+                    if (isValid(step, stepOption)) {
+                        applyStep(step, stepOption)
+                        solve()
+                        revertStep(step)
                     }
-                    return
                 }
+                return
             }
         }
     }
 
-    abstract fun isNewStep(step: S): Boolean
     abstract fun stepOptions(v: S): Collection<O>
     abstract fun isValid(nextMove: S, option: O): Boolean
     abstract fun revertStep(nextMove: S)
     abstract fun applyStep(nextMove: S, option: O)
-    abstract fun stepIdentifiers(): Sequence<S>
+    abstract fun nextSteps(): Sequence<S>
     abstract fun isComplete(workInProgress: W): Boolean
     abstract fun currentResolution(): W
 

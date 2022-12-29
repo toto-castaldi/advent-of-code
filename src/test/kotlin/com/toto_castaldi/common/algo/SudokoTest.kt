@@ -45,5 +45,6 @@ class SudokoTest {
         )
         sudoku.solve()
         assertEquals(1, sudoku.solutions.size)
+        println(sudoku.solutions[0])
     }
 }

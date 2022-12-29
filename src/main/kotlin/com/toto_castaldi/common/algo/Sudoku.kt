@@ -4,7 +4,7 @@ import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.Matrix2D
 import kotlin.math.floor
 
-class Sudoku(private val inputGrid: List<String>) : BackTrackProblem<Matrix2D<Int>, Coordinates, Int>() {
+class Sudoku(inputGrid: List<String>) : BackTrackProblem<Matrix2D<Int>, Coordinates, Int>() {
 
     private val grid = Matrix2D<Int>(9,9, 0)
 
@@ -43,14 +43,12 @@ class Sudoku(private val inputGrid: List<String>) : BackTrackProblem<Matrix2D<In
         return (1..9).toList()
     }
 
-    override fun isNewStep(step: Coordinates): Boolean {
-        return grid[step.x, step.y] == 0
-    }
-
-    override  fun stepIdentifiers() = sequence<Coordinates> {
+    override  fun nextSteps() = sequence<Coordinates> {
         for (y in 0 until 9) {
             for (x in 0 until 9) {
-                yield(Coordinates(x,y))
+                if (grid[x,y] == 0) {
+                    yield(Coordinates(x, y))
+                }
             }
         }
     }
