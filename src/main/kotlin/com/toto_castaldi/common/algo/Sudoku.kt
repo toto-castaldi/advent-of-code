@@ -1,38 +1,17 @@
 package com.toto_castaldi.common.algo
 
+import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.Matrix2D
 import kotlin.math.floor
 
-class Sudoku(private val inputGrid: List<String>) {
-    val solutions = mutableListOf<Matrix2D<Int>>()
+class Sudoku(private val inputGrid: List<String>) : BackTrackProblem<Matrix2D<Int>, Coordinates, Int>() {
+
     private val grid = Matrix2D<Int>(9,9, 0)
 
     init {
         for ((y, line) in inputGrid.withIndex()) {
             for ((x, v) in line.toCharArray().toList().withIndex()) {
                 grid[x,y] = "$v".toInt()
-            }
-        }
-    }
-
-    fun solve() {
-        if (0 !in grid) {
-            solutions.add(grid.bake())
-        } else {
-            //println(this)
-            for (y in 0 until 9) {
-                for (x in 0 until 9) {
-                    if (grid[x, y] == 0) {
-                        for (v in 1..9) {
-                            if (valid(x, y, v) == 0) {
-                                grid[x, y] = v
-                                solve()
-                                grid[x, y] = 0
-                            }
-                        }
-                        return
-                    }
-                }
             }
         }
     }
@@ -54,6 +33,42 @@ class Sudoku(private val inputGrid: List<String>) {
         if (v in grid.sub(x0,y0,3,3)) return -3
 
         return 0
+    }
+
+    override fun isValid(nextMove: Coordinates, option : Int): Boolean {
+        return valid(nextMove.x, nextMove.y, option) == 0
+    }
+
+    override fun stepOptions(v: Coordinates): Collection<Int> {
+        return (1..9).toList()
+    }
+
+    override fun isNewStep(step: Coordinates): Boolean {
+        return grid[step.x, step.y] == 0
+    }
+
+    override  fun stepIdentifiers() = sequence<Coordinates> {
+        for (y in 0 until 9) {
+            for (x in 0 until 9) {
+                yield(Coordinates(x,y))
+            }
+        }
+    }
+
+    override fun currentResolution(): Matrix2D<Int> {
+        return grid.bake()
+    }
+
+    override fun isComplete(workInProgress: Matrix2D<Int>): Boolean {
+        return 0 !in workInProgress
+    }
+
+    override fun applyStep(nextMove: Coordinates, option: Int) {
+        grid[nextMove.x, nextMove.y] = option
+    }
+
+    override fun revertStep(nextMove: Coordinates) {
+        grid[nextMove.x, nextMove.y] = 0
     }
 
     override fun toString(): String {
