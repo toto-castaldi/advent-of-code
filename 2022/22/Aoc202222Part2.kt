@@ -15,7 +15,7 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
         super.plus(mapLine)
         if (mapLine.trim().length < cubeFaceWidth) cubeFaceWidth = mapLine.trim().length
 
-        if (rawMap.ny == cubeFaceWidth * 3) {
+        if (rawMap.ny == cubeFaceWidth * cubeMap.inputHeight()) {
             cubeMap.parse(rawMap, cubeFaceWidth)
             currentFace = cubeMap.first()
         }
@@ -76,8 +76,6 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
         val yc : Coordinates,
         val bc : Coordinates
         ) {
-
-
         internal lateinit var w: Matrix2D<MapPoint>
         internal lateinit var o: Matrix2D<MapPoint>
         internal lateinit var g: Matrix2D<MapPoint>
@@ -86,6 +84,10 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
         internal lateinit var b: Matrix2D<MapPoint>
 
         private var len = 0
+
+        fun first(): Matrix2D<MapPoint> {
+            return w
+        }
 
         fun popolate(matrix: Matrix2D<MapPoint>): Matrix2D<MapPoint> {
             return matrix
@@ -128,14 +130,16 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
         val opposite = { v : Int -> len - 1 - v }
         val edge = { len - 1 }
 
-        abstract fun first(): Matrix2D<MapPoint>
-
         abstract fun navigate(
             face: Matrix2D<MapPoint>,
             direction: CrossDirection,
             iX: Int,
             iY: Int
         ): CubeMapNavigation
+
+        fun inputHeight(): Int {
+            return setOf(wc.y, oc.y, gc.y, rc.y, yc.y, bc.y).max() + 1
+        }
 
         data class CubeMapNavigation(val x: Int, val y: Int, val direction: CrossDirection, val newFace : Matrix2D<MapPoint>)
     }
@@ -150,16 +154,13 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
 
     companion object {
         val REAL_MAP = object: CubeMap(
-            Coordinates(0,0),
-            Coordinates(0,0),
-            Coordinates(0,0),
-            Coordinates(0,0),
-            Coordinates(0,0),
-            Coordinates(0,0)
+            Coordinates(1,0),
+            Coordinates(0,2),
+            Coordinates(1,1),
+            Coordinates(2,0),
+            Coordinates(1,2),
+            Coordinates(0,3)
         ) {
-            override fun first(): Matrix2D<MapPoint> {
-                TODO("Not yet implemented")
-            }
 
             override fun navigate(
                 face: Matrix2D<MapPoint>,
@@ -167,7 +168,46 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
                 iX: Int,
                 iY: Int
             ): CubeMapNavigation {
-                TODO("Not yet implemented")
+                return when(face) {
+                    w -> when(direction) {
+                        CrossDirection.U -> CubeMapNavigation(0,iX,CrossDirection.R,b)
+                        CrossDirection.R -> CubeMapNavigation(0,iY,CrossDirection.R,r)
+                        CrossDirection.D -> CubeMapNavigation(iX,0,CrossDirection.D,g)
+                        CrossDirection.L -> CubeMapNavigation(0,opposite(iY),CrossDirection.R,o)
+                    }
+                    r -> when(direction) {
+                        CrossDirection.U -> CubeMapNavigation(iX,edge(),CrossDirection.U,b)
+                        CrossDirection.R -> CubeMapNavigation(edge(),opposite(iY),CrossDirection.L,y)
+                        CrossDirection.D -> CubeMapNavigation(edge(),iX,CrossDirection.L,g)
+                        CrossDirection.L -> CubeMapNavigation(edge(),iY,CrossDirection.L,w)
+                    }
+                    g -> when(direction) {
+                        CrossDirection.U -> CubeMapNavigation(iX,edge(),CrossDirection.U,w)
+                        CrossDirection.R -> CubeMapNavigation(iY,edge(),CrossDirection.U,r)
+                        CrossDirection.D -> CubeMapNavigation(iX,0,CrossDirection.D,y)
+                        CrossDirection.L -> CubeMapNavigation(iY,0,CrossDirection.D,o)
+                    }
+                    o -> when(direction) {
+                        CrossDirection.U -> CubeMapNavigation(0,iX,CrossDirection.R,g)
+                        CrossDirection.R -> CubeMapNavigation(0,iY,CrossDirection.R,y)
+                        CrossDirection.D -> CubeMapNavigation(iX,0,CrossDirection.D,b)
+                        CrossDirection.L -> CubeMapNavigation(0,opposite(iY),CrossDirection.R,w)
+                    }
+                    y -> when(direction) {
+                        CrossDirection.U -> CubeMapNavigation(iX,edge(),CrossDirection.U,g)
+                        CrossDirection.R -> CubeMapNavigation(edge(),opposite(iY),CrossDirection.L,r)
+                        CrossDirection.D -> CubeMapNavigation(edge(),iX,CrossDirection.L,b)
+                        CrossDirection.L -> CubeMapNavigation(edge(),iY,CrossDirection.L,o)
+                    }
+                    b -> when(direction) {
+                        CrossDirection.U -> CubeMapNavigation(iX,edge(),CrossDirection.U,o)
+                        CrossDirection.R -> CubeMapNavigation(iY,edge(),CrossDirection.U,y)
+                        CrossDirection.D -> CubeMapNavigation(iX,0,CrossDirection.D,r)
+                        CrossDirection.L -> CubeMapNavigation(iY,0,CrossDirection.D,w)
+                    }
+                    else -> throw Exception("unknown $face")
+                }
+
             }
 
         }
@@ -180,9 +220,6 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
                 Coordinates(2,2),
                 Coordinates(3,2)
             ) {
-            override fun first(): Matrix2D<MapPoint> {
-                return w
-            }
 
             override fun navigate(
                 face: Matrix2D<MapPoint>,
@@ -192,34 +229,52 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
             ): CubeMapNavigation {
                 return when(face) {
                     w -> {
-                        if (direction == CrossDirection.R) return CubeMapNavigation(iX, opposite(iY), CrossDirection.L, b)
-                        if (direction == CrossDirection.D) return CubeMapNavigation(iX, 0, CrossDirection.D, r)
-                        throw Exception("invalid dir $direction")
+                        when (direction) {
+                            CrossDirection.R -> CubeMapNavigation(iX, opposite(iY), CrossDirection.L, b)
+                            CrossDirection.D -> CubeMapNavigation(iX, 0, CrossDirection.D, r)
+                            CrossDirection.U -> CubeMapNavigation(0, 0, CrossDirection.U, face)
+                            CrossDirection.L -> CubeMapNavigation(0, 0, CrossDirection.U, face)
+                        }
                     }
                     o -> {
-                        if (direction == CrossDirection.U) return CubeMapNavigation(opposite(iX), 0, CrossDirection.D, w)
-                        if (direction == CrossDirection.R) return CubeMapNavigation(0, iY, CrossDirection.R, g)
-                        throw Exception("invalid dir $direction")
+                        when (direction) {
+                            CrossDirection.R -> CubeMapNavigation(0, iY, CrossDirection.R, g)
+                            CrossDirection.D -> CubeMapNavigation(0, 0, CrossDirection.U, face)
+                            CrossDirection.U -> CubeMapNavigation(opposite(iX), 0, CrossDirection.D, w)
+                            CrossDirection.L -> CubeMapNavigation(0, 0, CrossDirection.U, face)
+                        }
                     }
                     g -> {
-                        if (direction == CrossDirection.R) return CubeMapNavigation(0, iY, CrossDirection.R, r)
-                        if (direction == CrossDirection.U) return CubeMapNavigation(0, iX, CrossDirection.R, w)
-                        throw Exception("invalid dir $direction")
+                        when (direction) {
+                            CrossDirection.R -> CubeMapNavigation(0, iY, CrossDirection.R, r)
+                            CrossDirection.D -> CubeMapNavigation(0, 0, CrossDirection.U, face)
+                            CrossDirection.U -> CubeMapNavigation(0, iX, CrossDirection.R, w)
+                            CrossDirection.L -> CubeMapNavigation(0, 0, CrossDirection.U, face)
+                        }
                     }
                     r -> {
-                        if (direction == CrossDirection.D) return CubeMapNavigation(iX, 0, CrossDirection.D, y)
-                        if (direction == CrossDirection.R) return CubeMapNavigation(opposite(iY), 0, CrossDirection.D, b)
-                        throw Exception("invalid dir $direction")
+                        when (direction) {
+                            CrossDirection.R -> CubeMapNavigation(opposite(iY), 0, CrossDirection.D, b)
+                            CrossDirection.D -> CubeMapNavigation(iX, 0, CrossDirection.D, y)
+                            CrossDirection.U -> CubeMapNavigation(0, 0, CrossDirection.U, face)
+                            CrossDirection.L -> CubeMapNavigation(0, 0, CrossDirection.U, face)
+                        }
                     }
                     y -> {
-                        if (direction == CrossDirection.L) return CubeMapNavigation(opposite(iX), edge(), CrossDirection.U, g)
-                        if (direction == CrossDirection.D) return CubeMapNavigation(opposite(iX), edge(), CrossDirection.U, o)
-                        throw Exception("invalid dir $direction")
+                        when (direction) {
+                            CrossDirection.R -> CubeMapNavigation(0, 0, CrossDirection.U, face)
+                            CrossDirection.D -> CubeMapNavigation(opposite(iX), edge(), CrossDirection.U, o)
+                            CrossDirection.U -> CubeMapNavigation(0, 0, CrossDirection.U, face)
+                            CrossDirection.L -> CubeMapNavigation(opposite(iX), edge(), CrossDirection.U, g)
+                        }
                     }
                     b -> {
-                        if (direction == CrossDirection.D) return CubeMapNavigation(0, opposite(iX), CrossDirection.L, o)
-                        if (direction == CrossDirection.L) return CubeMapNavigation(edge(), iY, CrossDirection.L, y)
-                        throw Exception("invalid dir $direction")
+                        when (direction) {
+                            CrossDirection.R -> CubeMapNavigation(0, 0, CrossDirection.U, face)
+                            CrossDirection.D -> CubeMapNavigation(0, opposite(iX), CrossDirection.L, o)
+                            CrossDirection.U -> CubeMapNavigation(0, 0, CrossDirection.U, face)
+                            CrossDirection.L -> CubeMapNavigation(edge(), iY, CrossDirection.L, y)
+                        }
                     }
                     else -> throw Exception("invalid $face")
                 }
