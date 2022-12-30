@@ -1,10 +1,10 @@
 import java.io.File
 import java.lang.Exception
 
-class Aoc202211(val mokeyDefinitions: List<List<String>>) {
+class Aoc202211(mokeyDefinitions: List<List<String>>) {
 
     private var commonDivider: Int
-    private var monkeys: MutableMap<Int, Aoc202211.Monkey>
+    private var monkeys: MutableMap<Int, Monkey>
 
     init {
         commonDivider = 1
@@ -46,8 +46,8 @@ class Aoc202211(val mokeyDefinitions: List<List<String>>) {
             when (operationType) {
                 "+" -> if (operationValue == "old") return item + item else return item + operationValue.toLong()
                 "*" -> if (operationValue == "old") return item * item else return item * operationValue.toLong()
-                "-" -> if (operationValue == "old") return item - item else return item - operationValue.toLong()
-                "/" -> if (operationValue == "old") return item - item else return item / operationValue.toLong()
+                "-" -> if (operationValue == "old") return 0 else return item - operationValue.toLong()
+                "/" -> if (operationValue == "old") return 1 else return item / operationValue.toLong()
                 else -> {
                     throw Exception("!")
                 }
@@ -81,12 +81,6 @@ class Aoc202211(val mokeyDefinitions: List<List<String>>) {
                 }
                 monkey.items = newItems
             }
-            for (monkeyId in monkeys.keys) {
-                val monkey = monkeys[monkeyId]!!
-                println("$monkeyId, ${monkey.items}")
-            }
-            println("##################################")
-
         }
         val byActivity = monkeys.values.sortedBy { it.activity }.reversed()
         return byActivity[0].activity * byActivity[1].activity
@@ -100,9 +94,8 @@ class Aoc202211(val mokeyDefinitions: List<List<String>>) {
                 val newItems = mutableListOf<Long>()
                 for (item in monkey.items) {
                     monkey.activity ++
-                    var level = monkey.operation.compute(item) %  monkey.divider
+                    val level = monkey.operation.compute(item) %  commonDivider
                     if (level % monkey.divider == 0L) {
-
                         monkeys[monkey.trueId]!!.items.add(level)
                     } else {
                         monkeys[monkey.falseId]!!.items.add(level)
@@ -110,15 +103,8 @@ class Aoc202211(val mokeyDefinitions: List<List<String>>) {
                 }
                 monkey.items = newItems
             }
-            for (monkeyId in monkeys.keys) {
-                val monkey = monkeys[monkeyId]!!
-                println("$monkeyId, ${monkey.items}")
-            }
-            println("##################################")
-
         }
         val byActivity = monkeys.values.sortedBy { it.activity }.reversed()
-        println(byActivity)
         return byActivity[0].activity.toLong() * byActivity[1].activity.toLong()
     }
 

@@ -12,9 +12,8 @@ fun main(args: Array<String>) {
             "2022/05" -> Aoc202205(fileName(yyyyDd)).run()
             "2022/10" -> Aoc202210(fileName(yyyyDd)).run()
             "2022/11" -> {
-                val aoc202211 = Aoc202211.build(fileName(yyyyDd))
-                println(aoc202211.part1())
-                println(aoc202211.part2())
+                println(Aoc202211.build(fileName(yyyyDd)).part1())
+                println(Aoc202211.build(fileName(yyyyDd)).part2())
             }
             "2022/12" -> Aoc202212(fileName(yyyyDd)).run()
             "2022/13" -> {

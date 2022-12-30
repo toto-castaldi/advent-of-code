@@ -33,7 +33,7 @@ Tested with Kotlink version 1.7.21 and Java openjdk 17.0.3 2022-04-19
 ./gradlew run --args 2022/14
 ```
 
-## TO BE OPTIMIZED
+## To be optimized
 
 - 2020.15.2
 
@@ -49,14 +49,11 @@ Tested with Kotlink version 1.7.21 and Java openjdk 17.0.3 2022-04-19
 
 [Congruence](https://en.wikipedia.org/wiki/Modular_arithmetic#Congruence)
 
-### 2022.11.2
+## Solved with an help
 
-```
-(a % kn) % n = a % n
-https://en.wikipedia.org/wiki/Modulo_operation
-```
+- 2022.11.2 [William Y. Feng video](https://www.youtube.com/watch?v=63-uEScYUvM)
 
-## Solved
+## My status
 
 ![2015 Calendar](./2015.18.1-calendar.png?&raw=true "2015 Calendar")
 
@@ -72,4 +69,4 @@ https://en.wikipedia.org/wiki/Modulo_operation
 
 ![2021 Calendar](./2021.12.1-calendar.png?&raw=true "2021 Calendar")
 
-![2022 Calendar](./2022.22.2-calendar.png?&raw=true "2022 Calendar")
+![2022 Calendar](./2022.11.2-calendar.png?&raw=true "2022 Calendar")
