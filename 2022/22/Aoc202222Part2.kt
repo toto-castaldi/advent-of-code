@@ -1,14 +1,9 @@
 import com.toto_castaldi.common.CrossDirection
+import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.Matrix2D
 
 class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
     private lateinit var currentFace: Matrix2D<MapPoint>
-    private lateinit var wF: Matrix2D<MapPoint>
-    private lateinit var bF: Matrix2D<MapPoint>
-    private lateinit var oF: Matrix2D<MapPoint>
-    private lateinit var gF: Matrix2D<MapPoint>
-    private lateinit var yF: Matrix2D<MapPoint>
-    private lateinit var rF: Matrix2D<MapPoint>
     private var cubeFaceWidth = Integer.MAX_VALUE
 
     override fun resolveMap(): Matrix2D<MapPoint> {
@@ -20,20 +15,15 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
         if (mapLine.trim().length < cubeFaceWidth) cubeFaceWidth = mapLine.trim().length
 
         if (rawMap.ny == cubeFaceWidth * 3) {
-            wF = cubeMap.white(rawMap, cubeFaceWidth)
-            bF = cubeMap.blu(rawMap, cubeFaceWidth)
-            oF = cubeMap.orange(rawMap, cubeFaceWidth)
-            gF = cubeMap.green(rawMap, cubeFaceWidth)
-            yF = cubeMap.yellow(rawMap, cubeFaceWidth)
-            rF = cubeMap.red(rawMap, cubeFaceWidth)
-            currentFace = wF
+            cubeMap.parse(rawMap, cubeFaceWidth)
+            currentFace = cubeMap.first()
         }
     }
 
     override fun nextSpot(x: Int, y: Int, direction: CrossDirection): NavigationProposal {
         val map = currentFace
 
-        val cubeMapNavigation = cubeMap.navigate(map, direction, x, y, wF, bF, oF, gF, yF, rF)
+        val cubeMapNavigation = cubeMap.navigate(map, direction, x, y)
 
         return when (direction) {
             CrossDirection.R -> {
@@ -68,7 +58,7 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
     }
 
     override fun formatMap(): String {
-        return format(cubeMap.popolate(Matrix2D(rawMapWidth, rawMapLines.size, MapPoint.EMPTY ), cubeFaceWidth, wF, bF, oF, gF, yF, rF))
+        return format(cubeMap.popolate(Matrix2D(rawMapWidth, rawMapLines.size, MapPoint.EMPTY )))
     }
 
 
@@ -77,37 +67,74 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
     }
 
 
-    interface CubeMap {
-        fun white(rawData: Matrix2D<MapPoint>, edge: Int): Matrix2D<MapPoint>
-        fun orange(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
-        fun green(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
-        fun blu(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
-        fun red(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
-        fun yellow(rawData: Matrix2D<MapPoint>, edge : Int): Matrix2D<MapPoint>
-        fun navigate(
+    abstract class CubeMap(
+        val wc : Coordinates,
+        val oc : Coordinates,
+        val gc : Coordinates,
+        val rc : Coordinates,
+        val yc : Coordinates,
+        val bc : Coordinates
+        ) {
+
+
+        internal lateinit var w: Matrix2D<MapPoint>
+        internal lateinit var o: Matrix2D<MapPoint>
+        internal lateinit var g: Matrix2D<MapPoint>
+        internal lateinit var r: Matrix2D<MapPoint>
+        internal lateinit var y: Matrix2D<MapPoint>
+        internal lateinit var b: Matrix2D<MapPoint>
+
+        private var len = 0
+
+        fun popolate(matrix: Matrix2D<MapPoint>): Matrix2D<MapPoint> {
+            return matrix
+                .putSubmap(wc.x * len, wc.y * len, w)
+                .putSubmap(oc.x * len, oc.y * len, o)
+                .putSubmap(gc.x * len, gc.y * len, g)
+                .putSubmap(rc.x * len, rc.y * len, r)
+                .putSubmap(yc.x * len, yc.y * len, y)
+                .putSubmap(bc.x * len, bc.y * len, b)
+        }
+
+        fun coord(face : Matrix2D<MapPoint>) : Coordinates {
+            return when (face) {
+                w -> wc
+                o -> oc
+                g -> gc
+                r -> rc
+                y -> yc
+                b -> bc
+                else -> throw Exception("unknown face $face")
+            }
+        }
+
+        fun finalRow(face : Matrix2D<MapPoint>, iY: Int): Int {
+            return coord(face).y * len + iY
+        }
+        fun finalColumn(face : Matrix2D<MapPoint>, iX: Int): Int {
+            return coord(face).x * len + iX
+        }
+        fun parse(rawData: Matrix2D<MapPoint>, l: Int) {
+            len = l
+            w = rawData.sub(wc.x * len,wc.y * len, len, len)
+            o = rawData.sub(oc.x * len,oc.y * len, len, len)
+            g = rawData.sub(gc.x * len,gc.y * len, len, len)
+            r = rawData.sub(rc.x * len,rc.y * len, len, len)
+            y = rawData.sub(yc.x * len,yc.y * len, len, len)
+            b = rawData.sub(bc.x * len,bc.y * len, len, len)
+        }
+
+        val opposite = { v : Int -> len - 1 - v }
+        val edge = { len - 1 }
+
+        abstract fun first(): Matrix2D<MapPoint>
+
+        abstract fun navigate(
             face: Matrix2D<MapPoint>,
             direction: CrossDirection,
             iX: Int,
-            iY: Int,
-            w : Matrix2D<MapPoint>,
-            b : Matrix2D<MapPoint>,
-            o : Matrix2D<MapPoint>,
-            g : Matrix2D<MapPoint>,
-            y : Matrix2D<MapPoint>,
-            r : Matrix2D<MapPoint>
+            iY: Int
         ): CubeMapNavigation
-
-        fun popolate(matrix: Matrix2D<MapPoint>,
-                     cubeFaceWidth : Int,
-                     w : Matrix2D<MapPoint>,
-                     b : Matrix2D<MapPoint>,
-                     o : Matrix2D<MapPoint>,
-                     g : Matrix2D<MapPoint>,
-                     y : Matrix2D<MapPoint>,
-                     r : Matrix2D<MapPoint>): Matrix2D<MapPoint>
-
-        fun finalRow(face : Matrix2D<MapPoint>, y: Int): Int
-        fun finalColumn(face : Matrix2D<MapPoint>, x: Int): Int
 
         data class CubeMapNavigation(val x: Int, val y: Int, val direction: CrossDirection, val newFace : Matrix2D<MapPoint>)
     }
@@ -121,114 +148,59 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
     }
 
     companion object {
-        val EXAMPLE_MAP: CubeMap = object : CubeMap {
-            override fun white(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
-                end = len - 1
-                return rawData.sub(len * 2,0, len, len)
-            }
-
-            override fun orange(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
-                end = len - 1
-                return rawData.sub(0,len, len, len)
-            }
-
-            override fun green(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
-                end = len - 1
-                return rawData.sub(len ,len, len, len)
-            }
-
-            override fun red(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
-                end = len - 1
-                return rawData.sub(len * 2,len , len, len)
-            }
-
-            override fun yellow(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
-                end = len - 1
-                return rawData.sub(len * 2,len * 2, len, len)
-            }
-
-            override fun blu(rawData: Matrix2D<MapPoint>, len : Int): Matrix2D<MapPoint> {
-                end = len - 1
-                return rawData.sub(len * 3,len * 2, len , len)
+        val EXAMPLE_MAP = object: CubeMap(
+                Coordinates(2,0),
+                Coordinates(0,1),
+                Coordinates(1,1),
+                Coordinates(2,1),
+                Coordinates(2,2),
+                Coordinates(3,2)
+            ) {
+            override fun first(): Matrix2D<MapPoint> {
+                return w
             }
 
             override fun navigate(
                 face: Matrix2D<MapPoint>,
                 direction: CrossDirection,
                 iX: Int,
-                iY: Int,
-                w : Matrix2D<MapPoint>,
-                b : Matrix2D<MapPoint>,
-                o : Matrix2D<MapPoint>,
-                g : Matrix2D<MapPoint>,
-                y : Matrix2D<MapPoint>,
-                r : Matrix2D<MapPoint>
-            ): CubeMap.CubeMapNavigation {
+                iY: Int
+            ): CubeMapNavigation {
                 return when(face) {
                     w -> {
-                        if (direction == CrossDirection.R) return CubeMap.CubeMapNavigation(end, fromEnd(iX), CrossDirection.L, r)
-                        if (direction == CrossDirection.D) return CubeMap.CubeMapNavigation(iX, 0, CrossDirection.D, r)
-                        throw Exception("invalid dir $direction")
-                    }
-                    b -> {
-                        if (direction == CrossDirection.D) return CubeMap.CubeMapNavigation(0, iX, CrossDirection.L, o)
-                        if (direction == CrossDirection.L) return CubeMap.CubeMapNavigation(end, iY, CrossDirection.L, y)
+                        if (direction == CrossDirection.R) return CubeMapNavigation(iX, opposite(iY), CrossDirection.L, b)
+                        if (direction == CrossDirection.D) return CubeMapNavigation(iX, 0, CrossDirection.D, r)
                         throw Exception("invalid dir $direction")
                     }
                     o -> {
-                        if (direction == CrossDirection.U) return CubeMap.CubeMapNavigation(fromEnd(iY), 0, CrossDirection.D, w)
-                        if (direction == CrossDirection.R) return CubeMap.CubeMapNavigation(0, iY, CrossDirection.R, g)
+                        if (direction == CrossDirection.U) return CubeMapNavigation(opposite(iX), 0, CrossDirection.D, w)
+                        if (direction == CrossDirection.R) return CubeMapNavigation(0, iY, CrossDirection.R, g)
                         throw Exception("invalid dir $direction")
                     }
                     g -> {
-                        if (direction == CrossDirection.R) return CubeMap.CubeMapNavigation(0, iY, CrossDirection.R, r)
-                        if (direction == CrossDirection.U) return CubeMap.CubeMapNavigation(0, iX, CrossDirection.R, w)
-                        throw Exception("invalid dir $direction")
-                    }
-                    y -> {
-                        if (direction == CrossDirection.L) return CubeMap.CubeMapNavigation(fromEnd(iY), end, CrossDirection.D, g)
-                        if (direction == CrossDirection.D) return CubeMap.CubeMapNavigation(fromEnd(iX), end, CrossDirection.U, o)
+                        if (direction == CrossDirection.R) return CubeMapNavigation(0, iY, CrossDirection.R, r)
+                        if (direction == CrossDirection.U) return CubeMapNavigation(0, iX, CrossDirection.R, w)
                         throw Exception("invalid dir $direction")
                     }
                     r -> {
-                        if (direction == CrossDirection.D) return CubeMap.CubeMapNavigation(iX, 0, CrossDirection.D, y)
-                        if (direction == CrossDirection.R) return CubeMap.CubeMapNavigation(fromEnd(iY), 0, CrossDirection.D, b)
-
+                        if (direction == CrossDirection.D) return CubeMapNavigation(iX, 0, CrossDirection.D, y)
+                        if (direction == CrossDirection.R) return CubeMapNavigation(opposite(iY), 0, CrossDirection.D, b)
+                        throw Exception("invalid dir $direction")
+                    }
+                    y -> {
+                        if (direction == CrossDirection.L) return CubeMapNavigation(opposite(iX), edge(), CrossDirection.U, g)
+                        if (direction == CrossDirection.D) return CubeMapNavigation(opposite(iX), edge(), CrossDirection.U, o)
+                        throw Exception("invalid dir $direction")
+                    }
+                    b -> {
+                        if (direction == CrossDirection.D) return CubeMapNavigation(0, opposite(iX), CrossDirection.L, o)
+                        if (direction == CrossDirection.L) return CubeMapNavigation(edge(), iY, CrossDirection.L, y)
                         throw Exception("invalid dir $direction")
                     }
                     else -> throw Exception("invalid $face")
                 }
             }
 
-            override fun popolate(
-                matrix: Matrix2D<MapPoint>,
-                cubeFaceWidth : Int,
-                w : Matrix2D<MapPoint>,
-                b : Matrix2D<MapPoint>,
-                o : Matrix2D<MapPoint>,
-                g : Matrix2D<MapPoint>,
-                y : Matrix2D<MapPoint>,
-                r : Matrix2D<MapPoint>): Matrix2D<MapPoint> {
-                return matrix
-                    .putSubmap(2*cubeFaceWidth, 0, w)
-                    .putSubmap(0, cubeFaceWidth, o)
-                    .putSubmap(cubeFaceWidth, cubeFaceWidth, g)
-                    .putSubmap(cubeFaceWidth * 2, cubeFaceWidth, r)
-                    .putSubmap(cubeFaceWidth * 2, cubeFaceWidth * 2, y)
-                    .putSubmap(cubeFaceWidth * 3, cubeFaceWidth * 2, b)
-            }
-
-            override fun finalRow(face : Matrix2D<MapPoint>, y: Int): Int {
-                return y + (end + 1)
-            }
-
-            override fun finalColumn(face: Matrix2D<MapPoint>, x: Int): Int {
-                return x + (end + 1)
-            }
-
-            private var end: Int = 0
-
-            val fromEnd = { v : Int -> end - v }
         }
     }
 

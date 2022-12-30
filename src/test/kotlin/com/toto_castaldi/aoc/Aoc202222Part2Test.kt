@@ -21,7 +21,7 @@ class Aoc202222Part2Test {
         aoc + "        .#......"
         aoc + "        ......#."
 
-        aoc.navigate("10R5L5R10L4R5L5")
+        aoc.navigate("10R5L5R10L4R5L5", 13)
         assertEquals(5031, aoc.finalPassword())
     }
 
