@@ -1,4 +1,4 @@
-import com.toto_castaldi.common.structure.Coordinates
+import com.toto_castaldi.common.structure.IntCoordinates
 import java.io.File
 import kotlin.math.abs
 import kotlin.math.sign
@@ -11,9 +11,9 @@ fun main(
 }
 
 private fun part(fileName : String , len : Int) : Int{
-    val tailPassing = mutableSetOf<Coordinates>()
+    val tailPassing = mutableSetOf<IntCoordinates>()
 
-    val rope = (1..len).map { Coordinates(0, 0) }.toMutableList()
+    val rope = (1..len).map { IntCoordinates(0, 0) }.toMutableList()
 
     File(fileName).forEachLine { line ->
 

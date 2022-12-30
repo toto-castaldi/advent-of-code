@@ -1,4 +1,17 @@
-import com.toto_castaldi.common.structure.Coordinates
+import com.toto_castaldi.common.structure.IntCoordinates
+import kotlin.math.sign
+
+private fun IntCoordinates.d(): IntCoordinates {
+    return move(0,1)
+}
+
+private fun IntCoordinates.ld(): IntCoordinates {
+    return move(-1,1)
+}
+
+private fun IntCoordinates.rd(): IntCoordinates {
+    return move(1,1)
+}
 
 class Aoc202214(val sandXStart: Int) {
 
@@ -6,14 +19,14 @@ class Aoc202214(val sandXStart: Int) {
     private var maxY: Int = 0
     private var maxX: Int = 0
     private var minX: Int = Int.MAX_VALUE
-    val bricks = mutableSetOf<Coordinates>()
+    val bricks = mutableSetOf<IntCoordinates>()
 
-    operator fun plus(parsePath: List<Coordinates>): Aoc202214 {
+    operator fun plus(parsePath: List<IntCoordinates>): Aoc202214 {
         for (i in 0 until parsePath.size -1) {
             val pFrom = parsePath[i]
             val pTo = parsePath[i+1]
 
-            val pathSequence = Coordinates.path(pFrom, pTo)
+            val pathSequence = path2D(pFrom, pTo)
             bricks.add(pFrom)
             setPrintBounderies(pFrom)
             for (p in pathSequence) {
@@ -24,7 +37,21 @@ class Aoc202214(val sandXStart: Int) {
         return this
     }
 
-    private fun setPrintBounderies(c: Coordinates) {
+    fun path2D(source: IntCoordinates, destination: IntCoordinates) = sequence<IntCoordinates> {
+        var step = source
+
+        while (step != destination) {
+            val direction = destination - step
+            if (direction.x != 0) {
+                step = step.clone().move(sign(direction.x.toDouble()).toInt(),0)
+            } else {
+                step = step.clone().move(0, sign(direction.y.toDouble()).toInt())
+            }
+            yield(step)
+        }
+    }
+
+    private fun setPrintBounderies(c: IntCoordinates) {
         if (c.y > maxY) {
             maxY = c.y
         }
@@ -39,14 +66,14 @@ class Aoc202214(val sandXStart: Int) {
     fun blockedSandCount(print : Boolean = false, debug : Int = -1): Int {
         var time = 0
         var result = 0
-        var currentSand: Coordinates? = null
+        var currentSand: IntCoordinates? = null
         var canFall = true
 
         while (canFall && (debug == -1 || time < debug)) {
             time ++
 
             if (currentSand == null) {
-                currentSand = Coordinates(sandXStart, 0)
+                currentSand = IntCoordinates(sandXStart, 0)
             }
 
             if (currentSand.clone().d() !in bricks && (floorY == -1 || currentSand.clone().d().y < floorY)) { //can move down
@@ -69,7 +96,7 @@ class Aoc202214(val sandXStart: Int) {
             }
             if (currentSand != null &&
                 (currentSand.y >= maxY && floorY == -1) ||
-                (Coordinates(sandXStart, 0) in bricks) //cave full
+                (IntCoordinates(sandXStart, 0) in bricks) //cave full
             ){
                 canFall = false
                 currentSand = null
@@ -88,10 +115,10 @@ class Aoc202214(val sandXStart: Int) {
         floorY = maxY + delta
     }
 
-    private fun printCave(currentSand: Coordinates?) {
+    private fun printCave(currentSand: IntCoordinates?) {
         for (y in 0..maxY) {
             for (x in minX..maxX) {
-                val c = Coordinates(x, y)
+                val c = IntCoordinates(x, y)
                 if (c in bricks) {
                     print("#")
                 } else if (c == currentSand) {
@@ -113,9 +140,7 @@ class Aoc202214(val sandXStart: Int) {
         }
 
         //"498,4 -> 498,6 -> 496,6"
-        val parsePath = { pathStringDef: String -> pathStringDef.trim().split(" -> ").map { Coordinates(it.trim().split(",")[0].toInt(), it.trim().split(",")[1].toInt()) }}
+        val parsePath = { pathStringDef: String -> pathStringDef.trim().split(" -> ").map { IntCoordinates(it.trim().split(",")[0].toInt(), it.trim().split(",")[1].toInt()) }}
     }
 
 }
-
-

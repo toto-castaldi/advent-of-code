@@ -7,8 +7,8 @@ class LineTest {
 
     @Test
     fun intersect0() {
-        assertEquals(-1, Line(Coordinates(-2,4), Coordinates(0,6)).atY(5).toInt())
-        assertEquals(1, Line(Coordinates(2,4), Coordinates(0,6)).atY(5).toInt())
+        assertEquals(-1, Line(IntCoordinates(-2,4), IntCoordinates(0,6)).atY(5).toInt())
+        assertEquals(1, Line(IntCoordinates(2,4), IntCoordinates(0,6)).atY(5).toInt())
     }
 
 }

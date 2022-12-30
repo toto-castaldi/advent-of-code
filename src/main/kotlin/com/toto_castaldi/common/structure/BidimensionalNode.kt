@@ -7,7 +7,7 @@ data class NodeAndCounting<T>(val node: BidimentionalNode<T>?, val countNodes: I
 
 class BidimentionalNode<T>(var data: T) {
 
-    private var neighbors: MutableMap<Coordinates, BidimentionalNode<T>> = mutableMapOf<Coordinates, BidimentionalNode<T>>()
+    private var neighbors: MutableMap<IntCoordinates, BidimentionalNode<T>> = mutableMapOf<IntCoordinates, BidimentionalNode<T>>()
 
     fun neighbors(): Collection<BidimentionalNode<T>> {
         return neighbors.values
@@ -18,21 +18,21 @@ class BidimentionalNode<T>(var data: T) {
         y: Int,
         neighbor: BidimentionalNode<T>
     ): BidimentionalNode<T> {
-        neighbors[Coordinates(x, y)] = neighbor
-        neighbor.neighbors[Coordinates(-x, -y)] = this
+        neighbors[IntCoordinates(x, y)] = neighbor
+        neighbor.neighbors[IntCoordinates(-x, -y)] = this
         return this
     }
 
     fun removeNeighbor(x: Int, y: Int): BidimentionalNode<T> {
-        neighbors[Coordinates(x, y)]?.neighbors?.remove(Coordinates(-x, -y))
-        neighbors.remove(Coordinates(x, y))
+        neighbors[IntCoordinates(x, y)]?.neighbors?.remove(IntCoordinates(-x, -y))
+        neighbors.remove(IntCoordinates(x, y))
         return this
     }
     /**
      * moving from here to a distant node
      */
     fun resolve(
-        coordinates: Coordinates
+        coordinates: IntCoordinates
     ): BidimentionalNode<T>? {
         return resolve(coordinates.x, coordinates.y)
     }
@@ -47,16 +47,16 @@ class BidimentionalNode<T>(var data: T) {
         return if (dirX == 0 && dirY == 0) {
             this
         } else if (abs(dirX) <= 1 && abs(dirY) <= 1) {
-            neighbors[Coordinates(dirX, dirY)]
+            neighbors[IntCoordinates(dirX, dirY)]
         } else {
-            if (dirX < 0 && neighbors.containsKey(Coordinates(-1, 0))) {
-                neighbors[Coordinates(-1, 0)]!!.resolve(dirX +1, dirY)
-            } else if (dirX > 0 && neighbors.containsKey(Coordinates(1, 0))) {
-                neighbors[Coordinates(1, 0)]!!.resolve(dirX -1, dirY)
-            } else if (dirY < 0 && neighbors.containsKey(Coordinates(0, -1))) {
-                neighbors[Coordinates(0, -1)]!!.resolve(dirX, dirY+1)
+            if (dirX < 0 && neighbors.containsKey(IntCoordinates(-1, 0))) {
+                neighbors[IntCoordinates(-1, 0)]!!.resolve(dirX +1, dirY)
+            } else if (dirX > 0 && neighbors.containsKey(IntCoordinates(1, 0))) {
+                neighbors[IntCoordinates(1, 0)]!!.resolve(dirX -1, dirY)
+            } else if (dirY < 0 && neighbors.containsKey(IntCoordinates(0, -1))) {
+                neighbors[IntCoordinates(0, -1)]!!.resolve(dirX, dirY+1)
             } else {
-                neighbors[Coordinates(0, 1)]!!.resolve(dirX, dirY-1)
+                neighbors[IntCoordinates(0, 1)]!!.resolve(dirX, dirY-1)
             }
         }
     }

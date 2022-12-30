@@ -5,7 +5,7 @@ import com.toto_castaldi.common.Numbers
 /**
  * the anchor point is top left in the containing box of the shape
  */
-class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: BidimensionalShape) {
+class PlacedBidimensionalShape(var anchorPoint: IntCoordinates, var shape: BidimensionalShape) {
 
     fun move(x: Int, y: Int) {
         anchorPoint.move(x,y)
@@ -60,7 +60,7 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
             }
         }
 
-        anchorPoint = Coordinates(xs.min(), anchorPoint.y - other.shape.getHeight() )
+        anchorPoint = IntCoordinates(xs.min(), anchorPoint.y - other.shape.getHeight() )
         shape = BidimensionalShape(newLines.toTypedArray())
         return this
     }
@@ -103,7 +103,7 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
         return checkCommonSpots(other)
     }
 
-    operator fun contains(coordinates: Coordinates): Boolean {
+    operator fun contains(coordinates: IntCoordinates): Boolean {
         val c = coordinates.clone().move(-anchorPoint.x, -anchorPoint.y)
         if (shape.visualDescription.size > c.y) {
             if (c.y >= 0) {
@@ -139,7 +139,7 @@ class PlacedBidimensionalShape(var anchorPoint: Coordinates, var shape: Bidimens
             val maxY = shape.maxY()
             for (y in minY..maxY) {
                 for (x in minX..maxX) {
-                    if (Coordinates(x,y) in shape) {
+                    if (IntCoordinates(x,y) in shape) {
                         print("#")
                     } else print(".")
                 }

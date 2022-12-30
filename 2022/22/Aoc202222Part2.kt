@@ -1,5 +1,5 @@
 import com.toto_castaldi.common.CrossDirection
-import com.toto_castaldi.common.structure.Coordinates
+import com.toto_castaldi.common.structure.IntCoordinates
 import com.toto_castaldi.common.structure.Matrix2D
 import java.io.File
 
@@ -69,12 +69,12 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
 
 
     abstract class CubeMap(
-        val wc : Coordinates,
-        val oc : Coordinates,
-        val gc : Coordinates,
-        val rc : Coordinates,
-        val yc : Coordinates,
-        val bc : Coordinates
+        val wc : IntCoordinates,
+        val oc : IntCoordinates,
+        val gc : IntCoordinates,
+        val rc : IntCoordinates,
+        val yc : IntCoordinates,
+        val bc : IntCoordinates
         ) {
         internal lateinit var w: Matrix2D<MapPoint>
         internal lateinit var o: Matrix2D<MapPoint>
@@ -99,7 +99,7 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
                 .putSubmap(bc.x * len, bc.y * len, b)
         }
 
-        fun coord(face : Matrix2D<MapPoint>) : Coordinates {
+        fun coord(face : Matrix2D<MapPoint>) : IntCoordinates {
             return when (face) {
                 w -> wc
                 o -> oc
@@ -154,12 +154,12 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
 
     companion object {
         val REAL_MAP = object: CubeMap(
-            Coordinates(1,0),
-            Coordinates(0,2),
-            Coordinates(1,1),
-            Coordinates(2,0),
-            Coordinates(1,2),
-            Coordinates(0,3)
+            IntCoordinates(1,0),
+            IntCoordinates(0,2),
+            IntCoordinates(1,1),
+            IntCoordinates(2,0),
+            IntCoordinates(1,2),
+            IntCoordinates(0,3)
         ) {
 
             override fun navigate(
@@ -213,12 +213,12 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
         }
 
         val EXAMPLE_MAP = object: CubeMap(
-                Coordinates(2,0),
-                Coordinates(0,1),
-                Coordinates(1,1),
-                Coordinates(2,1),
-                Coordinates(2,2),
-                Coordinates(3,2)
+                IntCoordinates(2,0),
+                IntCoordinates(0,1),
+                IntCoordinates(1,1),
+                IntCoordinates(2,1),
+                IntCoordinates(2,2),
+                IntCoordinates(3,2)
             ) {
 
             override fun navigate(

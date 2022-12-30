@@ -1,6 +1,6 @@
 package com.toto_castaldi.common.structure
 
-class Line(val a: Coordinates, val b: Coordinates) {
+class Line(val a: IntCoordinates, val b: IntCoordinates) {
 
     fun atY(y: Int): Double {
         return atY(y.toDouble())

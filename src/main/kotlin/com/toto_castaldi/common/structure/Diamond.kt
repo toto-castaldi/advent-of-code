@@ -18,26 +18,26 @@ package com.toto_castaldi.common.structure
 ..........###...............
 ...........#................
  */
-class Diamond(center: Coordinates, halfWidth: Int) {
+class Diamond(center: IntCoordinates, halfWidth: Int) {
 
-    private var a: Coordinates = Coordinates(center.x, center.y - halfWidth)
-    private var b: Coordinates = Coordinates(center.x + halfWidth, center.y)
-    private var c: Coordinates = Coordinates(center.x, center.y + halfWidth)
-    private var d: Coordinates = Coordinates(center.x - halfWidth, center.y)
+    private var a: IntCoordinates = IntCoordinates(center.x, center.y - halfWidth)
+    private var b: IntCoordinates = IntCoordinates(center.x + halfWidth, center.y)
+    private var c: IntCoordinates = IntCoordinates(center.x, center.y + halfWidth)
+    private var d: IntCoordinates = IntCoordinates(center.x - halfWidth, center.y)
 
-    operator fun contains(coordinates: Coordinates): Boolean {
+    operator fun contains(coordinates: IntCoordinates): Boolean {
         return resolveInterval(coordinates.y)?.contains(coordinates.x) ?: false
     }
 
     fun resolveInterval(y: Int): IntRange? {
         var interval: IntRange? = null
         if (y >= a.y && y <= d.y) {
-            val f = Coordinates(Line(a, d).atY(y).toInt(), y)
-            val s = Coordinates(Line(a, b).atY(y).toInt(), y)
+            val f = IntCoordinates(Line(a, d).atY(y).toInt(), y)
+            val s = IntCoordinates(Line(a, b).atY(y).toInt(), y)
             interval = f.x..s.x
         } else if (y > d.y && y <= c.y) {
-            val f = Coordinates(Line(d, c).atY(y).toInt(), y)
-            val s = Coordinates(Line(b, c).atY(y).toInt(), y)
+            val f = IntCoordinates(Line(d, c).atY(y).toInt(), y)
+            val s = IntCoordinates(Line(b, c).atY(y).toInt(), y)
             interval = f.x..s.x
         }
         return interval

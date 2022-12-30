@@ -1,5 +1,5 @@
 import com.toto_castaldi.common.structure.BidimentionalNode
-import com.toto_castaldi.common.structure.Coordinates
+import com.toto_castaldi.common.structure.IntCoordinates
 import java.io.File
 
 class Aoc202212 (private val fileName:String) {
@@ -10,19 +10,19 @@ class Aoc202212 (private val fileName:String) {
         val heightVal = { supply: Char -> supply.code - 'a'.code + 1 }
 
         val heightmapInputChar = File(fileName).readLines().map { line -> line.toCharArray().toList() }
-        var startCoordinates = Coordinates(0, 0)
-        var endCoordinates = Coordinates(0, 0)
+        var startCoordinates = IntCoordinates(0, 0)
+        var endCoordinates = IntCoordinates(0, 0)
         val heightmapInput = mutableListOf<MutableList<Int>>()
         for ((indexRow, row) in heightmapInputChar.withIndex()) {
             val rowInt = mutableListOf<Int>()
             for ((indexCol, element) in row.withIndex()) {
                 when (element) {
                     'S' -> {
-                        startCoordinates = Coordinates(indexCol, indexRow)
+                        startCoordinates = IntCoordinates(indexCol, indexRow)
                         rowInt.add(heightVal('a'))
                     }
                     'E' -> {
-                        endCoordinates = Coordinates(indexCol, indexRow)
+                        endCoordinates = IntCoordinates(indexCol, indexRow)
                         rowInt.add(heightVal('z'))
                     }
                     else -> {

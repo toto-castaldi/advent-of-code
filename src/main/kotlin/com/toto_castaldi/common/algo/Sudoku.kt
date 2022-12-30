@@ -1,10 +1,10 @@
 package com.toto_castaldi.common.algo
 
-import com.toto_castaldi.common.structure.Coordinates
+import com.toto_castaldi.common.structure.IntCoordinates
 import com.toto_castaldi.common.structure.Matrix2D
 import kotlin.math.floor
 
-class Sudoku(inputGrid: List<String>) : BackTrackProblem<Matrix2D<Int>, Coordinates, Int>() {
+class Sudoku(inputGrid: List<String>) : BackTrackProblem<Matrix2D<Int>, IntCoordinates, Int>() {
 
     private val grid = Matrix2D<Int>(9,9, 0)
 
@@ -35,19 +35,19 @@ class Sudoku(inputGrid: List<String>) : BackTrackProblem<Matrix2D<Int>, Coordina
         return 0
     }
 
-    override fun isValid(nextMove: Coordinates, option : Int): Boolean {
+    override fun isValid(nextMove: IntCoordinates, option : Int): Boolean {
         return valid(nextMove.x, nextMove.y, option) == 0
     }
 
-    override fun stepOptions(v: Coordinates): Collection<Int> {
+    override fun stepOptions(v: IntCoordinates): Collection<Int> {
         return (1..9).toList()
     }
 
-    override  fun nextSteps() = sequence<Coordinates> {
+    override  fun nextSteps() = sequence<IntCoordinates> {
         for (y in 0 until 9) {
             for (x in 0 until 9) {
                 if (grid[x,y] == 0) {
-                    yield(Coordinates(x, y))
+                    yield(IntCoordinates(x, y))
                 }
             }
         }
@@ -61,11 +61,11 @@ class Sudoku(inputGrid: List<String>) : BackTrackProblem<Matrix2D<Int>, Coordina
         return 0 !in workInProgress
     }
 
-    override fun applyStep(nextMove: Coordinates, option: Int) {
+    override fun applyStep(nextMove: IntCoordinates, option: Int) {
         grid[nextMove.x, nextMove.y] = option
     }
 
-    override fun revertStep(nextMove: Coordinates) {
+    override fun revertStep(nextMove: IntCoordinates) {
         grid[nextMove.x, nextMove.y] = 0
     }
 

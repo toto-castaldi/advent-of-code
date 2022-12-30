@@ -1,13 +1,13 @@
 import com.toto_castaldi.common.Numbers
 import com.toto_castaldi.common.algo.ManhattanDistance
-import com.toto_castaldi.common.structure.Coordinates
+import com.toto_castaldi.common.structure.IntCoordinates
 import com.toto_castaldi.common.structure.Diamond
 import java.io.File
 
 class Aoc202215() {
 
     private val sensorAreas = mutableSetOf<Diamond>()
-    private val beacons = mutableSetOf<Coordinates>()
+    private val beacons = mutableSetOf<IntCoordinates>()
 
     private fun freeSpotAt(y: Int): Set<Int> {
         val result = mutableSetOf<Int>()
@@ -55,8 +55,8 @@ class Aoc202215() {
         val bX = match.groups[3]!!.value.toInt()
         val bY = match.groups[4]!!.value.toInt()
 
-        val sensor = Coordinates(sX, sY)
-        val beacon = Coordinates(bX, bY)
+        val sensor = IntCoordinates(sX, sY)
+        val beacon = IntCoordinates(bX, bY)
 
         beacons.add(beacon)
 

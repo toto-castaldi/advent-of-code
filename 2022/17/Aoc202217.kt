@@ -1,5 +1,5 @@
 import com.toto_castaldi.common.structure.BidimensionalShape
-import com.toto_castaldi.common.structure.Coordinates
+import com.toto_castaldi.common.structure.IntCoordinates
 import com.toto_castaldi.common.structure.PlacedBidimensionalShape
 import java.io.File
 import java.lang.Math.max
@@ -10,7 +10,7 @@ class Aoc202217(val movements: String) {
     private var pieceIndex = 0
     private var movIndex = 0
     private val base = BidimensionalShape(arrayOf("#######"))
-    private var stack = PlacedBidimensionalShape(Coordinates(1, 4), base)
+    private var stack = PlacedBidimensionalShape(IntCoordinates(1, 4), base)
     private var stackedPiecesCount: Long = 0
     private val freeR = 7
     private val freeL = 1
@@ -91,9 +91,9 @@ class Aoc202217(val movements: String) {
         val maxY = max(currentPiece.maxY(), stack.maxY())
         for (y in minY..maxY) {
             for (x in minX..maxX) {
-                if (Coordinates(x,y) in stack) {
+                if (IntCoordinates(x,y) in stack) {
                     print("#")
-                } else if (Coordinates(x,y) in currentPiece) {
+                } else if (IntCoordinates(x,y) in currentPiece) {
                     print("@")
                 } else print(".")
             }
@@ -109,7 +109,7 @@ class Aoc202217(val movements: String) {
 
     private fun nextPiece(): PlacedBidimensionalShape {
         val nextShape = pieces[(pieceIndex++) % pieces.size]
-        return PlacedBidimensionalShape(Coordinates(3, stack.minY() - 3 - nextShape.getHeight()), nextShape)
+        return PlacedBidimensionalShape(IntCoordinates(3, stack.minY() - 3 - nextShape.getHeight()), nextShape)
     }
 
     companion object {

@@ -25,8 +25,8 @@ class PlacedBidimensionalShapeTest {
 
     @Test
     fun testIntersects() {
-        val line = PlacedBidimensionalShape(Coordinates(2,1), hLineShape)
-        val cross = PlacedBidimensionalShape(Coordinates(0,0), crossShape)
+        val line = PlacedBidimensionalShape(IntCoordinates(2,1), hLineShape)
+        val cross = PlacedBidimensionalShape(IntCoordinates(0,0), crossShape)
 
         assertTrue { line.intersect(cross) }
         assertTrue { cross.intersect(line) }
@@ -44,7 +44,7 @@ class PlacedBidimensionalShapeTest {
 
     @Test
     fun testMove() {
-        val pds = PlacedBidimensionalShape(Coordinates(3,0),hLineShape)
+        val pds = PlacedBidimensionalShape(IntCoordinates(3,0),hLineShape)
 
         r(pds)
         d(pds)
@@ -58,14 +58,14 @@ class PlacedBidimensionalShapeTest {
         l(pds)
         d(pds)
 
-        assertEquals(Coordinates(3,3), pds.anchorPoint)
+        assertEquals(IntCoordinates(3,3), pds.anchorPoint)
     }
 
     @Test
     fun testBase() {
-        val original = PlacedBidimensionalShape(Coordinates(1,5) , hLineShape)
-        original + PlacedBidimensionalShape(Coordinates(1,4) , hLineShape)
-        original + PlacedBidimensionalShape(Coordinates(1,1) , crossShape)
+        val original = PlacedBidimensionalShape(IntCoordinates(1,5) , hLineShape)
+        original + PlacedBidimensionalShape(IntCoordinates(1,4) , hLineShape)
+        original + PlacedBidimensionalShape(IntCoordinates(1,1) , crossShape)
 
         PlacedBidimensionalShape.print(original)
 
@@ -84,8 +84,8 @@ class PlacedBidimensionalShapeTest {
 
     @Test
     fun testSumLCross(){
-        val cross =  PlacedBidimensionalShape(Coordinates(2,2), crossShape)
-        val l =  PlacedBidimensionalShape(Coordinates(0,0), lShape)
+        val cross =  PlacedBidimensionalShape(IntCoordinates(2,2), crossShape)
+        val l =  PlacedBidimensionalShape(IntCoordinates(0,0), lShape)
 
         cross + l
 
@@ -99,8 +99,8 @@ class PlacedBidimensionalShapeTest {
 
     @Test
     fun testSum202217() {
-        var rock =  PlacedBidimensionalShape(Coordinates(0,3), hLineShape)
-        var stack =  PlacedBidimensionalShape(Coordinates(0,4), hLongLineShape)
+        var rock =  PlacedBidimensionalShape(IntCoordinates(0,3), hLineShape)
+        var stack =  PlacedBidimensionalShape(IntCoordinates(0,4), hLongLineShape)
 
         stack + rock
 
@@ -108,8 +108,8 @@ class PlacedBidimensionalShapeTest {
         assertEquals("####...", stack.shape.visualDescription[0])
         assertEquals("#######", stack.shape.visualDescription[1])
 
-        rock =  PlacedBidimensionalShape(Coordinates(1,3), hLineShape)
-        stack =  PlacedBidimensionalShape(Coordinates(0,4), hLongLineShape)
+        rock =  PlacedBidimensionalShape(IntCoordinates(1,3), hLineShape)
+        stack =  PlacedBidimensionalShape(IntCoordinates(0,4), hLongLineShape)
 
         stack + rock
 
@@ -120,8 +120,8 @@ class PlacedBidimensionalShapeTest {
 
     @Test
     fun testSumA() {
-        val lineA = PlacedBidimensionalShape(Coordinates(0,0), hLineShape)
-        val stack = PlacedBidimensionalShape(Coordinates(2,1), hLineShape)
+        val lineA = PlacedBidimensionalShape(IntCoordinates(0,0), hLineShape)
+        val stack = PlacedBidimensionalShape(IntCoordinates(2,1), hLineShape)
 
         stack + lineA
 
@@ -132,8 +132,8 @@ class PlacedBidimensionalShapeTest {
 
     @Test
     fun testIn() {
-        val cross = PlacedBidimensionalShape(Coordinates(0,0), crossShape)
-        assertFalse { Coordinates(0,2) in cross }
-        assertTrue { Coordinates(1,1) in cross }
+        val cross = PlacedBidimensionalShape(IntCoordinates(0,0), crossShape)
+        assertFalse { IntCoordinates(0,2) in cross }
+        assertTrue { IntCoordinates(1,1) in cross }
     }
 }

@@ -1,7 +1,7 @@
 package com.toto_castaldi.aoc
 
 import Aoc202214
-import com.toto_castaldi.common.structure.Coordinates
+import com.toto_castaldi.common.structure.IntCoordinates
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -33,28 +33,28 @@ class Aoc202214Test {
         aoc202214 + Aoc202214.parsePath("498,4 -> 498,6 -> 496,6")
         aoc202214 + Aoc202214.parsePath("503,4 -> 502,4 -> 502,9 -> 494,9")
         assertTrue {
-            Coordinates(503,4) in aoc202214.bricks
+            IntCoordinates(503,4) in aoc202214.bricks
         }
     }
 
     @Test
     fun testBricks() {
-        assertEquals(setOf(Coordinates(10,1), Coordinates(11,1)), (Aoc202214(500)  + Aoc202214.parsePath("10,1 -> 11,1")).bricks)
+        assertEquals(setOf(IntCoordinates(10,1), IntCoordinates(11,1)), (Aoc202214(500)  + Aoc202214.parsePath("10,1 -> 11,1")).bricks)
         assertEquals(setOf(
-            Coordinates(10,1),
-            Coordinates(11,1),
-            Coordinates(12,1),
-            Coordinates(13,1),
-            Coordinates(14,1),
-            Coordinates(15,1),
+            IntCoordinates(10,1),
+            IntCoordinates(11,1),
+            IntCoordinates(12,1),
+            IntCoordinates(13,1),
+            IntCoordinates(14,1),
+            IntCoordinates(15,1),
         ), (Aoc202214(500)  + Aoc202214.parsePath("10,1 -> 11,1 -> 15,1")).bricks)
         assertEquals(setOf(
-            Coordinates(10,10),
-            Coordinates(10,11),
-            Coordinates(10,12),
-            Coordinates(10,13),
-            Coordinates(10,14),
-            Coordinates(10,15),
+            IntCoordinates(10,10),
+            IntCoordinates(10,11),
+            IntCoordinates(10,12),
+            IntCoordinates(10,13),
+            IntCoordinates(10,14),
+            IntCoordinates(10,15),
         ), (Aoc202214(500)  + Aoc202214.parsePath("10,10 -> 10,11 -> 10,15")).bricks)
     }
 
