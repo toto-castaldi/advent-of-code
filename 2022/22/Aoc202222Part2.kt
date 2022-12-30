@@ -1,6 +1,7 @@
 import com.toto_castaldi.common.CrossDirection
 import com.toto_castaldi.common.structure.Coordinates
 import com.toto_castaldi.common.structure.Matrix2D
+import java.io.File
 
 class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
     private lateinit var currentFace: Matrix2D<MapPoint>
@@ -148,6 +149,29 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
     }
 
     companion object {
+        val REAL_MAP = object: CubeMap(
+            Coordinates(0,0),
+            Coordinates(0,0),
+            Coordinates(0,0),
+            Coordinates(0,0),
+            Coordinates(0,0),
+            Coordinates(0,0)
+        ) {
+            override fun first(): Matrix2D<MapPoint> {
+                TODO("Not yet implemented")
+            }
+
+            override fun navigate(
+                face: Matrix2D<MapPoint>,
+                direction: CrossDirection,
+                iX: Int,
+                iY: Int
+            ): CubeMapNavigation {
+                TODO("Not yet implemented")
+            }
+
+        }
+
         val EXAMPLE_MAP = object: CubeMap(
                 Coordinates(2,0),
                 Coordinates(0,1),
@@ -200,7 +224,16 @@ class Aoc202222Part2(val cubeMap: CubeMap) : Aoc202222() {
                     else -> throw Exception("invalid $face")
                 }
             }
+        }
 
+        fun run(fileName: String, test : Boolean) {
+            val aoc = Aoc202222Part2(if (test) EXAMPLE_MAP else REAL_MAP)
+            var map = true
+            File(fileName).forEachLine {
+                if (map) aoc + it else aoc.navigate(it)
+                if (it.isBlank()) map = false
+            }
+            println( aoc.finalPassword())
         }
     }
 

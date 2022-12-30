@@ -1,6 +1,5 @@
 import com.toto_castaldi.common.CrossDirection
 import com.toto_castaldi.common.structure.Matrix2D
-import com.toto_castaldi.common.structure.Rubik
 import java.io.File
 
 class Aoc202222Part1() : Aoc202222() {
@@ -62,7 +61,6 @@ class Aoc202222Part1() : Aoc202222() {
     }
 
     companion object {
-
         fun run(fileName: String) {
             val aoc = Aoc202222Part1()
             var map = true

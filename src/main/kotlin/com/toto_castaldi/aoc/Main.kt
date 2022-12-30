@@ -62,7 +62,10 @@ fun main(args: Array<String>) {
                 Aoc202221.run1(fileName(yyyyDd))
                 Aoc202221.run2(fileName(yyyyDd))
             }
-            "2022/22" -> Aoc202222Part1.run(fileName(yyyyDd))
+            "2022/22" -> {
+                Aoc202222Part1.run(fileName(yyyyDd))
+                Aoc202222Part2.run(fileName(yyyyDd), test)
+            }
             "2022/23" -> Aoc202223.run(fileName(yyyyDd))
 
             else -> {
