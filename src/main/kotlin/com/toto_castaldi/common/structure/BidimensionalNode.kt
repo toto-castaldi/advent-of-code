@@ -2,9 +2,6 @@ package com.toto_castaldi.common.structure
 
 import kotlin.math.abs
 
-data class NodeAndCounting<T>(val node: BidimentionalNode<T>?, val countNodes: Int)
-
-
 class BidimentionalNode<T>(var data: T) {
 
     private var neighbors: MutableMap<IntCoordinates, BidimentionalNode<T>> = mutableMapOf<IntCoordinates, BidimentionalNode<T>>()
@@ -27,14 +24,6 @@ class BidimentionalNode<T>(var data: T) {
         neighbors[IntCoordinates(x, y)]?.neighbors?.remove(IntCoordinates(-x, -y))
         neighbors.remove(IntCoordinates(x, y))
         return this
-    }
-    /**
-     * moving from here to a distant node
-     */
-    fun resolve(
-        coordinates: IntCoordinates
-    ): BidimentionalNode<T>? {
-        return resolve(coordinates.x, coordinates.y)
     }
 
     /**
@@ -134,6 +123,13 @@ class BidimentionalNode<T>(var data: T) {
         /**
          * build and return the last node in the grid
          */
+        fun <T> build(matrix : List<List<T>>) : NodeAndCounting<T> {
+            return build(matrix) { _,_,i -> i }
+        }
+
+        /**
+         * build and return the last node in the grid
+         */
         fun <T, R> build(matrix : List<List<T>>, builder : (Int, Int, T) -> R) : NodeAndCounting<R> {
             var count = 0
             var pointer : BidimentionalNode<R>? = null
@@ -161,4 +157,6 @@ class BidimentionalNode<T>(var data: T) {
             return NodeAndCounting(pointer, count)
         }
     }
+
+    data class NodeAndCounting<T>(val node: BidimentionalNode<T>?, val countNodes: Int)
 }

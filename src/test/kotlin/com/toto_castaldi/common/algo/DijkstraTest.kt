@@ -10,16 +10,15 @@ class DijkstraTest {
     fun algoTest () {
         val graph = Graph("A" , "B" , "C" , "D" , "E")
 
-
         val dijkstra = Dijkstra(graph)
 
-        dijkstra.weight("A", "B", 6)
-        dijkstra.weight("A", "D", 1)
-        dijkstra.weight("B", "D", 2)
-        dijkstra.weight("D", "E", 1)
-        dijkstra.weight("B", "E", 2)
-        dijkstra.weight("B", "C", 5)
-        dijkstra.weight("C", "E", 5)
+        dijkstra.twoWays("A", "B", 6)
+        dijkstra.twoWays("A", "D", 1)
+        dijkstra.twoWays("B", "D", 2)
+        dijkstra.twoWays("D", "E", 1)
+        dijkstra.twoWays("B", "E", 2)
+        dijkstra.twoWays("B", "C", 5)
+        dijkstra.twoWays("C", "E", 5)
 
         val shortest: Map<String, Int> = dijkstra.shortestFrom("A")
 
