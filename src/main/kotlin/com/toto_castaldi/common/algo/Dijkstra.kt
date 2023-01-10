@@ -36,8 +36,9 @@ class Dijkstra<T>(private val graph: Graph<T>) {
         }
 
         var current = startingNode
-
-        while (unvisited.size > 0) {
+        var unvisitedChanged = true
+        
+        while (unvisited.size > 0 && unvisitedChanged) {
 
             var smallestDistance = Int.MAX_VALUE
 
@@ -60,7 +61,7 @@ class Dijkstra<T>(private val graph: Graph<T>) {
                 }
             }
 
-            unvisited.remove(current)
+            unvisitedChanged = unvisited.remove(current)
         }
 
         return computation.mapValues { entry -> entry.value.shortestDistance }
