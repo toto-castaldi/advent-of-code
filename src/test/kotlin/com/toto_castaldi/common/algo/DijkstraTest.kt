@@ -1,5 +1,6 @@
 package com.toto_castaldi.common.algo
 
+import com.toto_castaldi.common.structure.Graph
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -7,12 +8,10 @@ class DijkstraTest {
 
     @Test
     fun algoTest () {
-        val dijkstra = Dijkstra<String>()
-        dijkstra + "A"
-        dijkstra + "B"
-        dijkstra + "C"
-        dijkstra + "D"
-        dijkstra + "E"
+        val graph = Graph("A" , "B" , "C" , "D" , "E")
+
+
+        val dijkstra = Dijkstra(graph)
 
         dijkstra.weight("A", "B", 6)
         dijkstra.weight("A", "D", 1)

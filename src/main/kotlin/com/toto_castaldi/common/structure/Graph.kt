@@ -1,24 +1,34 @@
 package com.toto_castaldi.common.structure
 
-class Graph<T> : Iterable<Node<T>> {
+class Graph<T>(vararg nodeValues: T) : Iterable<Node<T>> {
 
-    private val nodes = mutableMapOf<String, Node<T>>()
+    private val nodes = mutableSetOf<Node<T>>()
 
-    fun getOrCreateNode(name: String, t: T): Node<T> {
-        return nodes[name] ?:run {
-            val result = Node(name, t)
-            nodes[name] = result
+    init {
+        for (t in nodeValues) {
+            getOrCreateNode(t)
+        }
+    }
+
+    operator fun plus(nodeVal: T): Graph<T> {
+        getOrCreateNode(nodeVal)
+        return this
+    }
+
+    fun getOrCreateNode(v: T): Node<T> {
+        return nodes.firstOrNull() { n -> n.data == v } ?:run {
+            val result = Node(v)
+            nodes.add(result)
             result
         }
     }
 
     override fun iterator(): Iterator<Node<T>> {
-        return nodes.values.iterator()
+        return nodes.iterator()
     }
 
-    operator fun get(name: String): Node<T>? {
-        return nodes[name]
+    operator fun get(v: T): Node<T>? {
+        return nodes.firstOrNull() { n -> n.data == v }
     }
-
 
 }
