@@ -108,17 +108,70 @@ class Aoc202212 () {
         val dijkstra = Dijkstra<XYH>(graph)
 
         BidimentionalNode.navigate(topLeft) {
-            n ->
-            n.u() ?.let { other -> if (n.data.h + 1 >= other.data.h ) dijkstra.oneWay(n.data, other.data, 1)}
-            n.d() ?.let { other -> if (n.data.h + 1 >= other.data.h ) dijkstra.oneWay(n.data, other.data, 1)}
-            n.l() ?.let { other -> if (n.data.h + 1 >= other.data.h ) dijkstra.oneWay(n.data, other.data, 1)}
-            n.r() ?.let { other -> if (n.data.h + 1 >= other.data.h ) dijkstra.oneWay(n.data, other.data, 1)}
+            from ->
+            val valid = { f: XYH, d: XYH -> f.h + 1 >= d.h }
+            from.u() ?.let { dest -> if (valid(from.data, dest.data)) dijkstra.oneWay(from.data, dest.data, 1)}
+            from.d() ?.let { dest -> if (valid(from.data, dest.data)) dijkstra.oneWay(from.data, dest.data, 1)}
+            from.l() ?.let { dest -> if (valid(from.data, dest.data)) dijkstra.oneWay(from.data, dest.data, 1)}
+            from.r() ?.let { dest -> if (valid(from.data, dest.data)) dijkstra.oneWay(from.data, dest.data, 1)}
         }
 
         println("${start.x} ${start.y}")
         println("${end.x} ${end.y}")
 
         return dijkstra.shortestFrom(start)[end]!!
+    }
+
+    fun fewestShortestPath(): Int {
+        var start = XYH(0,0,0)
+        var end = XYH(0,0,0)
+        val graph = Graph<XYH>()
+
+        val topLeft = BidimentionalNode.build(lines) {
+                x, y, c ->
+
+            val n = when (c) {
+                'S' -> {
+                    end = XYH(x, y, heightVal('a'))
+                    end
+                }
+                'E' -> {
+                    start = XYH(x, y, heightVal('z'))
+                    start
+                }
+                else -> {
+                    XYH(x, y, heightVal(c))
+                }
+            }
+
+            graph + n
+
+            n
+        }.node!!.topLeft()
+
+        BidimentionalNode.printNodes(topLeft) {
+            it.h.toString().padStart(3, ' ')
+        }
+
+        val dijkstra = Dijkstra<XYH>(graph)
+
+        BidimentionalNode.navigate(topLeft) {
+                from ->
+            val valid = { f: XYH, d: XYH -> f.h - d.h in (0 .. 1) || d.h - f.h > 1 }
+            from.u() ?.let { dest -> if (valid(from.data, dest.data)) dijkstra.oneWay(from.data, dest.data, 1)}
+            from.d() ?.let { dest -> if (valid(from.data, dest.data)) dijkstra.oneWay(from.data, dest.data, 1)}
+            from.l() ?.let { dest -> if (valid(from.data, dest.data)) dijkstra.oneWay(from.data, dest.data, 1)}
+            from.r() ?.let { dest -> if (valid(from.data, dest.data)) dijkstra.oneWay(from.data, dest.data, 1)}
+        }
+
+        println("${start.x} ${start.y}")
+        println("${end.x} ${end.y}")
+
+        return dijkstra.shortestFrom(start).filter {
+            entry ->
+
+            entry.key.h == 1
+        }.values.min()
     }
 
     fun part1(fileName: String) {
@@ -128,6 +181,15 @@ class Aoc202212 () {
         }
         println( aoc.shortestPath())
     }
+
+    fun part2(fileName: String) {
+        val aoc = Aoc202212()
+        File(fileName).forEachLine {
+            aoc + it
+        }
+        println( aoc.fewestShortestPath())
+    }
+
 }
 
 

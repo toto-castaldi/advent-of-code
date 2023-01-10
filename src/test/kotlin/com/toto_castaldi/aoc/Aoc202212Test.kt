@@ -19,4 +19,17 @@ class Aoc202212Test {
 
     }
 
+    @Test
+    fun part2Test() {
+        val aoc = Aoc202212()
+        aoc + "Sabqponm"
+        aoc + "abcryxxl"
+        aoc + "accszExk"
+        aoc + "acctuvwj"
+        aoc + "abdefghi"
+
+        assertEquals(29, aoc.fewestShortestPath())
+
+    }
+
 }

@@ -15,7 +15,10 @@ fun main(args: Array<String>) {
                 println(Aoc202211.build(fileName(yyyyDd)).part1())
                 println(Aoc202211.build(fileName(yyyyDd)).part2())
             }
-            "2022/12" -> Aoc202212().part1(fileName(yyyyDd))
+            "2022/12" -> {
+                Aoc202212().part1(fileName(yyyyDd))
+                Aoc202212().part2(fileName(yyyyDd))
+            }
             "2022/13" -> {
                 val aoc202213: Aoc202213 = Aoc202213.build(fileName(yyyyDd))
                 val correctOrderIndexes = aoc202213.correctOrderIndexes()

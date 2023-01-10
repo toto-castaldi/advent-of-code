@@ -37,7 +37,7 @@ class Dijkstra<T>(private val graph: Graph<T>) {
 
         var current = startingNode
         var unvisitedChanged = true
-        
+
         while (unvisited.size > 0 && unvisitedChanged) {
 
             var smallestDistance = Int.MAX_VALUE
