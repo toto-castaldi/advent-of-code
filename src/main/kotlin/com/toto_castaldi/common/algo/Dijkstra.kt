@@ -10,12 +10,7 @@ class Dijkstra<T>(private val graph: Graph<T>) {
 
     private val weights = mutableMapOf<FromTo<T, T>, Int>()
 
-    fun twoWays(fromNode: T, toNode: T, w: Int) {
-        weights[FromTo(fromNode, toNode)] = w
-        weights[FromTo(toNode, fromNode)] = w
-    }
-
-    fun oneWay(fromNode: T, toNode: T, w: Int) {
+    fun arc(fromNode: T, toNode: T, w: Int) {
         weights[FromTo(fromNode, toNode)] = w
     }
 
@@ -35,29 +30,23 @@ class Dijkstra<T>(private val graph: Graph<T>) {
             }
         }
 
-        var current = startingNode
+
         var unvisitedChanged = true
 
         while (unvisited.size > 0 && unvisitedChanged) {
 
-            var smallestDistance = Int.MAX_VALUE
+            val current = unvisited.minBy { node -> computation[node]!!.shortestDistance }
 
-            for (u in unvisited) {
-                val p = computation[u]!!
-                if (p.shortestDistance < smallestDistance) {
-                    smallestDistance = p.shortestDistance
-                    current = u
-                }
-            }
+            if (computation[current]!!.shortestDistance != Int.MAX_VALUE) {
+                for (unvisitedNeighbour in weights.filter { entry -> entry.key.from == current && entry.key.to in unvisited }) {
+                    val dest = unvisitedNeighbour.key.to
+                    val prev = computation[current]!!.shortestDistance
 
-            for (unvisitedNeighbour in weights.filter { entry -> entry.key.from == current && entry.key.to in unvisited }) {
-                val dest = unvisitedNeighbour.key.to
-                val prev = computation[current]!!.shortestDistance
+                    val dist = prev + weights[FromTo(current, dest)]!!
 
-                val dist = prev + weights[FromTo(current, dest)]!!
-
-                if (dist < computation[dest]!!.shortestDistance) {
-                    computation[dest] = DistancePrevious(dist, current)
+                    if (dist < computation[dest]!!.shortestDistance) {
+                        computation[dest] = DistancePrevious(dist, current)
+                    }
                 }
             }
 

@@ -12,13 +12,13 @@ class DijkstraTest {
 
         val dijkstra = Dijkstra(graph)
 
-        dijkstra.twoWays("A", "B", 6)
-        dijkstra.twoWays("A", "D", 1)
-        dijkstra.twoWays("B", "D", 2)
-        dijkstra.twoWays("D", "E", 1)
-        dijkstra.twoWays("B", "E", 2)
-        dijkstra.twoWays("B", "C", 5)
-        dijkstra.twoWays("C", "E", 5)
+        dijkstra.arc("A", "B", 6)
+        dijkstra.arc("A", "D", 1)
+        dijkstra.arc("D", "B", 2)
+        dijkstra.arc("D", "E", 1)
+        dijkstra.arc("B", "E", 2)
+        dijkstra.arc("B", "C", 5)
+        dijkstra.arc("E", "C", 5)
 
         val shortest: Map<String, Int> = dijkstra.shortestFrom("A")
 
