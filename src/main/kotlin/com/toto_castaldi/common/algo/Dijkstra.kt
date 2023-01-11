@@ -14,7 +14,7 @@ class Dijkstra<T>(private val graph: Graph<T>) {
         weights[FromTo(fromNode, toNode)] = w
     }
 
-    fun shortestFrom(startingNode: T): Map<T, Int> {
+    fun shortestFrom(startingNode: T): Map<T, Int?> {
         val unvisited = mutableSetOf<T>()
 
         val computation = mutableMapOf<T, DistancePrevious<T>>()
@@ -50,7 +50,7 @@ class Dijkstra<T>(private val graph: Graph<T>) {
             unvisited.remove(current)
         }
 
-        return computation.mapValues { entry -> entry.value.shortestDistance }
+        return computation.mapValues { entry -> if (entry.value.shortestDistance != Int.MAX_VALUE) entry.value.shortestDistance else null }
     }
 
     data class DistancePrevious<T>(val shortestDistance : Int, val previous: T?) {

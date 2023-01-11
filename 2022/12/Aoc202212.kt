@@ -83,11 +83,15 @@ class Aoc202212 () {
         println("${elementE.x} ${elementE.y}")
         println("${elementS.x} ${elementS.y}")
 
-        return dijkstra.shortestFrom(elementE).filter {
-            entry ->
+        val values = mutableListOf<Int>()
 
-            entry.key.h == 1
-        }.values.min()
+        for (v in dijkstra.shortestFrom(elementE).filter { entry ->
+            entry.key.h == 1 && entry.value != null
+        }.values) {
+            values.add(v!!)
+        }
+
+        return values.min()
     }
 
     fun part1(fileName: String) {

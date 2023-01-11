@@ -20,7 +20,7 @@ class DijkstraTest {
         dijkstra.arc("B", "C", 5)
         dijkstra.arc("E", "C", 5)
 
-        val shortest: Map<String, Int> = dijkstra.shortestFrom("A")
+        val shortest = dijkstra.shortestFrom("A")
 
         assertEquals(5, shortest.size)
         assertEquals(0, shortest["A"])
