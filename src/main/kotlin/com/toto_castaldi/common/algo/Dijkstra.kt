@@ -30,10 +30,7 @@ class Dijkstra<T>(private val graph: Graph<T>) {
             }
         }
 
-
-        var unvisitedChanged = true
-
-        while (unvisited.size > 0 && unvisitedChanged) {
+        while (unvisited.size > 0) {
 
             val current = unvisited.minBy { node -> computation[node]!!.shortestDistance }
 
@@ -50,7 +47,7 @@ class Dijkstra<T>(private val graph: Graph<T>) {
                 }
             }
 
-            unvisitedChanged = unvisited.remove(current)
+            unvisited.remove(current)
         }
 
         return computation.mapValues { entry -> entry.value.shortestDistance }
