@@ -34,7 +34,7 @@ class Dijkstra<T>(private val graph: Graph<T>) {
 
             val current = unvisited.minBy { node -> computation[node]!!.shortestDistance }
 
-            if (computation[current]!!.shortestDistance != Int.MAX_VALUE) {
+            if (!computation[current]!!.isInfinite()) {
                 for (unvisitedNeighbour in weights.filter { entry -> entry.key.from == current && entry.key.to in unvisited }) {
                     val dest = unvisitedNeighbour.key.to
                     val prev = computation[current]!!.shortestDistance
@@ -50,10 +50,12 @@ class Dijkstra<T>(private val graph: Graph<T>) {
             unvisited.remove(current)
         }
 
-        return computation.mapValues { entry -> if (entry.value.shortestDistance != Int.MAX_VALUE) entry.value.shortestDistance else null }
+        return computation.mapValues { entry -> if (entry.value.isInfinite()) null else entry.value.shortestDistance}
     }
 
     data class DistancePrevious<T>(val shortestDistance : Int, val previous: T?) {
+
+        val isInfinite = { shortestDistance == Int.MAX_VALUE }
 
         override fun toString(): String {
             return "$shortestDistance from $previous"
