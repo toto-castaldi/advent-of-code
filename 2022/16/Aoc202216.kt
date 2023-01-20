@@ -1,6 +1,11 @@
 import java.io.File
 
+
+
+
 class Aoc202216() {
+    private val startingValve = "AA"
+    private val minutesForTwo = 26
 
     private val valves = mutableMapOf<String, ValveDefinition>()
     private lateinit var cache : MutableMap<String, Int>
@@ -21,27 +26,31 @@ class Aoc202216() {
         return this
     }
 
-    private fun solve(pos: String, time: Int, opened: MutableSet<String>): Int {
-        val cacheKey = cacheKey(pos, time, opened)
+    private fun solve(currentValve: String, time: Int, openedValves: Set<String>, elephantWait : Boolean = false): Int {
+        val cacheKey = cacheKey(currentValve, time, openedValves, elephantWait)
         //memoization
         if (cache[cacheKey] != null) return cache[cacheKey]!!
 
         if (time == 0) {
+            if (elephantWait) {
+                return solve(startingValve, minutesForTwo, openedValves, false)
+            }
             return 0
         }
 
-        var score = valves[pos]!!.valveDestinations.maxOf { dest ->
+        val currentValveDefinition = valves[currentValve]!!
 
-            solve(dest, time - 1, opened)
+        var score = currentValveDefinition.valveDestinations.maxOf { dest ->
+            solve(dest, time - 1, openedValves, elephantWait)
         }
 
-        if (valves[pos]!!.valveRate > 0 && pos !in opened) {
+        if (currentValveDefinition.valveRate > 0 && currentValve !in openedValves) {
             //clone opened
-            val newOpened = opened.toMutableSet()
-            newOpened.add(pos)
+            val newOpened = openedValves.toMutableSet()
+            newOpened.add(currentValve)
             score = maxOf(
                 score,
-                (time - 1) * valves[pos]!!.valveRate + solve(pos, time - 1, newOpened,)
+                (time - 1) * currentValveDefinition.valveRate + solve(currentValve, time - 1, newOpened, elephantWait)
             )
         }
 
@@ -50,20 +59,31 @@ class Aoc202216() {
     }
 
     private val cacheKey = {
-            pos: String, time: Int, opened: MutableSet<String> ->
-            pos + "-" + time.toString() + "--" + opened.sorted().fold ( "") { s, acc -> "$acc;$s" }
+            pos: String, time: Int, opened: Set<String>, elephantWait : Boolean ->
+            pos + "-" + time.toString() + "--" + opened.sorted().fold ( "") { s, acc -> "$acc;$s" } + elephantWait.toString()
     }
 
-    fun mostPressureIn(minutes: Int): Int {
+    fun mostPressureBySingleOperator(): Int {
         cache = mutableMapOf<String, Int>()
-        return solve("AA", minutes, mutableSetOf(),)
+        return solve(startingValve, 30, setOf(),)
+    }
+
+    fun mostPressureByTwoOperator(): Int {
+        cache = mutableMapOf<String, Int>()
+        return solve(startingValve, minutesForTwo, setOf(), true)
     }
 
     companion object {
-        fun run(fileName: String): Int {
+        fun run1(fileName: String): Int {
             val aoc = Aoc202216()
             File(fileName).readLines().forEach { line -> aoc + line }
-            return aoc.mostPressureIn(30)
+            return aoc.mostPressureBySingleOperator()
+        }
+
+        fun run2(fileName: String): Int {
+            val aoc = Aoc202216()
+            File(fileName).readLines().forEach { line -> aoc + line }
+            return aoc.mostPressureByTwoOperator()
         }
     }
 
