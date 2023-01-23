@@ -12,10 +12,10 @@ class Aoc202217Test {
     }
 
     @Test
-    @Ignore
     fun part2() {
         val aoc = Aoc202217(">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>")
-        assertEquals(1514285714288, aoc.towerHeight(1000000000000))
+        aoc.findPattern(10)
+        //assertEquals(1514285714288, aoc.towerHeight(1000000000000))
     }
 
 

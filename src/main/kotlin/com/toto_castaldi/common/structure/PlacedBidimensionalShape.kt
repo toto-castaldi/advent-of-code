@@ -116,6 +116,35 @@ class PlacedBidimensionalShape(var anchorPoint: IntCoordinates, var shape: Bidim
         return false
     }
 
+    /**
+     *
+         ..#.#..
+         #####..
+         ..###..
+         ...#...
+         ..####.
+         #######
+        ,
+        6
+        ,
+        3
+
+        ->
+
+         ...#...
+         ..####.
+         #######
+
+     */
+    fun subFromBottom(bottomY: Int, height: Int): BidimensionalShape {
+        val visualDescription = mutableListOf<String>()
+        val mY = maxY()
+        for (y in 1 ..  height) {
+            visualDescription.add(0, shape.visualDescription[shape.visualDescription.size - y + bottomY - mY])
+        }
+        return BidimensionalShape(visualDescription.toTypedArray())
+    }
+
     val minX = { anchorPoint.x }
     val minY = { anchorPoint.y }
     val maxX = { anchorPoint.x + shape.getWidth() - 1}
@@ -125,27 +154,13 @@ class PlacedBidimensionalShape(var anchorPoint: IntCoordinates, var shape: Bidim
 
     companion object {
         fun verticalValues(pbs: PlacedBidimensionalShape): IntRange {
-            return pbs.anchorPoint.y ..pbs.shape.visualDescription.size + pbs.anchorPoint.y  - 1
+            return pbs.anchorPoint.y until pbs.shape.visualDescription.size + pbs.anchorPoint.y
         }
 
         fun horizontalValues(pbs: PlacedBidimensionalShape): IntRange {
-            return pbs.anchorPoint.x ..pbs.shape.getWidth() + pbs.anchorPoint.x  - 1
+            return pbs.anchorPoint.x until pbs.shape.getWidth() + pbs.anchorPoint.x
         }
 
-        fun print(shape: PlacedBidimensionalShape) {
-            val minX = shape.minX()
-            val maxX = shape.maxX()
-            val minY = shape.minY()
-            val maxY = shape.maxY()
-            for (y in minY..maxY) {
-                for (x in minX..maxX) {
-                    if (IntCoordinates(x,y) in shape) {
-                        print("#")
-                    } else print(".")
-                }
-                println()
-            }
-        }
     }
 
 }

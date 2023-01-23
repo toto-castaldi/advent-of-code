@@ -1,8 +1,5 @@
 import java.io.File
 
-
-
-
 class Aoc202216() {
     private val startingValve = "AA"
     private val minutesForTwo = 26

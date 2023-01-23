@@ -2,11 +2,11 @@ import com.toto_castaldi.common.structure.BidimensionalShape
 import com.toto_castaldi.common.structure.IntCoordinates
 import com.toto_castaldi.common.structure.PlacedBidimensionalShape
 import java.io.File
-import java.lang.Math.max
-import java.lang.Math.min
+import kotlin.math.max
+import kotlin.math.min
 
 class Aoc202217(val movements: String) {
-    private var cuttedStack: Long = 0
+
     private var pieceIndex = 0
     private var movIndex = 0
     private val base = BidimensionalShape(arrayOf("#######"))
@@ -72,26 +72,21 @@ class Aoc202217(val movements: String) {
             }
             movement = nextMovement()
 
-            val newStackShape = BidimensionalShape.base(stack.shape)
-
-            cuttedStack += stack.shape.getHeight() - newStackShape.getHeight()
-
-            stack =  PlacedBidimensionalShape(stack.anchorPoint, newStackShape )
-
             if (debug == 1) debugPrint(currentPiece)
         }
-        return stack.shape.getHeight() - 1 + cuttedStack
+        debugPrint(currentPiece)
+        return stack.shape.getHeight() - 1L
     }
 
 
-    private fun debugPrint(currentPiece: PlacedBidimensionalShape) {
-        val minX = min(currentPiece.minX(), stack.minX())
-        val maxX = max(currentPiece.maxX(), stack.maxX())
-        val minY = min(currentPiece.minY(), stack.minY())
-        val maxY = max(currentPiece.maxY(), stack.maxY())
+    private fun debugPrint(currentPiece: PlacedBidimensionalShape, includeStack: Boolean = true) {
+        val minX = if (includeStack) min(currentPiece.minX(), stack.minX()) else currentPiece.minX()
+        val maxX = if (includeStack) max(currentPiece.maxX(), stack.maxX()) else currentPiece.maxX()
+        val minY = if (includeStack) min(currentPiece.minY(), stack.minY()) else currentPiece.minY()
+        val maxY = if (includeStack) max(currentPiece.maxY(), stack.maxY()) else currentPiece.maxY()
         for (y in minY..maxY) {
             for (x in minX..maxX) {
-                if (IntCoordinates(x,y) in stack) {
+                if (IntCoordinates(x,y) in stack && includeStack) {
                     print("#")
                 } else if (IntCoordinates(x,y) in currentPiece) {
                     print("@")
@@ -110,6 +105,15 @@ class Aoc202217(val movements: String) {
     private fun nextPiece(): PlacedBidimensionalShape {
         val nextShape = pieces[(pieceIndex++) % pieces.size]
         return PlacedBidimensionalShape(IntCoordinates(3, stack.minY() - 3 - nextShape.getHeight()), nextShape)
+    }
+
+    fun findPattern(moves: Long) {
+        towerHeight(moves)
+        var bottomY = stack.maxY()
+        var patternHeight = 3
+        val subStack = stack.subFromBottom(bottomY - 1, patternHeight)
+        println()
+        BidimensionalShape.print(subStack)
     }
 
     companion object {
