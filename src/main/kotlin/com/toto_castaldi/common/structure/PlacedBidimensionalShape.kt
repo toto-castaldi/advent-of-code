@@ -140,7 +140,10 @@ class PlacedBidimensionalShape(var anchorPoint: IntCoordinates, var shape: Bidim
         val visualDescription = mutableListOf<String>()
         val mY = maxY()
         for (y in 1 ..  height) {
-            visualDescription.add(0, shape.visualDescription[shape.visualDescription.size - y + bottomY - mY])
+            val index = shape.visualDescription.size - y + bottomY - mY
+            if (index > 0) {
+                visualDescription.add(0, shape.visualDescription[index])
+            }
         }
         return BidimensionalShape(visualDescription.toTypedArray())
     }

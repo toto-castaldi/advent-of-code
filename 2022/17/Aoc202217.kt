@@ -74,7 +74,7 @@ class Aoc202217(val movements: String) {
 
             if (debug == 1) debugPrint(currentPiece)
         }
-        debugPrint(currentPiece)
+        //debugPrint(currentPiece)
         return stack.shape.getHeight() - 1L
     }
 
@@ -109,11 +109,49 @@ class Aoc202217(val movements: String) {
 
     fun findPattern(moves: Long) {
         towerHeight(moves)
+
         var bottomY = stack.maxY()
-        var patternHeight = 3
-        val subStack = stack.subFromBottom(bottomY - 1, patternHeight)
-        println()
-        BidimensionalShape.print(subStack)
+
+        val stackHeight = stack.shape.getHeight()
+
+        var foundPattern = false
+
+        while (!foundPattern) {
+            val patternHeight = 1
+
+            while (!foundPattern) {
+                val subStack = stack.subFromBottom(bottomY, patternHeight)
+                var y = 1
+
+                while (!foundPattern && y <= (stackHeight - patternHeight)) {
+                    val matchSub = stack.subFromBottom(bottomY - y, patternHeight)
+
+                    if (subStack == matchSub) {
+                        foundPattern = checkPattern(bottomY, bottomY - y)
+                    }
+
+                    y++
+                }
+
+                bottomY--
+            }
+
+        }
+
+
+    }
+
+    private fun checkPattern(lastY: Int, firstY: Int): Boolean {
+        if (lastY - firstY > 1) { //no adijacent lines
+            val patternHeight = lastY - firstY
+            val a = stack.subFromBottom(firstY, patternHeight)
+            val b = stack.subFromBottom(lastY, patternHeight)
+            if  (a == b) {
+                BidimensionalShape.print(b)
+                return true
+            }
+        }
+        return false
     }
 
     companion object {
