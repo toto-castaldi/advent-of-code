@@ -10,8 +10,8 @@ class Aoc202217(val movements: String) {
     private var piecesForBase: Long = 0L
     private var piecesForPattern: Long = 0L
     private var patternShape: BidimensionalShape? = null
-    private var pieceIndex = 0
-    private var movIndex = 0
+    //private var pieceIndex = 0
+    //private var movIndex = 0
     private val base = BidimensionalShape(arrayOf("#######"))
     private var stack = PlacedBidimensionalShape(IntCoordinates(1, 4), base)
     private val freeR = 7
@@ -43,6 +43,18 @@ class Aoc202217(val movements: String) {
     )
 
     fun towerHeight(maxStackedPiecesCountInput: Long, debug : Int = -1): Long {
+        var movIndex = 0
+        var pieceIndex = 0
+
+        val nextMovement = {
+            movements[(movIndex ++) % movements.length]
+        }
+
+        val nextPiece = {
+            val nextShape = pieces[(pieceIndex++) % pieces.size]
+            PlacedBidimensionalShape(IntCoordinates(3, stack.minY() - 3 - nextShape.getHeight()), nextShape)
+        }
+
         piecesLog = mutableMapOf<Int, Long>()
         stack = PlacedBidimensionalShape(IntCoordinates(1, 4), base)
         var maxStackedPiecesCount = maxStackedPiecesCountInput
@@ -123,16 +135,6 @@ class Aoc202217(val movements: String) {
         println()
     }
 
-
-    private fun nextMovement(): Char {
-        return movements[(movIndex ++) % movements.length]
-    }
-
-    private fun nextPiece(): PlacedBidimensionalShape {
-        val nextShape = pieces[(pieceIndex++) % pieces.size]
-        return PlacedBidimensionalShape(IntCoordinates(3, stack.minY() - 3 - nextShape.getHeight()), nextShape)
-    }
-
     fun patternInfo(moves: Long) {
         towerHeight(moves)
 
@@ -176,7 +178,7 @@ class Aoc202217(val movements: String) {
     }
 
     private fun checkPattern(lastY: Int, firstY: Int): Boolean {
-        if (lastY - firstY > 1) { //no adijacent lines
+        if (lastY - firstY > 3) { //no adijacent lines
             val patternHeight = lastY - firstY
             val a = stack.subFromBottom(firstY, patternHeight)
             val b = stack.subFromBottom(lastY, patternHeight)

@@ -14,7 +14,7 @@ class Aoc202217Test {
     @Test
     fun part2() {
         val aoc = Aoc202217(">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>")
-        aoc.patternInfo(5000)
+        aoc.patternInfo(200)
         assertEquals(1514285714288, aoc.towerHeight(1000000000000))
     }
 
