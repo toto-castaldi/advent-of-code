@@ -50,7 +50,6 @@ class Aoc202218Test {
     }
 
     @Test
-    @Ignore
     fun part2() {
         val aoc = Aoc202218()
         aoc.add(2,2,2)
