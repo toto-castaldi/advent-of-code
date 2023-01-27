@@ -1,29 +1,31 @@
 module Droplet() {
-	translate([2,2,2])
-		cube([1,1,1],true);
 	translate([1,2,2])
 		cube([1,1,1],true);
-	translate([3,2,2])
+	translate([1,2,5])
 		cube([1,1,1],true);
 	translate([2,1,2])
 		cube([1,1,1],true);
-	translate([2,3,2])
+	translate([2,1,5])
 		cube([1,1,1],true);
 	translate([2,2,1])
+		cube([1,1,1],true);
+	translate([2,2,2])
 		cube([1,1,1],true);
 	translate([2,2,3])
 		cube([1,1,1],true);
 	translate([2,2,4])
 		cube([1,1,1],true);
+	translate([2,2,5])
+		cube([1,1,1],true);
 	translate([2,2,6])
 		cube([1,1,1],true);
-	translate([1,2,5])
-		cube([1,1,1],true);
-	translate([3,2,5])
-		cube([1,1,1],true);
-	translate([2,1,5])
+	translate([2,3,2])
 		cube([1,1,1],true);
 	translate([2,3,5])
+		cube([1,1,1],true);
+	translate([3,2,2])
+		cube([1,1,1],true);
+	translate([3,2,5])
 		cube([1,1,1],true);
 }
 Droplet();

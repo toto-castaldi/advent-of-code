@@ -32,16 +32,13 @@ class Aoc202218() {
     }
 
     private fun update() {
-        //val minX = points.keys.minBy { it.x }.x
-        //val minY = points.keys.minBy { it.y }.y
-        //val minZ = points.keys.minBy { it.z }.z
-        sizeX = points.keys.maxBy { it.x }.x + 1//- minX
-        sizeY = points.keys.maxBy { it.y }.y + 1//- minY
-        sizeZ = points.keys.maxBy { it.z }.z + 1//- minZ
+        // +2 for allow Water flowing (step2)
+        sizeX = points.keys.maxBy { it.x }.x + 2
+        sizeY = points.keys.maxBy { it.y }.y + 2
+        sizeZ = points.keys.maxBy { it.z }.z + 2
 
         matrix = Matrix3D<Int>(sizeX , sizeY , sizeZ , AIR)
         points.entries.forEach {entry ->
-            //matrix[entry.key.x - minX, entry.key.y - minY, entry.key.z - minZ] = entry.value
             matrix[entry.key.x , entry.key.y , entry.key.z ] = entry.value
         }
     }
@@ -114,7 +111,7 @@ class Aoc202218() {
         if (matrix[x, y, z ] != AIR) throw Exception("invalid starting cube")
         AirToWater(x, y, z)
         //Air to Lava
-        for (p in matrix.iterator()) {
+        for (p in matrix) {
             if (matrix[p] == AIR) matrix[p] = LAVA
         }
         //Water to Air
@@ -128,6 +125,9 @@ class Aoc202218() {
         if (x < sizeX - 1 && matrix[x + 1, y, z] == AIR) AirToWater(x + 1, y, z)
         if (y < sizeY - 1 && matrix[x , y + 1, z] == AIR) AirToWater(x , y + 1, z)
         if (z < sizeZ - 1 && matrix[x , y, z + 1] == AIR) AirToWater(x , y , z + 1)
+        if (x > 0 && matrix[x - 1, y, z] == AIR) AirToWater(x - 1, y, z)
+        if (y > 0 && matrix[x ,y - 1, z] == AIR) AirToWater(x, y - 1, z)
+        if (z > 0 && matrix[x ,y , z - 1] == AIR) AirToWater(x, y, z - 1)
     }
 
     companion object {
@@ -143,9 +143,11 @@ class Aoc202218() {
             val openScadFileName = "${fileName.replace("input.txt", "droplet")}.2.scad"
             val openscadScript = File(openScadFileName).printWriter()
             openscadScript.println("module Droplet() {")
-            for (cube in aoc.points.keys) {
-                openscadScript.println("\ttranslate([${cube.x},${cube.y},${cube.z}])")
-                openscadScript.println("\t\tcube([1,1,1],true);")
+            for (p in aoc.matrix) {
+                if (aoc.matrix[p] == LAVA) {
+                    openscadScript.println("\ttranslate([${p.x},${p.y},${p.z}])")
+                    openscadScript.println("\t\tcube([1,1,1],true);")
+                }
             }
             openscadScript.println("}")
             openscadScript.println("Droplet();")
