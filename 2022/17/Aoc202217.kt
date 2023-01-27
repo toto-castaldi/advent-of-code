@@ -61,11 +61,8 @@ class Aoc202217(val movements: String) {
         var optimizationCount = 0L
 
         if (piecesForPattern != 0L && piecesForBase != 0L) {
-            println("$piecesForPattern $piecesForBase $maxStackedPiecesCount")
             optimizationCount = (maxStackedPiecesCount - piecesForBase) / piecesForPattern
-            println(optimizationCount)
             maxStackedPiecesCount -= optimizationCount * piecesForPattern
-            println("optimized is $maxStackedPiecesCount")
         }
 
         val boundX = freeL .. freeR
@@ -105,11 +102,8 @@ class Aoc202217(val movements: String) {
 
             if (debug == 1) debugPrint(currentPiece)
         }
-        //debugPrint(currentPiece)
+
         if (optimizationCount != 0L) {
-            println("current shape height ${stack.shape.getHeight()}")
-            println("optimizationCount ${optimizationCount}")
-            println("patternShape shape height ${patternShape!!.getHeight()}")
             return stack.shape.getHeight() - 1L + optimizationCount * patternShape!!.getHeight()
         } else {
             return stack.shape.getHeight() - 1L
@@ -156,18 +150,21 @@ class Aoc202217(val movements: String) {
                     if (subStack == matchSub) {
                         foundPattern = checkPattern(bottomY, bottomY - y)
                         if (foundPattern) {
-                            patternShape = stack.subFromBottom(bottomY, y)
-                            stackHeight = stack.shape.getHeight()
-                            val patternHeight = patternShape!!.getHeight()
-                            val baseHeight = stack.maxY() - bottomY
+                            var patternOnPiecePlaced = false
+                            while (!patternOnPiecePlaced) {
+                                patternShape = stack.subFromBottom(bottomY, y)
+                                stackHeight = stack.shape.getHeight()
+                                val patternHeight = patternShape!!.getHeight()
+                                val baseHeight = stack.maxY() - bottomY
 
-                            //println()
-                            //BidimensionalShape.print(stack.subFromBottom(stack.maxY(), baseHeight + 1))
-
-                            println("patternHeight $patternHeight baseHeight $baseHeight")
-
-                            piecesForBase = piecesLog[baseHeight]!!
-                            piecesForPattern = piecesLog[patternHeight + baseHeight]!! - piecesForBase
+                                piecesForBase = piecesLog[baseHeight]!!
+                                if (patternHeight + baseHeight in piecesLog) {
+                                    piecesForPattern = piecesLog[patternHeight + baseHeight]!! - piecesForBase
+                                    patternOnPiecePlaced = true
+                                } else {
+                                    bottomY --
+                                }
+                            }
                         }
                     }
                     y++
@@ -183,7 +180,6 @@ class Aoc202217(val movements: String) {
             val a = stack.subFromBottom(firstY, patternHeight)
             val b = stack.subFromBottom(lastY, patternHeight)
             if  (a == b) {
-                //BidimensionalShape.print(b)
                 return true
             }
         }
@@ -195,9 +191,9 @@ class Aoc202217(val movements: String) {
             println( Aoc202217(File(fileName).readLines().first()).towerHeight(maxStackedPiecesCount))
         }
 
-        fun run2(fileName: String, maxStackedPiecesCount: Long) {
+        fun run2(fileName: String, patternSearchIterations: Long, maxStackedPiecesCount: Long) {
             val aoc = Aoc202217(File(fileName).readLines().first())
-            aoc.patternInfo(5000)
+            aoc.patternInfo(patternSearchIterations)
             println(aoc.towerHeight(maxStackedPiecesCount))
         }
     }
