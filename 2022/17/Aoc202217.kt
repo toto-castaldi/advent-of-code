@@ -139,9 +139,7 @@ class Aoc202217(val movements: String) {
         var foundPattern = false
 
         while (!foundPattern) {
-
-            while (!foundPattern) {
-                val subStack = stack.subFromBottom(bottomY, 1)
+            val subStack = stack.subFromBottom(bottomY, 1)
                 var y = 1
 
                 while (!foundPattern && y <= (stackHeight - 1)) {
@@ -169,8 +167,7 @@ class Aoc202217(val movements: String) {
                     }
                     y++
                 }
-                bottomY--
-            }
+            bottomY--
         }
     }
 

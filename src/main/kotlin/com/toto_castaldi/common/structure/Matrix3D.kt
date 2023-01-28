@@ -56,16 +56,14 @@ class Matrix3D<T>(val nx: Int, val ny: Int, val nz: Int, val defValue : T) {
         return values.toString()
     }
 
-    operator fun iterator(): Iterator<IntCoordinates> {
-        return sequence<IntCoordinates> {
-            for (x in 0 until nx) {
-                for (y in 0 until ny) {
-                    for (z in 0 until nz) {
-                        yield(IntCoordinates(x, y, z))
-                    }
+    fun coordinates() = sequence<IntCoordinates> {
+        for (x in 0 until nx) {
+            for (y in 0 until ny) {
+                for (z in 0 until nz) {
+                    yield(IntCoordinates(x, y, z))
                 }
             }
-        }.iterator()
+        }
     }
 
 }

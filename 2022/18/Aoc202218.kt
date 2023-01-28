@@ -7,25 +7,17 @@ private const val AIR = -1
 private const val LAVA = 0
 private const val WATER = -2
 
-/**
- * 0 Lava
- * -1 Air
- * -2 Water
- */
 class Aoc202218() {
     private lateinit var matrix: Matrix3D<Int>
     private var sizeZ: Int = 0
     private var sizeY: Int = 0
     private var sizeX: Int = 0
-    val points = mutableMapOf<IntCoordinates, Int>()
+    private val points = mutableMapOf<IntCoordinates, Int>()
 
     fun add(x: Int, y: Int, z: Int) {
         add(x,y,z,LAVA)
     }
 
-    /**
-     * 1 base numeration
-     */
     fun add(x: Int, y: Int, z: Int, marker: Int) {
         points[IntCoordinates(x,y,z)] = marker
         update()
@@ -37,7 +29,7 @@ class Aoc202218() {
         sizeY = points.keys.maxBy { it.y }.y + 2
         sizeZ = points.keys.maxBy { it.z }.z + 2
 
-        matrix = Matrix3D<Int>(sizeX , sizeY , sizeZ , AIR)
+        matrix = Matrix3D(sizeX , sizeY , sizeZ , AIR)
         points.entries.forEach {entry ->
             matrix[entry.key.x , entry.key.y , entry.key.z ] = entry.value
         }
@@ -57,6 +49,12 @@ class Aoc202218() {
     }
 
     private fun count(direction: Int, maxAxis : Int, slice: (Int) -> Matrix2D<Int>): Int {
+        val countFilled = {
+            s: Matrix2D<Int> ->
+            s.fold(0) { acc, value ->
+                acc + value.count { v -> v != AIR }
+            }
+        }
         var count = 0
         var sliceB : Matrix2D<Int>? = null
         var axisProgression : IntProgression = 0 until maxAxis
@@ -78,12 +76,6 @@ class Aoc202218() {
             }
         }
         return count
-    }
-
-    private fun countFilled(slice: Matrix2D<Int>): Int {
-        return slice.fold(0) { acc, value ->
-            acc + value.count { v -> v != AIR }
-        }
     }
 
     private fun countY(dir: Int): Int {
@@ -109,25 +101,25 @@ class Aoc202218() {
         val y = 0
         val z = 0
         if (matrix[x, y, z ] != AIR) throw Exception("invalid starting cube")
-        AirToWater(x, y, z)
+        airToWater(x, y, z)
         //Air to Lava
-        for (p in matrix) {
+        for (p in matrix.coordinates()) {
             if (matrix[p] == AIR) matrix[p] = LAVA
         }
         //Water to Air
-        for (p in matrix) {
+        for (p in matrix.coordinates()) {
             if (matrix[p] == WATER) matrix[p] = AIR
         }
     }
 
-    private fun AirToWater(x: Int, y: Int, z: Int) {
+    private fun airToWater(x: Int, y: Int, z: Int) {
         matrix[x, y, z] = WATER //from air to water
-        if (x < sizeX - 1 && matrix[x + 1, y, z] == AIR) AirToWater(x + 1, y, z)
-        if (y < sizeY - 1 && matrix[x , y + 1, z] == AIR) AirToWater(x , y + 1, z)
-        if (z < sizeZ - 1 && matrix[x , y, z + 1] == AIR) AirToWater(x , y , z + 1)
-        if (x > 0 && matrix[x - 1, y, z] == AIR) AirToWater(x - 1, y, z)
-        if (y > 0 && matrix[x ,y - 1, z] == AIR) AirToWater(x, y - 1, z)
-        if (z > 0 && matrix[x ,y , z - 1] == AIR) AirToWater(x, y, z - 1)
+        if (x < sizeX - 1 && matrix[x + 1, y, z] == AIR) airToWater(x + 1, y, z)
+        if (y < sizeY - 1 && matrix[x , y + 1, z] == AIR) airToWater(x , y + 1, z)
+        if (z < sizeZ - 1 && matrix[x , y, z + 1] == AIR) airToWater(x , y , z + 1)
+        if (x > 0 && matrix[x - 1, y, z] == AIR) airToWater(x - 1, y, z)
+        if (y > 0 && matrix[x ,y - 1, z] == AIR) airToWater(x, y - 1, z)
+        if (z > 0 && matrix[x ,y , z - 1] == AIR) airToWater(x, y, z - 1)
     }
 
     companion object {
@@ -143,7 +135,7 @@ class Aoc202218() {
             val openScadFileName = "${fileName.replace("input.txt", "droplet")}.2.scad"
             val openscadScript = File(openScadFileName).printWriter()
             openscadScript.println("module Droplet() {")
-            for (p in aoc.matrix) {
+            for (p in aoc.matrix.coordinates()) {
                 if (aoc.matrix[p] == LAVA) {
                     openscadScript.println("\ttranslate([${p.x},${p.y},${p.z}])")
                     openscadScript.println("\t\tcube([1,1,1],true);")
