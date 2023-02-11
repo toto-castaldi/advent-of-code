@@ -10,7 +10,7 @@ class Dijkstra<T>(private val graph: Graph<T>) {
 
     private val weights = mutableMapOf<FromTo<T, T>, Int>()
 
-    fun arc(fromNode: T, toNode: T, w: Int) {
+    fun edge(fromNode: T, toNode: T, w: Int) {
         weights[FromTo(fromNode, toNode)] = w
     }
 

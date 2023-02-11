@@ -12,13 +12,13 @@ class DijkstraTest {
 
         val dijkstra = Dijkstra(graph)
 
-        dijkstra.arc("A", "B", 6)
-        dijkstra.arc("A", "D", 1)
-        dijkstra.arc("D", "B", 2)
-        dijkstra.arc("D", "E", 1)
-        dijkstra.arc("B", "E", 2)
-        dijkstra.arc("B", "C", 5)
-        dijkstra.arc("E", "C", 5)
+        dijkstra.edge("A", "B", 6)
+        dijkstra.edge("A", "D", 1)
+        dijkstra.edge("D", "B", 2)
+        dijkstra.edge("D", "E", 1)
+        dijkstra.edge("B", "E", 2)
+        dijkstra.edge("B", "C", 5)
+        dijkstra.edge("E", "C", 5)
 
         val shortest = dijkstra.shortestFrom("A")
 
