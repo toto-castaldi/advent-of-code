@@ -98,7 +98,7 @@ class Aoc202219() {
                     continue
                 }
 
-                val nextStuff = mapOf(
+                val nextStuff = mutableMapOf(
                     MATERIAL.ORE to stuff[MATERIAL.ORE]!! + (robots[MATERIAL.ORE]!! * (wait + 1)) - cost.ore,
                     MATERIAL.CLAY to stuff[MATERIAL.CLAY]!! + (robots[MATERIAL.CLAY]!! * (wait + 1)) - cost.clay,
                     MATERIAL.OBSIDIAN to stuff[MATERIAL.OBSIDIAN]!! + (robots[MATERIAL.OBSIDIAN]!! * (wait + 1)) - cost.obsidian,
@@ -114,6 +114,14 @@ class Aoc202219() {
 
                 nextRobots[resource] = nextRobots[resource]!! + 1
 
+                for (nextStuffRes in MATERIAL.values()) {
+                    if (nextStuffRes != MATERIAL.GEODE) {
+                        nextStuff[nextStuffRes] = minOf(
+                            nextStuff[nextStuffRes]!!, maxSpend[nextStuffRes]!! * (executionTime - wait - 1)
+                        )
+                    }
+                }
+
                 queue.add(BluePrintExecution(executionTime - wait - 1, nextStuff, nextRobots))
             }
 
@@ -122,18 +130,36 @@ class Aoc202219() {
         return best
     }
 
+    fun part2(t: Int): Int {
+        var result = 1
+
+        for (line in lines.subList(0, 3)) {
+            result *= solve(line, t)
+        }
+
+        return result
+    }
+
     data class  RobotCost(val ore: Int, val clay: Int, val obsidian: Int, val geode: Int)
 
     data class BluePrintExecution(val t: Int, val stuff: Map<MATERIAL, Int>, val robots: Map<MATERIAL, Int>)
 
 
     companion object {
-        fun run(fileName: String) {
+        fun run1(fileName: String) {
             val aoc = Aoc202219()
             File(fileName).forEachLine { line ->
                 aoc + line
             }
             println( aoc.part1(24))
+        }
+
+        fun run2(fileName: String) {
+            val aoc = Aoc202219()
+            File(fileName).forEachLine { line ->
+                aoc + line
+            }
+            println( aoc.part2(32))
         }
     }
 

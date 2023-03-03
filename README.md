@@ -62,7 +62,7 @@ Tested with Kotlink version 1.7.21 and Java openjdk 17.0.3 2022-04-19
 - 2022.11.2 [William Y. Feng video](https://www.youtube.com/watch?v=63-uEScYUvM)
 - 2022.16.1 and 2022.16.2 [0xdf Video](https://www.youtube.com/watch?v=rN4tVLnkgJU)
 - 2022.17.2 [Salvan13](https://github.com/salvan13/advent-of-code/tree/main/2022/17)
-- 2022.19.1 [0xdf Video](https://youtu.be/iIqIc5T2XpM)
+- 2022.19.1 and 2022.19.2 [0xdf Video](https://youtu.be/iIqIc5T2XpM)
 
 ## My status
 
@@ -80,4 +80,4 @@ Tested with Kotlink version 1.7.21 and Java openjdk 17.0.3 2022-04-19
 
 ![2021 Calendar](./2021.12.1-calendar.png?&raw=true "2021 Calendar")
 
-![2022 Calendar](./2022.19.1-calendar.png?&raw=true "2022 Calendar")
+![2022 Calendar](./2022.19.2-calendar.png?&raw=true "2022 Calendar")
