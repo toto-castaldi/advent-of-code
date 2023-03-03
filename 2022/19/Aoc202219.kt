@@ -1,230 +1,130 @@
-class Aoc202219() {
+import java.util.*
+import kotlin.math.ceil
 
-    private val bluePrints = mutableSetOf<BluePrint>()
-    private val executions = mutableMapOf<Int, BluePrintExecution>()
-    private val cache = mutableMapOf<String, Int>()
+class Aoc202219() {
 
     enum class MATERIAL {
         ORE, CLAY, OBSIDIAN, GEODE
     }
 
-    private fun maxGeodes(minutes: Int, execution: BluePrintExecution, bluePrint: BluePrint, shouldBuildRobot : MATERIAL? = null): Int {
-        if (minutes == 0) {
-            return 0
-        }
+    private val lines = mutableListOf<String>()
 
-        val cacheKey = cacheKey(minutes, execution, bluePrint.id, shouldBuildRobot)
-        if (cacheKey in cache.keys) return cache[cacheKey]!!
-
-
-        execution.robotsProduction()
-
-        if (shouldBuildRobot != null && execution.canBuild(shouldBuildRobot, bluePrint)) {
-            execution.build(shouldBuildRobot, bluePrint)
-        }
-
-        val scoresMaterial = mutableMapOf<MATERIAL, Int>()
-        for (material in MATERIAL.values()) {
-            scoresMaterial[material] = execution.productionOf(MATERIAL.GEODE) + maxGeodes(minutes - 1, execution.bake(), bluePrint, material)
-        }
-
-        val result = scoresMaterial.values.max()
-        cache[cacheKey] = result
-
-        return result
-    }
-
-    private fun cacheKey(
-        minutes: Int,
-        execution: BluePrintExecution,
-        id: Int,
-        shouldBuildRobot: MATERIAL?
-    ): String {
-        return "$minutes-$execution-$id-$shouldBuildRobot"
-    }
-
-    fun qualityLevels(minutes : Int): Map<Int, Int> {
-        val result = mutableMapOf<Int, Int>()
-        for (entry in executions) {
-            val id = entry.key
-            val execution = entry.value
-            val bluePrint = bluePrints.find { bluePrint -> bluePrint.id == id }!!
-
-            val maxGeodes = maxGeodes(minutes, execution, bluePrint)
-
-            result[id] = maxGeodes
-        }
-        return result
-    }
 
     operator fun plus(bluePrint: String) {
-        val bpIdRegex = "Blueprint (\\d+):".toRegex().find(bluePrint)!!
-        val id = bpIdRegex.groups[1]!!.value.toInt()
-        val robots = bluePrint.split(":")[1].trim()
-        val oreForRobotOre = robots.split("Each ore robot costs ")[1].split("ore")[0].trim().toInt()
-        val oreForRobotClay = robots.split("Each clay robot costs ")[1].split("ore")[0].trim().toInt()
-        val oreForRobotObsidian = robots.split("Each obsidian robot costs ")[1].split("ore")[0].trim().toInt()
-        val clayForRobotObsidian = robots.split("Each obsidian robot costs $oreForRobotObsidian ore and ")[1].split("clay")[0].trim().toInt()
-        val oreForRobotGeode = robots.split("Each geode robot costs ")[1].split("ore")[0].trim().toInt()
-        val obsidianForRobotGeode = robots.split("Each geode robot costs $oreForRobotGeode ore and ")[1].split("obsidian")[0].trim().toInt()
-
-        val bluePrint = BluePrint(id) + RobotOre(oreForRobotOre) + RobotClay(oreForRobotClay) + RobotObsidian(oreForRobotObsidian, clayForRobotObsidian) + RobotGeode(oreForRobotGeode, obsidianForRobotGeode)
-        executions[id] = BluePrintExecution() + bluePrint.getRobot(MATERIAL.ORE)
-        bluePrints.add(bluePrint)
+        lines.add(bluePrint)
     }
 
-    class BluePrintExecution {
-        private val robots = mapOf(MATERIAL.CLAY to mutableListOf<Robot>(), MATERIAL.OBSIDIAN to mutableListOf<Robot>(), MATERIAL.GEODE to mutableListOf<Robot>(), MATERIAL.ORE to mutableListOf<Robot>())
-        private val materials = mutableMapOf(MATERIAL.CLAY to 0, MATERIAL.OBSIDIAN to 0, MATERIAL.GEODE to 0, MATERIAL.ORE to 0)
-        operator fun plus(robot: Robot): BluePrintExecution {
-            val m = robot.producing()
-            robots[m]!!.add(robot)
-            return this
+    fun part1(t: Int): Int {
+        var result = 0
+
+        for ((i, line) in lines.withIndex()) {
+            result += (i+1) * solve(line, t)
         }
 
-        fun productionOf(material: MATERIAL) : Int {
-            return materials[material]!!
-        }
+        return result
+    }
 
-        fun robotsProduction() {
-            for (pr in robots) {
-                val producing = pr.key
-                materials[producing] = materials[producing]!! + pr.value.size
+    private fun solve(bluePrintDesc: String, t: Int): Int {
+        val robotsDesc = bluePrintDesc.split(":")[1].trim()
+        val oreForRobotOre = robotsDesc.split("Each ore robot costs ")[1].split("ore")[0].trim().toInt()
+        val oreForRobotClay = robotsDesc.split("Each clay robot costs ")[1].split("ore")[0].trim().toInt()
+        val oreForRobotObsidian = robotsDesc.split("Each obsidian robot costs ")[1].split("ore")[0].trim().toInt()
+        val clayForRobotObsidian = robotsDesc.split("Each obsidian robot costs $oreForRobotObsidian ore and ")[1].split("clay")[0].trim().toInt()
+        val oreForRobotGeode = robotsDesc.split("Each geode robot costs ")[1].split("ore")[0].trim().toInt()
+        val obsidianForRobotGeode = robotsDesc.split("Each geode robot costs $oreForRobotGeode ore and ")[1].split("obsidian")[0].trim().toInt()
+
+        val maxSpend = mapOf(
+            MATERIAL.ORE to maxOf(oreForRobotOre, oreForRobotClay, oreForRobotObsidian, oreForRobotGeode),
+            MATERIAL.CLAY to clayForRobotObsidian,
+            MATERIAL.OBSIDIAN to obsidianForRobotGeode,
+            MATERIAL.GEODE to 0
+        )
+
+        val costs = mapOf(
+            MATERIAL.ORE to RobotCost(oreForRobotOre, 0, 0, 0),
+            MATERIAL.CLAY to RobotCost(oreForRobotClay, 0, 0, 0),
+            MATERIAL.OBSIDIAN to RobotCost(oreForRobotObsidian, clayForRobotObsidian, 0, 0),
+            MATERIAL.GEODE to RobotCost(oreForRobotGeode, 0, obsidianForRobotGeode, 0)
+        )
+
+        val queue: Queue<BluePrintExecution> = LinkedList()
+        queue.add(BluePrintExecution(
+            t,
+            mapOf( MATERIAL.ORE to 0, MATERIAL.CLAY to 0, MATERIAL.OBSIDIAN to 0, MATERIAL.GEODE to 0 ),
+            mapOf( MATERIAL.ORE to 1, MATERIAL.CLAY to 0, MATERIAL.OBSIDIAN to 0, MATERIAL.GEODE to 0 )
+        ))
+
+        val seen = mutableSetOf<BluePrintExecution>()
+
+        var best = 0
+
+        while (queue.isNotEmpty()) {
+            val execution = queue.remove()
+            val (executionTime, stuff, robots) = execution
+
+            val minGeodeLeft = stuff[MATERIAL.GEODE]!! + (executionTime * robots[MATERIAL.GEODE]!!)
+            if (minGeodeLeft > best) {
+                best = minGeodeLeft
             }
-        }
 
-        fun canBuild(material: MATERIAL, bluePrint: BluePrint): Boolean {
-            val robot = bluePrint.getRobot(material)
-            return robot.canBuild(materials)
-        }
+            if (executionTime == 0 || execution in seen) {
+                continue
+            }
 
-        fun build(material: MATERIAL, bluePrint: BluePrint) {
-            val robot = bluePrint.getRobot(material)
-            robot.build(materials)
-            this + robot
-        }
+            seen.add(execution)
 
-        fun bake(): BluePrintExecution {
-            val result = BluePrintExecution()
-            for (robot in robots) {
-                for (r in robot.value) {
-                    result + r
+            for (resource in MATERIAL.values()) {
+                val cost = costs[resource]!!
+
+                if (resource != MATERIAL.GEODE && robots[resource]!! >= maxSpend[resource]!!) {
+                    continue
                 }
+
+                if (cost.ore > 0 && robots[MATERIAL.ORE]!! == 0) continue
+                if (cost.clay > 0 && robots[MATERIAL.CLAY]!! == 0) continue
+                if (cost.obsidian > 0 && robots[MATERIAL.OBSIDIAN]!! == 0) continue
+                if (cost.geode > 0 && robots[MATERIAL.GEODE]!! == 0) continue
+
+                val wait = maxOf(
+                    if (cost.ore > 0) ceil((cost.ore - stuff[MATERIAL.ORE]!!).toDouble() / robots[MATERIAL.ORE]!!.toDouble()).toInt() else 0,
+                    if (cost.clay > 0) ceil((cost.clay - stuff[MATERIAL.CLAY]!!).toDouble() / robots[MATERIAL.CLAY]!!.toDouble()).toInt() else 0,
+                    if (cost.obsidian > 0) ceil((cost.obsidian - stuff[MATERIAL.OBSIDIAN]!!).toDouble() / robots[MATERIAL.OBSIDIAN]!!.toDouble()).toInt() else 0,
+                    if (cost.geode > 0) ceil((cost.geode - stuff[MATERIAL.GEODE]!!).toDouble() / robots[MATERIAL.GEODE]!!.toDouble()).toInt() else 0,
+                    0 //avoid negative
+                )
+
+                if (executionTime - wait - 1 < 0) {
+                    continue
+                }
+
+                val nextStuff = mapOf(
+                    MATERIAL.ORE to stuff[MATERIAL.ORE]!! + (robots[MATERIAL.ORE]!! * (wait + 1)) - cost.ore,
+                    MATERIAL.CLAY to stuff[MATERIAL.CLAY]!! + (robots[MATERIAL.CLAY]!! * (wait + 1)) - cost.clay,
+                    MATERIAL.OBSIDIAN to stuff[MATERIAL.OBSIDIAN]!! + (robots[MATERIAL.OBSIDIAN]!! * (wait + 1)) - cost.obsidian,
+                    MATERIAL.GEODE to stuff[MATERIAL.GEODE]!! + (robots[MATERIAL.GEODE]!! * (wait + 1)) - cost.geode
+                )
+
+                val nextRobots = mutableMapOf(
+                    MATERIAL.ORE to robots[MATERIAL.ORE]!!,
+                    MATERIAL.CLAY to robots[MATERIAL.CLAY]!!,
+                    MATERIAL.OBSIDIAN to robots[MATERIAL.OBSIDIAN]!!,
+                    MATERIAL.GEODE to robots[MATERIAL.GEODE]!!
+                )
+
+                nextRobots[resource] = nextRobots[resource]!! + 1
+
+                queue.add(BluePrintExecution(executionTime - wait - 1, nextStuff, nextRobots))
             }
-            for (e in materials) {
-                result.materials[e.key] = e.value
-            }
-            return result
+
         }
 
-        override fun toString(): String {
-            var result = "R{"
-            for (m in MATERIAL.values()) {
-                result += "$m->${robots[m]!!.size},"
-            }
-            return "$result} M$materials"
-        }
+        return best
     }
 
-    class RobotClay(private val ore: Int) : Robot{
-        override fun producing(): MATERIAL {
-            return MATERIAL.CLAY
-        }
+    data class  RobotCost(val ore: Int, val clay: Int, val obsidian: Int, val geode: Int)
 
-        override fun canBuild(materials: MutableMap<MATERIAL, Int>): Boolean {
-            return materials[MATERIAL.ORE]!! >= ore
-        }
+    data class BluePrintExecution(val t: Int, val stuff: Map<MATERIAL, Int>, val robots: Map<MATERIAL, Int>)
 
-        override fun build(materials: MutableMap<MATERIAL, Int>) {
-            materials[MATERIAL.ORE] = materials[MATERIAL.ORE]!! - ore
-        }
-
-        override fun bake(): Robot {
-            return RobotClay(ore)
-        }
-
-    }
-
-    class RobotOre(private val ore: Int): Robot {
-        override fun producing(): MATERIAL {
-            return MATERIAL.ORE
-        }
-
-        override fun canBuild(materials: MutableMap<MATERIAL, Int>): Boolean {
-            return materials[MATERIAL.ORE]!! >= ore
-        }
-
-        override fun build(materials: MutableMap<MATERIAL, Int>) {
-            materials[MATERIAL.ORE] = materials[MATERIAL.ORE]!! - ore
-        }
-
-        override fun bake(): Robot {
-            return RobotOre(ore)
-        }
-
-    }
-
-    class RobotObsidian(private val ore: Int, private val clay : Int): Robot {
-        override fun producing(): MATERIAL {
-            return MATERIAL.OBSIDIAN
-        }
-
-        override fun canBuild(materials: MutableMap<MATERIAL, Int>): Boolean {
-            return materials[MATERIAL.ORE]!! >= ore && materials[MATERIAL.CLAY]!! >= clay
-        }
-
-        override fun build(materials: MutableMap<MATERIAL, Int>) {
-            materials[MATERIAL.ORE] = materials[MATERIAL.ORE]!! - ore
-            materials[MATERIAL.CLAY] = materials[MATERIAL.CLAY]!! - clay
-        }
-
-        override fun bake(): Robot {
-            return RobotObsidian(ore, clay)
-        }
-
-    }
-
-    class RobotGeode(private val ore: Int, private val obsidian : Int): Robot {
-        override fun producing(): MATERIAL {
-            return MATERIAL.GEODE
-        }
-
-        override fun canBuild(materials: MutableMap<MATERIAL, Int>): Boolean {
-            return materials[MATERIAL.ORE]!! >= ore && materials[MATERIAL.OBSIDIAN]!! >= obsidian
-        }
-
-        override fun build(materials: MutableMap<MATERIAL, Int>) {
-            materials[MATERIAL.ORE] = materials[MATERIAL.ORE]!! - ore
-            materials[MATERIAL.OBSIDIAN] = materials[MATERIAL.OBSIDIAN]!! - obsidian
-        }
-
-        override fun bake(): Robot {
-            return RobotGeode(ore, obsidian)
-        }
-
-    }
-
-    interface Robot {
-        fun producing(): MATERIAL
-        fun canBuild(materials: MutableMap<MATERIAL, Int>): Boolean
-        fun build(materials: MutableMap<MATERIAL, Int>)
-        fun bake(): Robot
-
-    }
-
-    class BluePrint(val id : Int) {
-        private val robots = mutableMapOf<MATERIAL, Robot>()
-
-        operator fun plus(robot: Robot): BluePrint {
-            robots[robot.producing()] = robot
-            return this
-        }
-
-        fun getRobot(m: MATERIAL): Robot {
-            return robots[m]!!
-        }
-
-    }
 
     companion object {
         fun run(fileName: String) {
