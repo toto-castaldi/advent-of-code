@@ -1,3 +1,4 @@
+import java.io.File
 import java.util.*
 import kotlin.math.ceil
 
@@ -128,7 +129,11 @@ class Aoc202219() {
 
     companion object {
         fun run(fileName: String) {
-            println( fileName)
+            val aoc = Aoc202219()
+            File(fileName).forEachLine { line ->
+                aoc + line
+            }
+            println( aoc.part1(24))
         }
     }
 
