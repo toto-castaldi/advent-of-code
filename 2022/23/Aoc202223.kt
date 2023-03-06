@@ -5,7 +5,6 @@ import java.io.File
 class Aoc202223() {
 
     private var elveMoved = false
-
     private var elves = mutableSetOf<IntCoordinates>()
     private val rules = listOf(
         {
