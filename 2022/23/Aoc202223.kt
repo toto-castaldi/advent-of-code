@@ -140,14 +140,22 @@ class Aoc202223() {
 
     companion object {
 
-        fun run(fileName: String) {
+        fun run1(fileName: String) {
             val aoc = Aoc202223()
             var y = 0
             File(fileName).forEachLine {
-                aoc.map(y, it)
-                y ++
+                aoc.map(y++, it)
             }
             println( aoc.emptyGroud(10))
+        }
+
+        fun run2(fileName: String) {
+            val aoc = Aoc202223()
+            var y = 0
+            File(fileName).forEachLine {
+                aoc.map(y++, it)
+            }
+            println( aoc.roundNumberWithElvesStuck())
         }
 
     }
