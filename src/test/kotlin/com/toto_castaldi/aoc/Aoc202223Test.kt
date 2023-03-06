@@ -20,4 +20,18 @@ class Aoc202223Test {
         assertEquals(110, aoc.emptyGroud(10))
     }
 
+    @Test
+    fun part2() {
+        val aoc = Aoc202223()
+        aoc.map(0, "....#..")
+        aoc.map(1, "..###.#")
+        aoc.map(2, "#...#.#")
+        aoc.map(3, ".#...##")
+        aoc.map(4, "#.###..")
+        aoc.map(5, "##.#.##")
+        aoc.map(6, ".#..#..")
+
+        assertEquals(20, aoc.roundNumberWithElvesStuck())
+    }
+
 }
