@@ -1,6 +1,5 @@
 import com.toto_castaldi.common.WindRose
 import com.toto_castaldi.common.structure.IntCoordinates
-import com.toto_castaldi.common.structure.Matrix2D
 
 class Aoc202223() {
 
@@ -53,20 +52,41 @@ class Aoc202223() {
     }
 
     fun emptyGroud(roundCount: Int): Int {
+        var minx = elves.first().x
+        var maxx = elves.first().x
+        var miny = elves.first().y
+        var maxy = elves.first().y
         for (round in 0 until roundCount) {
+
             //proposition
             val elveProp = mutableMapOf<IntCoordinates, IntCoordinates>()
             val propCount = mutableMapOf<IntCoordinates, Int>()
             for (elve in elves) {
-                var proposition: IntCoordinates? = null
-                for (i in 0 until rules.size) {
-                    if (proposition == null) {
-                        proposition = rules[(roundCount + i) % rules.size](elve, elves)
+                if (
+                    WindRose.n(elve) in elves ||
+                    WindRose.ne(elve) in elves ||
+                    WindRose.e(elve) in elves ||
+                    WindRose.se(elve) in elves ||
+                    WindRose.s(elve) in elves ||
+                    WindRose.sw(elve) in elves ||
+                    WindRose.w(elve) in elves ||
+                    WindRose.nw(elve) in elves
+                ) {
+                    var proposition: IntCoordinates? = null
+                    var indeces = ""
+
+                    for (i in 0 until rules.size) {
+                        if (proposition == null) {
+                            indeces += ((round + i) % rules.size).toString() + "-"
+                            proposition = rules[(round + i) % rules.size](elve, elves)
+                        }
+
                     }
-                }
-                if (proposition != null) {
-                    elveProp[elve] = proposition
-                    propCount[proposition] = (propCount[proposition] ?: 0) + 1
+                    //println(indeces)
+                    if (proposition != null) {
+                        elveProp[elve] = proposition
+                        propCount[proposition] = (propCount[proposition] ?: 0) + 1
+                    }
                 }
             }
             //moving
@@ -74,37 +94,29 @@ class Aoc202223() {
             for (elve in elves) {
                 if (elveProp[elve] != null) {
                     val prop = elveProp[elve]!!
-                    if (propCount[prop] ?: 0 == 1) {
+                    if ((propCount[prop] ?: 0) == 1) {
+                        newElves.add(prop)
+                    } else {
                         newElves.add(elve)
                     }
+                } else {
+                    newElves.add(elve)
                 }
             }
             elves = newElves
-            debug(elves)
+
         }
 
-
-        //count
-        var total = 0
         for (elve in elves) {
-            if (WindRose.n(elve) !in elves) total ++
-            if (WindRose.ne(elve) !in elves) total ++
-            if (WindRose.e(elve) !in elves) total ++
-            if (WindRose.se(elve) !in elves) total ++
-            if (WindRose.s(elve) !in elves) total ++
-            if (WindRose.sw(elve) !in elves) total ++
-            if (WindRose.w(elve) !in elves) total ++
-            if (WindRose.nw(elve) !in elves) total ++
+            if (elve.x < minx) minx = elve.x
+            if (elve.x > maxx) maxx = elve.x
+            if (elve.y < miny) miny = elve.y
+            if (elve.y > maxy) maxy = elve.y
         }
 
-        return total
-    }
+        println("$minx, $maxx, $miny, $maxy")
+        return (maxx - minx + 1) * (maxy - miny + 1) - elves.size
 
-    private fun debug(elves: MutableSet<IntCoordinates>) {
-        val matrix2D = Matrix2D(10, 10, '.')
-        for (elve in elves) {
-
-        }
     }
 
     companion object {

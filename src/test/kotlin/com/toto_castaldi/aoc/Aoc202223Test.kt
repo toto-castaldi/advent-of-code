@@ -7,7 +7,6 @@ class Aoc202223Test {
 
 
     @Test
-    @Ignore
     fun part1() {
         val aoc = Aoc202223()
         aoc.map(0, "....#..")
