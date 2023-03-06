@@ -55,24 +55,15 @@ class Aoc202223() {
     }
 
     fun emptyGroud(roundCount: Int): Int {
-        var minx = elves.first().x
-        var maxx = elves.first().x
-        var miny = elves.first().y
-        var maxy = elves.first().y
         for (round in 0 until roundCount) {
-
             round(round)
-
         }
 
-        for (elve in elves) {
-            if (elve.x < minx) minx = elve.x
-            if (elve.x > maxx) maxx = elve.x
-            if (elve.y < miny) miny = elve.y
-            if (elve.y > maxy) maxy = elve.y
-        }
+        val minx = elves.minBy { it.x }.x
+        val maxx = elves.maxBy { it.x }.x
+        val miny = elves.minBy { it.y }.y
+        val maxy = elves.maxBy { it.y }.y
 
-        println("$minx, $maxx, $miny, $maxy")
         return (maxx - minx + 1) * (maxy - miny + 1) - elves.size
 
     }
@@ -94,16 +85,12 @@ class Aoc202223() {
                 WindRose.nw(elve) in elves
             ) {
                 var proposition: IntCoordinates? = null
-                var indeces = ""
 
                 for (i in 0 until rules.size) {
                     if (proposition == null) {
-                        indeces += ((round + i) % rules.size).toString() + "-"
                         proposition = rules[(round + i) % rules.size](elve, elves)
                     }
-
                 }
-                //println(indeces)
                 if (proposition != null) {
                     elveProp[elve] = proposition
                     propCount[proposition] = (propCount[proposition] ?: 0) + 1
@@ -113,17 +100,15 @@ class Aoc202223() {
         //moving
         val newElves = mutableSetOf<IntCoordinates>()
         for (elve in elves) {
+            var el = elve
             if (elveProp[elve] != null) {
                 val prop = elveProp[elve]!!
                 if ((propCount[prop] ?: 0) == 1) {
                     elveMoved = true
-                    newElves.add(prop)
-                } else {
-                    newElves.add(elve)
+                    el = prop
                 }
-            } else {
-                newElves.add(elve)
             }
+            newElves.add(el)
         }
         elves = newElves
     }
