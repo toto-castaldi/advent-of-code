@@ -153,14 +153,5 @@ class Aoc202221() {
             println( aoc.resolve("root", "humn",null))
         }
 
-        /*
-        private fun convert(dictionary: MutableMap<String, Operation>, exclude : String): MutableMap<String, CsAcademyGraph.CsAcademyGraphNode> {
-            val result = mutableMapOf<String, CsAcademyGraph.CsAcademyGraphNode>()
-            for (entry in dictionary.entries) {
-                if (entry.key != exclude) result[entry.key] = entry.value
-            }
-            return result
-        }
-        */
     }
 }

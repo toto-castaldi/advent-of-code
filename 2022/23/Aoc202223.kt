@@ -1,5 +1,6 @@
 import com.toto_castaldi.common.WindRose
 import com.toto_castaldi.common.structure.IntCoordinates
+import java.io.File
 
 class Aoc202223() {
 
@@ -122,8 +123,13 @@ class Aoc202223() {
     companion object {
 
         fun run(fileName: String) {
-
-            println( fileName)
+            val aoc = Aoc202223()
+            var y = 0
+            File(fileName).forEachLine {
+                aoc.map(y, it)
+                y ++
+            }
+            println( aoc.emptyGroud(10))
         }
 
     }
