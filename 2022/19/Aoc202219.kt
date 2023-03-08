@@ -10,7 +10,6 @@ class Aoc202219() {
 
     private val lines = mutableListOf<String>()
 
-
     operator fun plus(bluePrint: String) {
         lines.add(bluePrint)
     }
