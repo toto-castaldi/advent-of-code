@@ -81,6 +81,9 @@ fun main(args: Array<String>) {
                 Aoc202223.run1(fileName(yyyyDd))
                 Aoc202223.run2(fileName(yyyyDd))
             }
+            "2022/24" -> {
+                Aoc202224.run1(fileName(yyyyDd))
+            }
 
             else -> {
                 println("please specify correct YYYY/DD ($yyyyDd)")
