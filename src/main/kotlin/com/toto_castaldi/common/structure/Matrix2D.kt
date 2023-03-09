@@ -34,7 +34,7 @@ class Matrix2D<T> (var nx: Int, var ny: Int, val defValue : T) : Iterable<List<T
 
 
     override fun toString(): String {
-        return format { it -> it.toString() }
+        return format { it.toString() }
     }
 
     fun bake(): Matrix2D<T> {
