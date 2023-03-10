@@ -107,13 +107,10 @@ class Aoc202224() {
 
                 val windCoordintas = newWinds.map { it.coordinates }
 
-                var moved = false
-
                 if (state.player.y > 0 && WindRose.n(state.player) !in walls && WindRose.n(state.player) !in windCoordintas) {
                     val s = AocState(WindRose.n(state.player), state.steps + 1, newWinds)
                     if (s.fingerPrint() !in visited) {
                         q.add(s)
-                        moved = true
                     }
                 }
 
@@ -121,7 +118,6 @@ class Aoc202224() {
                     val s = AocState(WindRose.s(state.player), state.steps + 1, newWinds)
                     if (s.fingerPrint() !in visited) {
                         q.add(s)
-                        moved = true
                     }
                 }
 
@@ -129,7 +125,6 @@ class Aoc202224() {
                     val s = AocState(WindRose.e(state.player), state.steps + 1, newWinds)
                     if (s.fingerPrint() !in visited) {
                         q.add(s)
-                        moved = true
                     }
                 }
 
@@ -137,11 +132,10 @@ class Aoc202224() {
                     val s = AocState(WindRose.w(state.player), state.steps + 1, newWinds)
                     if (s.fingerPrint() !in visited) {
                         q.add(s)
-                        moved = true
                     }
                 }
 
-                if (!moved) {
+                if (state.player !in walls && state.player !in windCoordintas) {
                     val s = AocState(state.player.clone(), state.steps + 1, newWinds)
                     if (s.fingerPrint() !in visited) {
                         q.add(s)
@@ -151,31 +145,6 @@ class Aoc202224() {
         }
 
         return bestSteps + 1
-    }
-
-    private fun debug() {
-        val m = Matrix2D(w, h, '.')
-
-        for (c in winds) {
-            m[c.coordinates.x, c.coordinates.y] = when (c.crossDirection) {
-                CrossDirection.U -> '^'
-                CrossDirection.D -> 'v'
-                CrossDirection.L -> '<'
-                CrossDirection.R -> '>'
-            }
-        }
-
-        for (c in walls) {
-            m[c.x, c.y] = '#'
-        }
-
-        m[start.x, start.y] = '.'
-
-        m[end.x, end.y] = '.'
-
-        m[player.x, player.y] = 'E'
-
-        println(m)
     }
 
     companion object {
