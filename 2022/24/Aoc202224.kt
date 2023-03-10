@@ -134,7 +134,7 @@ class Aoc202224() {
                     }
                 }
 
-                if (state.player !in walls && state.player !in windCoordintas) {
+                if (state.player !in windCoordintas) {
                     val s = AocState(state.player.clone(), state.steps + 1, newWinds)
                     if (s.fingerPrint() !in visited) {
                         q.add(s)
