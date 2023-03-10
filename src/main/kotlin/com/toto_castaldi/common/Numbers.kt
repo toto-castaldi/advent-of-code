@@ -35,6 +35,21 @@ class Numbers {
         }
 
         val includes = { big: IntRange, small: IntRange ->  big.first <= small.first && big.last >= small.last }
+
+        fun lcm(a:Int, b:Int): Int {
+            var result: Int
+            var max = if (a > b) a else b
+
+            while (true) {
+                if (max % a == 0 && max % b == 0) {
+                    result = max
+                    break
+                }
+                max++
+            }
+
+            return result
+        }
     }
 
 }
