@@ -3,7 +3,6 @@ import com.toto_castaldi.common.CrossDirection
 import com.toto_castaldi.common.WindRose
 import com.toto_castaldi.common.structure.IntCoordinates
 import com.toto_castaldi.common.structure.Matrix2D
-import com.toto_castaldi.common.structure.Node
 import java.io.File
 import java.util.*
 
