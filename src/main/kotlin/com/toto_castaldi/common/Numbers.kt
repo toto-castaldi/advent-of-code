@@ -50,6 +50,17 @@ class Numbers {
 
             return result
         }
+
+        fun decimalToBase5(decimal: Long): String {
+            var number = decimal
+            var result = ""
+            while (number > 0) {
+                val remainder = number % 5
+                result = remainder.toString() + result
+                number /= 5
+            }
+            return if (result.isEmpty()) "0" else result
+        }
     }
 
 }
