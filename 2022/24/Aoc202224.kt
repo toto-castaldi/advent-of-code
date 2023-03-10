@@ -41,9 +41,9 @@ class Aoc202224() {
     }
 
     data class Wind(val crossDirection: CrossDirection,val coordinates: IntCoordinates)
-    data class AocState(val player : IntCoordinates, val steps: Int, val winds: Set<Wind>) {
-        fun fingerPrint(): String {
-            return "" + player.x + "-" + player.y + winds.sortedBy { it.coordinates.x + it.coordinates.y }.fold(" ") { acc, wind -> acc + wind.coordinates.x + "-" + wind.coordinates.y + "-" }
+    data class AocState(val player : IntCoordinates, val steps: Int) {
+        fun fingerPrint( period: Int): String {
+            return "" + player.x + "-" + player.y + (steps % period)
 
         }
     }
@@ -104,8 +104,8 @@ class Aoc202224() {
 
         player = start
 
-        val aocState = AocState(player, 0, winds)
-        visited.add(aocState.fingerPrint())
+        val aocState = AocState(player, 0)
+        visited.add(aocState.fingerPrint(period))
         q.add(aocState)
 
         while (q.isNotEmpty()) {
@@ -119,43 +119,43 @@ class Aoc202224() {
                     bestSteps = state.steps
                 }
             } else {
-                visited.add(state.fingerPrint())
+                visited.add(state.fingerPrint(period))
 
 
                 val currentWinds = windConf[state.steps % period]!!
                 val windCoordintas = currentWinds.map { it.coordinates }
 
                 if (state.player.y > 0 && WindRose.n(state.player) !in walls && WindRose.n(state.player) !in windCoordintas) {
-                    val s = AocState(WindRose.n(state.player), state.steps + 1, currentWinds)
-                    if (s.fingerPrint() !in visited) {
+                    val s = AocState(WindRose.n(state.player), state.steps + 1)
+                    if (s.fingerPrint(period) !in visited) {
                         q.add(s)
                     }
                 }
 
                 if (WindRose.s(state.player) !in walls && WindRose.s(state.player) !in windCoordintas) {
-                    val s = AocState(WindRose.s(state.player), state.steps + 1, currentWinds)
-                    if (s.fingerPrint() !in visited) {
+                    val s = AocState(WindRose.s(state.player), state.steps + 1)
+                    if (s.fingerPrint(period) !in visited) {
                         q.add(s)
                     }
                 }
 
                 if (WindRose.e(state.player) !in walls && WindRose.e(state.player) !in windCoordintas) {
-                    val s = AocState(WindRose.e(state.player), state.steps + 1, currentWinds)
-                    if (s.fingerPrint() !in visited) {
+                    val s = AocState(WindRose.e(state.player), state.steps + 1)
+                    if (s.fingerPrint(period) !in visited) {
                         q.add(s)
                     }
                 }
 
                 if (WindRose.w(state.player) !in walls && WindRose.w(state.player) !in windCoordintas) {
-                    val s = AocState(WindRose.w(state.player), state.steps + 1, currentWinds)
-                    if (s.fingerPrint() !in visited) {
+                    val s = AocState(WindRose.w(state.player), state.steps + 1)
+                    if (s.fingerPrint(period) !in visited) {
                         q.add(s)
                     }
                 }
 
                 if (state.player !in windCoordintas) {
-                    val s = AocState(state.player.clone(), state.steps + 1, currentWinds)
-                    if (s.fingerPrint() !in visited) {
+                    val s = AocState(state.player.clone(), state.steps + 1)
+                    if (s.fingerPrint(period) !in visited) {
                         q.add(s)
                     }
                 }
