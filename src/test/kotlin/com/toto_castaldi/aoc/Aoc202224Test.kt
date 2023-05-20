@@ -6,7 +6,6 @@ import kotlin.test.*
 class Aoc202224Test {
     
     @Test
-    @Ignore
     fun part1() {
         val aoc = Aoc202224()
         aoc.map(0, 6, "#.######")
@@ -16,7 +15,7 @@ class Aoc202224Test {
         aoc.map(4, 6, "#<^v^^>#")
         aoc.map(5, 6, "######.#")
 
-        assertEquals(18, aoc.stepToExit(2))
+        assertEquals(18, aoc.stepToExit())
     }
 
 

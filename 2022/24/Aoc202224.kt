@@ -1,16 +1,18 @@
 
 import com.toto_castaldi.common.CrossDirection
+import com.toto_castaldi.common.Numbers
 import com.toto_castaldi.common.WindRose
 import com.toto_castaldi.common.structure.IntCoordinates
-import com.toto_castaldi.common.structure.Matrix2D
 import java.io.File
+import java.util.*
 
 class Aoc202224() {
 
+    private val windConf = mutableMapOf<Int, Set<Wind>>()
     private var w: Int = 0
     private var h: Int = 0
     private var winds = mutableSetOf<Wind>()
-    private var walls = mutableSetOf<IntCoordinates>()
+    private val walls = mutableSetOf<IntCoordinates>()
     private lateinit var start:IntCoordinates
     private lateinit var end:IntCoordinates
     private lateinit var player:IntCoordinates
@@ -39,14 +41,16 @@ class Aoc202224() {
     }
 
     data class Wind(val crossDirection: CrossDirection,val coordinates: IntCoordinates)
+    data class AocState(val player : IntCoordinates, val steps: Int) {
+        fun fingerPrint( period: Int): String {
+            return "" + player.x + "-" + player.y + (steps % period)
 
-    fun stepToExit(debug:Int = -1): Int {
-        player = start
-        var steps = 0
+        }
+    }
 
-        while (player != end && (debug == -1 || steps < debug)) {
-            debug()
-
+    fun stepToExit(): Int {
+        val period = Numbers.lcm(h - 2, w - 2)
+        for (i in 0 until period) {
             val newWinds = mutableSetOf<Wind>()
             for (wind in winds) {
                 when (wind.crossDirection) {
@@ -57,6 +61,7 @@ class Aoc202224() {
                         }
                         newWinds.add(Wind(wind.crossDirection, next))
                     }
+
                     CrossDirection.D -> {
                         var next = WindRose.s(wind.coordinates)
                         if (next in walls) {
@@ -64,6 +69,7 @@ class Aoc202224() {
                         }
                         newWinds.add(Wind(wind.crossDirection, next))
                     }
+
                     CrossDirection.R -> {
                         var next = WindRose.e(wind.coordinates)
                         if (next in walls) {
@@ -71,6 +77,7 @@ class Aoc202224() {
                         }
                         newWinds.add(Wind(wind.crossDirection, next))
                     }
+
                     CrossDirection.L -> {
                         var next = WindRose.w(wind.coordinates)
                         if (next in walls) {
@@ -80,39 +87,82 @@ class Aoc202224() {
                     }
                 }
             }
+
+            windConf[i] = newWinds
             winds = newWinds
-
-
-
-            steps += 1
         }
 
-        return steps
-    }
 
-    private fun debug() {
-        val m = Matrix2D(w, h, '.')
 
-        for (c in winds) {
-            m[c.coordinates.x, c.coordinates.y] = when (c.crossDirection) {
-                CrossDirection.U -> '^'
-                CrossDirection.D -> 'v'
-                CrossDirection.L -> '<'
-                CrossDirection.R -> '>'
+
+        val q: Queue<AocState> = LinkedList()
+        val visited = mutableSetOf<String>()
+        var bestSteps = Int.MAX_VALUE
+
+        println(end)
+        println(h)
+
+        player = start
+
+        val aocState = AocState(player, 0)
+        visited.add(aocState.fingerPrint(period))
+        q.add(aocState)
+
+        while (q.isNotEmpty()) {
+            val state = q.remove()
+
+           // println(state.player)
+
+            if (WindRose.s(state.player) == end) {
+                println("found ! ${state.steps}")
+                if (state.steps < bestSteps) {
+                    bestSteps = state.steps
+                }
+            } else {
+                visited.add(state.fingerPrint(period))
+
+
+                val currentWinds = windConf[state.steps % period]!!
+                val windCoordintas = currentWinds.map { it.coordinates }
+
+                if (state.player.y > 0 && WindRose.n(state.player) !in walls && WindRose.n(state.player) !in windCoordintas) {
+                    val s = AocState(WindRose.n(state.player), state.steps + 1)
+                    if (s.fingerPrint(period) !in visited) {
+                        q.add(s)
+                    }
+                }
+
+                if (WindRose.s(state.player) !in walls && WindRose.s(state.player) !in windCoordintas) {
+                    val s = AocState(WindRose.s(state.player), state.steps + 1)
+                    if (s.fingerPrint(period) !in visited) {
+                        q.add(s)
+                    }
+                }
+
+                if (WindRose.e(state.player) !in walls && WindRose.e(state.player) !in windCoordintas) {
+                    val s = AocState(WindRose.e(state.player), state.steps + 1)
+                    if (s.fingerPrint(period) !in visited) {
+                        q.add(s)
+                    }
+                }
+
+                if (WindRose.w(state.player) !in walls && WindRose.w(state.player) !in windCoordintas) {
+                    val s = AocState(WindRose.w(state.player), state.steps + 1)
+                    if (s.fingerPrint(period) !in visited) {
+                        q.add(s)
+                    }
+                }
+
+                if (state.player !in windCoordintas) {
+                    val s = AocState(state.player.clone(), state.steps + 1)
+                    if (s.fingerPrint(period) !in visited) {
+                        q.add(s)
+                    }
+                }
             }
         }
 
-        for (c in walls) {
-            m[c.x, c.y] = '#'
-        }
-
-        m[start.x, start.y] = '.'
-
-        m[end.x, end.y] = '.'
-
-        m[player.x, player.y] = 'E'
-
-        println(m)
+        return bestSteps + 1
     }
 
     companion object {

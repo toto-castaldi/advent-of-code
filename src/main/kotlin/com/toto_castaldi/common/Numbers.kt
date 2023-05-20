@@ -35,6 +35,32 @@ class Numbers {
         }
 
         val includes = { big: IntRange, small: IntRange ->  big.first <= small.first && big.last >= small.last }
+
+        fun lcm(a:Int, b:Int): Int {
+            var result: Int
+            var max = if (a > b) a else b
+
+            while (true) {
+                if (max % a == 0 && max % b == 0) {
+                    result = max
+                    break
+                }
+                max++
+            }
+
+            return result
+        }
+
+        fun decimalToBase5(decimal: Long): String {
+            var number = decimal
+            var result = ""
+            while (number > 0) {
+                val remainder = number % 5
+                result = remainder.toString() + result
+                number /= 5
+            }
+            return if (result.isEmpty()) "0" else result
+        }
     }
 
 }
