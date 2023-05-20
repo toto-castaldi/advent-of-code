@@ -4,9 +4,7 @@ import Aoc201705
 import kotlin.test.*
 
 class Aoc201705Test {
-
     @Test
-    @Ignore
     fun part1() {
         val aoc = Aoc201705()
         aoc + 0

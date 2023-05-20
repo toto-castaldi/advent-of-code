@@ -2,13 +2,24 @@ import java.io.File
 
 class Aoc201705() {
 
+    private val instructions = mutableListOf<Int>()
+
     operator fun plus(value: Int) {
-        TODO("Not yet implemented")
+        instructions.add(value)
     }
 
 
     fun stepToExit(): Int {
-        TODO("Not yet implemented")
+        var currentPos = 0
+        var executionCount = 0
+        while (currentPos < instructions.size) {
+            val nextJump = instructions[currentPos]
+            instructions[currentPos] ++
+            currentPos += nextJump
+            executionCount ++
+        }
+
+        return executionCount
     }
 
     companion object {
