@@ -10,3 +10,4 @@ advent-of-code.iml
 .vscode
 gradle
 build
+bin
