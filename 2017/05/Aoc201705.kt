@@ -8,13 +8,16 @@ class Aoc201705() {
         instructions.add(value)
     }
 
-
-    fun stepToExit(): Int {
+    fun stepToExitRule(increaseDecrease : Boolean): Int {
         var currentPos = 0
         var executionCount = 0
         while (currentPos < instructions.size) {
             val nextJump = instructions[currentPos]
-            instructions[currentPos] ++
+            if (instructions[currentPos] >= 3 && increaseDecrease) {
+                instructions[currentPos]--
+            } else {
+                instructions[currentPos]++
+            }
             currentPos += nextJump
             executionCount ++
         }
@@ -28,7 +31,15 @@ class Aoc201705() {
             File(fileName).forEachLine {line ->
                 aoc + line.trim().toInt()
             }
-            println( aoc.stepToExit())
+            println( aoc.stepToExitRule(false))
+        }
+
+        fun run2(fileName: String) {
+            val aoc = Aoc201705()
+            File(fileName).forEachLine {line ->
+                aoc + line.trim().toInt()
+            }
+            println( aoc.stepToExitRule(true))
         }
 
     }

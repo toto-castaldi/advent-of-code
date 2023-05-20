@@ -11,6 +11,7 @@ fun main(args: Array<String>) {
         when (val yyyyDd = args.firstOrNull() ?: "") {
             "2017/05" -> {
                 Aoc201705.run1(fileName(yyyyDd))
+                Aoc201705.run2(fileName(yyyyDd))
             }
             "2022/05" -> Aoc202205(fileName(yyyyDd)).run()
             "2022/10" -> Aoc202210(fileName(yyyyDd)).run()

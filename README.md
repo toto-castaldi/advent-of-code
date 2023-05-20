@@ -70,7 +70,7 @@ Tested with Kotlink version 1.7.21 and Java openjdk 17.0.3 2022-04-19
 
 ![2016 Calendar](./2016.08.2-calendar.png?&raw=true "2016 Calendar")
 
-![2017 Calendar](./2017.05.1-calendar.png?&raw=true "2017 Calendar")
+![2017 Calendar](./2017.05.2-calendar.png?&raw=true "2017 Calendar")
 
 ![2018 Calendar](./2018.02.2-calendar.png?&raw=true "2018 Calendar")
 
