@@ -85,6 +85,14 @@ class Aoc201706() {
             }
             println(aoc.redistributionCountBeforeLoop())
         }
+
+        fun run2(fileName: String) {
+            val aoc = Aoc201706()
+            for (i in File(fileName).readText().split(" ")) {
+                aoc + i.trim().toInt()
+            }
+            println(aoc.sizeOfTheLoop())
+        }
     }
 
 
