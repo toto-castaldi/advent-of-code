@@ -13,8 +13,6 @@ class Aoc201706() {
         var count = 0
         var memoryFingerPrint = ""
 
-        println(memory)
-
         while (memoryFingerPrint !in finegerprintHistory) {
             finegerprintHistory.add(memoryFingerPrint)
 
@@ -36,12 +34,11 @@ class Aoc201706() {
             if (blockSize > maxBlockSize) {
                 maxBlockSize = blockSize
             }
-            if (blockIndex !in sizeToIndex.values) {
+            if (blockSize !in sizeToIndex.keys) {
                 sizeToIndex[blockSize] = blockIndex
             }
         }
         val blockIndex = sizeToIndex[maxBlockSize]!!
-        println("found block with $maxBlockSize at pos $blockIndex")
 
         //erase blank
         memory[blockIndex] = 0
@@ -49,19 +46,10 @@ class Aoc201706() {
         for (i in 1..maxBlockSize) {
             memory[(blockIndex + i) % memory.size ] += 1
         }
-
-        println(memory)
     }
 
     private fun computeFingerPrint(): String {
-        var result = ""
-        for (m in memory) {
-            result += m.toString().padStart(5, '0')
-        }
-
-        println("fingerprint $result")
-
-        return result
+        return memory.fold("") { acc, value -> acc + value.toString().padStart(5, '0') }
     }
 
     companion object {
