@@ -1,3 +1,5 @@
+import java.io.File
+
 class Aoc201706() {
 
     private val memory = mutableListOf<Int>()
@@ -10,6 +12,8 @@ class Aoc201706() {
     fun redistributionCountBeforeLoop(): Int {
         var count = 0
         var memoryFingerPrint = ""
+
+        println(memory)
 
         while (memoryFingerPrint !in finegerprintHistory) {
             finegerprintHistory.add(memoryFingerPrint)
@@ -29,7 +33,7 @@ class Aoc201706() {
         var maxBlockSize = -1
         val sizeToIndex = mutableMapOf<Int, Int>()
         for ((blockIndex, blockSize) in memory.withIndex()) {
-            if (blockIndex > maxBlockSize) {
+            if (blockSize > maxBlockSize) {
                 maxBlockSize = blockSize
             }
             if (blockIndex !in sizeToIndex.values) {
@@ -58,6 +62,16 @@ class Aoc201706() {
         println("fingerprint $result")
 
         return result
+    }
+
+    companion object {
+        fun run1(fileName: String) {
+            val aoc = Aoc201706()
+            for (i in File(fileName).readText().split(" ")) {
+                aoc + i.trim().toInt()
+            }
+            println(aoc.redistributionCountBeforeLoop())
+        }
     }
 
 
