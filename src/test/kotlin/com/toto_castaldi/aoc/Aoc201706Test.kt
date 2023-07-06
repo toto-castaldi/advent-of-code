@@ -16,5 +16,16 @@ class Aoc201706Test {
         assertEquals(5, aoc.redistributionCountBeforeLoop())
     }
 
+    @Test
+    fun part2() {
+        val aoc = Aoc201706()
+        aoc + 0
+        aoc + 2
+        aoc + 7
+        aoc + 0
+
+        assertEquals(4, aoc.sizeOfTheLoop())
+    }
+
 
 }

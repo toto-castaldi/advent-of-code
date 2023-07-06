@@ -52,6 +52,31 @@ class Aoc201706() {
         return memory.fold("") { acc, value -> acc + value.toString().padStart(5, '0') }
     }
 
+    fun sizeOfTheLoop(): Int {
+        var count = 0
+        var memoryFingerPrint = ""
+
+        while (memoryFingerPrint !in finegerprintHistory) {
+            finegerprintHistory.add(memoryFingerPrint)
+
+            redistributeMemoryBlocks()
+
+            memoryFingerPrint = computeFingerPrint()
+        }
+
+        val searchForFingerPrint = memoryFingerPrint
+        memoryFingerPrint = ""
+        while (memoryFingerPrint != searchForFingerPrint) {
+            redistributeMemoryBlocks()
+
+            memoryFingerPrint = computeFingerPrint()
+
+            count += 1
+        }
+
+        return count
+    }
+
     companion object {
         fun run1(fileName: String) {
             val aoc = Aoc201706()
