@@ -21,4 +21,8 @@ open class Node<T>(val data : T) : Iterable<Node<T>> {
         n.neighbors.add(this)
     }
 
+    fun neighborsSize(): Int {
+        return neighbors.size
+    }
+
 }
