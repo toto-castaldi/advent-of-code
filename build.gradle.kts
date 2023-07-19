@@ -19,7 +19,7 @@ dependencies {
 sourceSets {
     main {
         kotlin {
-            srcDirs("src/main/kotlin", "2017", "2021", "2022")
+            srcDirs("src/main/kotlin", "2017", "2018", "2021", "2022")
         }
     }
     test {
