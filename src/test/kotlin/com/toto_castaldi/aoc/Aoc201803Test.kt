@@ -12,9 +12,16 @@ class Aoc201803Test {
         aoc + "#1 @ 1,3: 4x4"
         aoc + "#2 @ 3,1: 4x4"
         aoc + "#3 @ 5,5: 2x2"
-
         assertEquals(4, aoc.squareInchesWithTwoOrMoreClaims())
     }
 
+    @Test
+    fun part2() {
+        val aoc = Aoc201803()
+        aoc + "#1 @ 1,3: 4x4"
+        aoc + "#2 @ 3,1: 4x4"
+        aoc + "#3 @ 5,5: 2x2"
+        assertEquals(3, aoc.idWithNoOtherOverlapping())
+    }
 
 }
