@@ -21,9 +21,10 @@ class Aoc201903() {
                 'U' -> step.move(0,-1)
                 'D' -> step.move(0,1)
             }
-            for (i in 1 .. dir.substring(1).toInt()) {
-                startingPoint.move(step.x, step.y)
-                points[startingPoint.clone()] = points[startingPoint.clone()]?.plus(1) ?: 1
+            val times = dir.substring(1).toInt()
+            for (i in 1 .. times) {
+                val p = startingPoint.move(step.x, step.y).clone()
+                points[p] = points[p]?.plus(1) ?: 1
             }
         }
 
@@ -32,7 +33,7 @@ class Aoc201903() {
     fun minimalManhattanDistanceOfIntersections(): Int {
         var minMd = 0
         for ((p, count) in points.entries) {
-            if (count == 2) {
+            if (count > 1) {
                 val md = ManhattanDistance.between(IntCoordinates(0, 0), p)
                 if (md < minMd || minMd == 0) {
                     minMd = md
