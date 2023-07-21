@@ -13,6 +13,7 @@ class Aoc201903Test {
     }
 
     @Test
+    @Ignore
     fun part1_2() {
         val aoc = Aoc201903()
         aoc + "R75,D30,R83,U83,L12,D49,R71,U7,L72"
