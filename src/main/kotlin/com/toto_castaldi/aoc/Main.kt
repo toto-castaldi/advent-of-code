@@ -29,6 +29,7 @@ fun main(args: Array<String>) {
             }
             "2019/04" -> {
                 Aoc201904.run1(271973,785961)
+                Aoc201904.run2(271973,785961)
             }
             "2022/05" -> Aoc202205(fileName(yyyyDd)).run()
             "2022/10" -> Aoc202210(fileName(yyyyDd)).run()
