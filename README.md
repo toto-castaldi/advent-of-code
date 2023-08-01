@@ -74,7 +74,7 @@ Tested with Kotlin version 1.7.21 and Java openjdk 17.0.3 2022-04-19
 
 ![2018 Calendar](./2018.03.2-calendar.png?&raw=true "2018 Calendar")
 
-![2019 Calendar](./2019.04.1-calendar.png?&raw=true "2019 Calendar")
+![2019 Calendar](./2019.06.1-calendar.png?&raw=true "2019 Calendar")
 
 ![2020 Calendar](./2020.16.2-calendar.png?&raw=true "2020 Calendar")
 
