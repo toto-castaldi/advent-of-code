@@ -1,6 +1,6 @@
 import { TextLineStream } from 'https://deno.land/std/streams/mod.ts'
 
-async function main(): Promise<void> {
+async function main(spelledNumbers : boolean): Promise<number> {
 
   const currentDir = new URL('.', import.meta.url).pathname;
   const fileName = `${currentDir}input.txt`;
@@ -14,30 +14,9 @@ async function main(): Promise<void> {
         .pipeThrough(new TextDecoderStream())
         .pipeThrough(new TextLineStream());
       for await (const line of lines) {
-        const trimmedLine : string = line.trim();
-        let first = undefined;
-        let last = undefined;
-        for (const char of trimmedLine) {
-            if ("0123456789".includes(char)) {
-                if (first === undefined) {
-                    first = char;
-                    break;
-                }
-            }
-        }
-        for (const char of trimmedLine.split('').reverse().join('')) {
-            if ("0123456789".includes(char)) {
-                if (last === undefined) {
-                    last = char;
-                    break
-                }
-            }
-        }
-        const num = (first !== undefined ? first : '') + (last !== undefined ? last : '')
-        console.log(`Processing line: ${line.trim()} => first: ${first}, last: ${last}, num: ${num}`);
-        sum += parseInt(num);
+        sum += extractNum(spelledNumbers, line.trim().toLocaleLowerCase());
       }
-      console.log(`Sum of all numbers: ${sum}`);
+      return sum;
     } catch (error) {
       file.close();
       throw error;
@@ -53,8 +32,72 @@ async function main(): Promise<void> {
 
 if (import.meta.main) {
   try {
-    await main();
+    let result = await main(false);
+    console.log(`Sum of all numbers: ${result}`);
+    result = await main(true);
+    console.log(`Sum of all numbers: ${result}`);
   } catch (error) {
     console.error("💥", error);
   }
+}
+
+export function extractNum(spelledNumbers: boolean, trimmedLine: string) : number{
+  const line : string[] = trimmedLine.split('');
+  if (spelledNumbers) {
+    const found: Record<string, number[]> = {
+      zero: [],
+      one: [],
+      two: [],
+      three: [],
+      four: [],
+      five: [],
+      six: [],
+      seven: [],
+      eight: [],
+      nine: []
+    };
+    const spelledVal: Record<string, string> = {
+      zero: '0',
+      one: '1',
+      two: '2',
+      three: '3',
+      four: '4',
+      five: '5',
+      six: '6',
+      seven: '7',
+      eight: '8',
+      nine: '9'
+    };
+    for (const spelledNum of Object.keys(spelledVal)) {
+      for (let index = 0; index < line.length; index++) {
+        if (line.length >= index + spelledNum.length && line.slice(index, index + spelledNum.length).join('') === spelledNum) {
+          found[spelledNum].push(index);
+        }
+      }
+    }
+    for (const spelledNum in found) {
+      for (const index of found[spelledNum]) {
+        line[index] = spelledVal[spelledNum]
+      }
+    }
+  }
+  let first = undefined;
+  let last = undefined;
+  for (const char of line) {
+    if ("0123456789".includes(char)) {
+      if (first === undefined) {
+        first = char;
+        break;
+      }
+    }
+  }
+  for (const char of line.reverse().join('')) {
+    if ("0123456789".includes(char)) {
+      if (last === undefined) {
+        last = char;
+        break;
+      }
+    }
+  }
+  return parseInt((first !== undefined ? first : '') + (last !== undefined ? last : ''));
 }
