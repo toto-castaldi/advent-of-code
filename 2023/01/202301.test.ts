@@ -1,5 +1,5 @@
 import { assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
-import { extractNum } from './202301a.ts';
+import { extractNum } from './202301.ts';
 
 Deno.test("extractNum - basic number extraction", () => {
   assertEquals(extractNum(false, "1abc2"), 12);
