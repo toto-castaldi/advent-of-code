@@ -1,6 +1,12 @@
 import { TextLineStream } from 'https://deno.land/std/streams/mod.ts'
 
-async function main(bagConfig : any): Promise<number> {
+type BagConfig = {
+  red: number;
+  green: number;
+  blue: number;
+}
+
+async function main(bagConfig : BagConfig): Promise<number> {
   const currentDir = new URL('.', import.meta.url).pathname;
   const fileName = `${currentDir}input.txt`;
   
@@ -36,12 +42,12 @@ if (import.meta.main) {
   }
 }
 
-export function possibleGame(bagConfig: any, line: string): boolean {
+export function possibleGame(bagConfig: BagConfig, line: string): boolean {
   let result = true;
   line.split(':')[1].split(';').forEach((set) => {
     set.trim().split(',').forEach((part) => {
       const [count, colorName] = part.trim().split(' ');
-      const maxOfColor = bagConfig[colorName.toLocaleLowerCase().trim()]
+      const maxOfColor = bagConfig[colorName.toLocaleLowerCase().trim() as keyof BagConfig]
       if (maxOfColor !== undefined && parseInt(count.trim()) > maxOfColor) result = false;
     });
   });
