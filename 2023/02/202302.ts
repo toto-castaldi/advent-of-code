@@ -6,7 +6,12 @@ type BagConfig = {
   blue: number;
 }
 
-async function step1(bagConfig : BagConfig): Promise<number> {
+type GameSet = {
+  count: number;
+  color: keyof BagConfig;
+}
+
+async function* readInputLines(): AsyncGenerator<string> {
   const currentDir = new URL('.', import.meta.url).pathname;
   const fileName = `${currentDir}input.txt`;
   
@@ -17,30 +22,28 @@ async function step1(bagConfig : BagConfig): Promise<number> {
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(new TextLineStream());
   
-  let sum = 0;
   for await (const line of lines) {
-    if (possibleGame(bagConfig, line)) {
-      sum += gameId(line);
-    }    
+    yield line;
+  }
+}
+
+async function step1(bagConfig: BagConfig): Promise<number> {
+  let sum = 0;
+  
+  for await (const line of readInputLines()) {
+    if (isGamePossible(bagConfig, line)) {
+      sum += extractGameId(line);
+    }
   }
   
   return sum;
 }
 
 async function step2(): Promise<number> {
-  const currentDir = new URL('.', import.meta.url).pathname;
-  const fileName = `${currentDir}input.txt`;
-  
-  const file = await Deno.open(fileName, { read: true });
-  
-  const lines = file
-    .readable
-    .pipeThrough(new TextDecoderStream())
-    .pipeThrough(new TextLineStream());
-  
   let sum = 0;
-  for await (const line of lines) {
-    sum += gamePower(line);   
+  
+  for await (const line of readInputLines()) {
+    sum += calculateGamePower(line);
   }
   
   return sum;
@@ -50,58 +53,77 @@ async function step2(): Promise<number> {
 
 if (import.meta.main) {
   try {
-    let result = await step1({
-      red : 12,
-      green : 13,
-      blue : 14,
-    });
-    console.log(`Possible games sum: ${result}`);
-    result = await step2();
-    console.log(`Sum o games power : ${result}`);
+    const bagConfig: BagConfig = {
+      red: 12,
+      green: 13,
+      blue: 14,
+    };
+    
+    const possibleGamesSum = await step1(bagConfig);
+    console.log(`Possible games sum: ${possibleGamesSum}`);
+    
+    const powerSum = await step2();
+    console.log(`Sum of games power: ${powerSum}`);
   } catch (error) {
     console.error("💥", error);
   }
 }
 
-export function gamePower(line: string) : number {
-  const result : BagConfig = {
-      red : 0,
-      green : 0,
-      blue : 0,
+function parseGameSets(gameData: string): GameSet[] {
+  const sets: GameSet[] = [];
+  const gameParts = gameData.split(':')[1];
+  
+  if (!gameParts) {
+    throw new Error('Invalid game format');
+  }
+  
+  for (const setString of gameParts.split(';')) {
+    for (const cubeInfo of setString.trim().split(',')) {
+      const [countStr, colorName] = cubeInfo.trim().split(' ');
+      const color = colorName?.toLowerCase().trim() as keyof BagConfig;
+      
+      if (!countStr || !color || !(color in { red: 0, green: 0, blue: 0 })) {
+        throw new Error(`Invalid game data: ${cubeInfo}`);
+      }
+      
+      sets.push({
+        count: parseInt(countStr, 10),
+        color
+      });
+    }
+  }
+  
+  return sets;
+}
+
+export function calculateGamePower(line: string): number {
+  const minCubes: BagConfig = {
+    red: 0,
+    green: 0,
+    blue: 0,
   };
-  line.split(':')[1].split(';').forEach((set) => {
-    set.trim().split(',').forEach((part) => {
-      const [countStr, colorName] = part.trim().split(' ');
-      const count = parseInt(countStr);
-      if (result[colorName.toLocaleLowerCase().trim() as keyof BagConfig] === undefined) {
-        throw new Error(`invalid key ${colorName}`);
-      }
-      if (result[colorName.toLocaleLowerCase().trim() as keyof BagConfig] < count) {
-        result[colorName.toLocaleLowerCase().trim() as keyof BagConfig] = count;
-      }
-    });
-  });
-
-  let power = 1;
-  Object.values(result).forEach(value => {
-    power = power * value;
-  });
-
-  return power;
+  
+  const gameSets = parseGameSets(line);
+  
+  for (const { count, color } of gameSets) {
+    minCubes[color] = Math.max(minCubes[color], count);
+  }
+  
+  return Object.values(minCubes).reduce((power, count) => power * count, 1);
 }
 
-export function possibleGame(bagConfig: BagConfig, line: string): boolean {
-  let result = true;
-  line.split(':')[1].split(';').forEach((set) => {
-    set.trim().split(',').forEach((part) => {
-      const [count, colorName] = part.trim().split(' ');
-      const maxOfColor = bagConfig[colorName.toLocaleLowerCase().trim() as keyof BagConfig]
-      if (maxOfColor !== undefined && parseInt(count.trim()) > maxOfColor) result = false;
-    });
-  });
-  return result;
+export function isGamePossible(bagConfig: BagConfig, line: string): boolean {
+  const gameSets = parseGameSets(line);
+  
+  return gameSets.every(({ count, color }) => count <= bagConfig[color]);
 }
 
-function gameId(line: string) : number {
-  return parseInt(line.split(':')[0].split(' ')[1].trim());
+function extractGameId(line: string): number {
+  const match = line.match(/^Game (\d+):/);
+  
+  if (!match || !match[1]) {
+    throw new Error(`Invalid game format: ${line}`);
+  }
+  
+  return parseInt(match[1], 10);
 }
