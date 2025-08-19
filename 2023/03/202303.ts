@@ -1,14 +1,13 @@
-import { findNumbers } from '../../src/main/typescript/utils.ts';
-import { containsOnlyDotsOrNumbers } from '../../src/main/typescript/utils.ts';
-import { readInputLines } from '../../src/main/typescript/utils.ts';
-
+import { findNumbers, containsOnlyDotsOrNumbers, readInputLines, findItemInString, isDigit, extractNumberFromString } from '../../src/main/typescript/utils.ts';
 
 export class EngineSchema {
+  
   private lineBuffer0: string;
   private lineBuffer1: string;
   private lineBuffer2: string;
 
   private sumOfParts: number;
+  private sumOfGears: number;
 
   private lineLenght: number;
 
@@ -18,6 +17,7 @@ export class EngineSchema {
     this.lineBuffer2 = "";
     this.sumOfParts = 0;
     this.lineLenght = 0;
+    this.sumOfGears = 0;
   }
 
   public getSumOfParts() : number {
@@ -67,14 +67,51 @@ export class EngineSchema {
                 aroundSymbols.push(this.lineBuffer2.charAt(numbInfo.position + pos));
             }
             if (!containsOnlyDotsOrNumbers(aroundSymbols)) {
-                this.sumOfParts += numbInfo.value;    
-                //console.log(numbInfo.value);
+                this.sumOfParts += numbInfo.value;
             } else {
                 console.log(numbInfo.position, numbInfo.value, aroundSymbols);
             }
             
         }
+
+        const asteriskInString = findItemInString("*", this.lineBuffer1);
+        for (const asteriskPos of asteriskInString){
+            let number0 = null;
+            let number1 = null;
+            if (asteriskPos > 0 && isDigit(this.lineBuffer0.charAt(asteriskPos - 1))) {
+                number0 = extractNumberFromString(this.lineBuffer0, asteriskPos - 1);
+            } 
+            if (asteriskPos < this.lineBuffer0.length && isDigit(this.lineBuffer0.charAt(asteriskPos + 1))) {
+                const res = extractNumberFromString(this.lineBuffer0, asteriskPos + 1);
+                if (number0 === null) number0 = res; else number1 = res;
+            }
+            if (asteriskPos > 0 && isDigit(this.lineBuffer1.charAt(asteriskPos - 1))) {
+                const res = extractNumberFromString(this.lineBuffer1, asteriskPos - 1);
+                if (number0 === null) number0 = res; else number1 = res;
+            }
+            if (asteriskPos < this.lineBuffer1.length && isDigit(this.lineBuffer1.charAt(asteriskPos + 1))) {
+                const res = extractNumberFromString(this.lineBuffer1, asteriskPos + 1);
+                if (number0 === null) number0 = res; else number1 = res;
+            }
+            if (asteriskPos > 0 && isDigit(this.lineBuffer2.charAt(asteriskPos - 1))) {
+                const res = extractNumberFromString(this.lineBuffer2, asteriskPos - 1);
+                if (number0 === null) number0 = res; else number1 = res;
+            }
+            if (asteriskPos < this.lineBuffer2.length && isDigit(this.lineBuffer2.charAt(asteriskPos + 1))) {
+                const res = extractNumberFromString(this.lineBuffer2, asteriskPos + 1);
+                if (number0 === null) number0 = res; else number1 = res;
+            }
+            if (number0 !== null && number1 !== null) {
+                const ratio = number0 * number1;
+                console.log(number0, number1, ratio);
+                this.sumOfGears += ratio;
+            }
+        }
         
+    }
+
+    public getSumOfGears(): number {
+        return this.sumOfGears;
     }
 }
 

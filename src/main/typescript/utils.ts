@@ -41,3 +41,39 @@ export async function* readInputLines(fileName : string): AsyncGenerator<string>
     yield line;
   }
 }
+
+export function findItemInString(item: string, str : string): number[] {
+    const positions: number[] = [];
+    let index = str.indexOf(item);
+    
+    while (index !== -1) {
+        positions.push(index);
+        index = str.indexOf(item, index + 1);
+    }
+    
+    return positions;
+}
+
+export function extractNumberFromString(str: string, position: number): number | null {
+    if (position < 0 || position >= str.length) {
+        return null;
+    }
+    
+    if (!/\d/.test(str[position])) {
+        return null;
+    }
+    
+    let start = position;
+    while (start > 0 && /\d/.test(str[start - 1])) {
+        start--;
+    }
+    
+    let end = position;
+    while (end < str.length - 1 && /\d/.test(str[end + 1])) {
+        end++;
+    }
+    
+    const numberStr = str.substring(start, end + 1);
+    
+    return parseInt(numberStr, 10);
+}
