@@ -38,3 +38,26 @@ Deno.test("step two", () => {
   assertEquals(engineSchema.getSumOfGears(), 467835);
 
 });
+
+Deno.test("north - south", () => {
+  const engineSchema = new EngineSchema();
+
+  engineSchema.addLine("..592....#...64..*..........*........656..505..*......546.....&........422.........#............*.613.382..123............%....721...572....");
+  engineSchema.addLine("...*.........*..........839.364.........*....*.549..............336...*...........129.......632....*....*.....#..647..122..25...............");
+  engineSchema.addLine(".612...-..%............$..............628..489......................-.850..633.........=......*...972.660........*....*.....................");
+  engineSchema.endLines();
+
+  const gears = engineSchema.getGears();
+  let otherGear = null;
+  for (const gear of gears) {
+    if (gear[0] == 613) {
+      otherGear = gear[1];
+      console.log("found !");
+    } else if (gear[1] == 613) {
+      otherGear = gear[0];
+      console.log("found !");
+    }
+  }
+  assertEquals(otherGear, 972);
+
+});
