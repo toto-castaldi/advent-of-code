@@ -1,4 +1,4 @@
-import { intersection, containsOnlyDotsOrNumbers, readInputLines, findItemInString, isDigit, extractNumberFromString } from '../../src/main/typescript/utils.ts';
+import { intersection, readInputLines } from '../../src/main/typescript/utils.ts';
 
 export class ScrathCards {
 
@@ -10,10 +10,12 @@ export class ScrathCards {
 
     public addCard(line: string) : void {
         const numberLines = line.split(":")[1].split("|");
-        const winningNumbers = [...new Set(numberLines[0].trim().split(" ").map((s) => parseInt(s.trim())))];
-        const havingNumbers = [...new Set(numberLines[1].trim().split(" ").map((s) => parseInt(s.trim())))];
+        const winningNumbers = [...new Set(numberLines[0].trim().split(" ").filter(s=> s.trim().length > 0).map(s => parseInt(s.trim())))];
+        const havingNumbers = [...new Set(numberLines[1].trim().split(" ").filter(s=> s.trim().length > 0).map((s) => parseInt(s.trim())))];
 
         const i = intersection(winningNumbers, havingNumbers);
+
+        //console.log(line, winningNumbers, havingNumbers, i);
 
         if (i.length > 0) {
             this.sumOfCardPoints += Math.pow(2, i.length - 1);
