@@ -1,73 +1,86 @@
 import { intersection, readInputLines } from '../../src/main/typescript/utils.ts';
 
-type CardsInfo = {
-  [id: number]: number;
-};
+type CardId = number;
+type MatchCount = number;
+type CardPoints = number;
 
-type Cache = {
-  [id: number]: number;
-};
+type CardsInfo = Record<CardId, MatchCount>;
+type Cache = Record<CardId, number>;
 
-export class ScrathCards {
+export class ScratchCards {
 
-    private cardsInfo : CardsInfo;
-    private cache : Cache;
+    private readonly cardsInfo: CardsInfo;
+    private readonly cache: Cache;
 
     constructor() {
       this.cardsInfo = {};
       this.cache = {};
     }
 
-    public addCard(line: string) : void {
-      const idNumbers = line.split(":").map(s => s.trim());
-      const numberLines = idNumbers[1].split("|");
-      const id : number = parseInt(idNumbers[0].split("Card ")[1].trim());
-      const winningNumbers = [...new Set(numberLines[0].trim().split(" ").filter(s=> s.trim().length > 0).map(s => parseInt(s.trim())))];
-      const havingNumbers = [...new Set(numberLines[1].trim().split(" ").filter(s=> s.trim().length > 0).map((s) => parseInt(s.trim())))];
-
-      const i = intersection(winningNumbers, havingNumbers);
-
-      this.cardsInfo[id] = i.length;
+    public addCard(line: string): void {
+      const [cardPart, numbersPart] = line.split(':');
+      const cardId = this.parseCardId(cardPart);
+      const [winningPart, havingPart] = numbersPart.split('|');
+      
+      const winningNumbers = this.parseNumbers(winningPart);
+      const havingNumbers = this.parseNumbers(havingPart);
+      const matchingNumbers = intersection(winningNumbers, havingNumbers);
+      
+      this.cardsInfo[cardId] = matchingNumbers.length;
+    }
+    
+    private parseCardId(cardPart: string): CardId {
+      const idMatch = cardPart.match(/Card\s+(\d+)/);
+      if (!idMatch) {
+        throw new Error(`Invalid card format: ${cardPart}`);
+      }
+      return parseInt(idMatch[1], 10);
+    }
+    
+    private parseNumbers(numbersString: string): number[] {
+      return [...new Set(
+        numbersString
+          .trim()
+          .split(/\s+/)
+          .filter(s => s.length > 0)
+          .map(s => parseInt(s, 10))
+      )];
     }
 
-    private cardPoints( winningNumberCounts : number) : number {
-      return winningNumberCounts > 0 ? Math.pow(2, winningNumberCounts - 1) : 0;
+    private calculateCardPoints(matchCount: MatchCount): CardPoints {
+      return matchCount > 0 ? Math.pow(2, matchCount - 1) : 0;
     } 
 
-    public getSumOfCardPoints() : number {
-      return Object.values(this.cardsInfo).reduce((acc, val) => {
-        return acc + this.cardPoints(val);
-      }, 0);
+    public getSumOfCardPoints(): number {
+      return Object.values(this.cardsInfo)
+        .reduce((sum, matchCount) => sum + this.calculateCardPoints(matchCount), 0);
     }
 
-    private recPoints(cardNumber : number) : number {
-      if (cardNumber in this.cache) {
-        return this.cache[cardNumber];
+    private calculateTotalCards(cardId: CardId): number {
+      if (cardId in this.cache) {
+        return this.cache[cardId];
       }
 
-
-      const cardMatchingNumbers = this.cardsInfo[cardNumber];
-      let result = 1;
-      if (cardMatchingNumbers !== 0) {
-        for (let index = 0; index < cardMatchingNumbers; index ++) {
-          const bonusCardIndex = cardNumber + index + 1;
-          if (bonusCardIndex in this.cardsInfo) {
-            result += this.recPoints(bonusCardIndex);
+      const matchCount = this.cardsInfo[cardId];
+      let totalCards = 1;
+      
+      if (matchCount > 0) {
+        for (let offset = 1; offset <= matchCount; offset++) {
+          const nextCardId = cardId + offset;
+          if (nextCardId in this.cardsInfo) {
+            totalCards += this.calculateTotalCards(nextCardId);
           }
         }
       }
 
-      this.cache[cardNumber] = result;
-
-      return result;
+      this.cache[cardId] = totalCards;
+      return totalCards;
     }
 
-    public getSumOfWinningCards() : number {
-      let result = 0;
-      for (const cardNumber of Object.keys(this.cardsInfo)) {
-        result += this.recPoints(parseInt(cardNumber));
-      }
-      return result;
+    public getSumOfWinningCards(): number {
+      return Object.keys(this.cardsInfo)
+        .map(id => parseInt(id, 10))
+        .reduce((sum, cardId) => sum + this.calculateTotalCards(cardId), 0);
     }
     
 }
@@ -76,16 +89,16 @@ if (import.meta.main) {
   try {
     const currentDir = new URL('.', import.meta.url).pathname;
 
-    const engineSchema = new ScrathCards();
+    const scratchCards = new ScratchCards();
     for await (const line of readInputLines(`${currentDir}input.txt`)) {
-        engineSchema.addCard(line);
+        scratchCards.addCard(line);
     }
     
-    let result = engineSchema.getSumOfCardPoints(); 
-    console.log(`Step 1: ${result}`);
+    const part1Result = scratchCards.getSumOfCardPoints();
+    console.log(`Step 1: ${part1Result}`);
 
-    result = engineSchema.getSumOfWinningCards(); 
-    console.log(`Step 2: ${result}`);
+    const part2Result = scratchCards.getSumOfWinningCards();
+    console.log(`Step 2: ${part2Result}`);
 
   } catch (error) {
     console.error("💥", error);
