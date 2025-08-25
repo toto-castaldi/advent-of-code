@@ -4,12 +4,18 @@ type CardsInfo = {
   [id: number]: number;
 };
 
+type Cache = {
+  [id: number]: number;
+};
+
 export class ScrathCards {
 
     private cardsInfo : CardsInfo;
+    private cache : Cache;
 
     constructor() {
       this.cardsInfo = {};
+      this.cache = {};
     }
 
     public addCard(line: string) : void {
@@ -35,6 +41,11 @@ export class ScrathCards {
     }
 
     private recPoints(cardNumber : number) : number {
+      if (cardNumber in this.cache) {
+        return this.cache[cardNumber];
+      }
+
+
       const cardMatchingNumbers = this.cardsInfo[cardNumber];
       let result = 1;
       if (cardMatchingNumbers !== 0) {
@@ -45,6 +56,9 @@ export class ScrathCards {
           }
         }
       }
+
+      this.cache[cardNumber] = result;
+
       return result;
     }
 
