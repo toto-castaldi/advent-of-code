@@ -21,10 +21,7 @@ export class ScrathCards {
 
       const i = intersection(winningNumbers, havingNumbers);
 
-      //console.log(line, winningNumbers, havingNumbers, i);
-
       this.cardsInfo[id] = i.length;
-      
     }
 
     private cardPoints( winningNumberCounts : number) : number {
@@ -37,20 +34,25 @@ export class ScrathCards {
       }, 0);
     }
 
+    private recPoints(cardNumber : number) : number {
+      const cardMatchingNumbers = this.cardsInfo[cardNumber];
+      //console.log(`Card ${cardNumber} => ${cardMatchingNumbers}`);
+      let result = 1;
+      if (cardMatchingNumbers !== 0) {
+        for (let index = 0; index < cardMatchingNumbers; index ++) {
+          result += this.recPoints(cardNumber + index + 1);
+        }
+      }
+      return result;
+    }
+
     public getSumOfCardPointsWithBonus() : number {
-      return Object.entries(this.cardsInfo).reduce((acc, [id, val]) => {
-        let s = acc + val;
-        if (val > 0) {
-          console.log(`points for Card ${id}`);  
-          for (let index = 0; index < val; index ++) {
-            const i = parseInt(id) + index + 1;
-            const p = this.cardPoints(parseInt(id) + index + 1);
-            console.log(`adding points for Card ${i}`);
-            s += p;
-          } 
-        };
-        return s;
-      }, 0);
+      console.log(this.cardsInfo);
+      let result = 0;
+      for (const cardNumber of Object.keys(this.cardsInfo)) {
+        result += this.recPoints(parseInt(cardNumber));
+      }
+      return result;
     }
     
 }
