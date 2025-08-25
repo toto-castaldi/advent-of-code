@@ -36,18 +36,19 @@ export class ScrathCards {
 
     private recPoints(cardNumber : number) : number {
       const cardMatchingNumbers = this.cardsInfo[cardNumber];
-      //console.log(`Card ${cardNumber} => ${cardMatchingNumbers}`);
       let result = 1;
       if (cardMatchingNumbers !== 0) {
         for (let index = 0; index < cardMatchingNumbers; index ++) {
-          result += this.recPoints(cardNumber + index + 1);
+          const bonusCardIndex = cardNumber + index + 1;
+          if (bonusCardIndex in this.cardsInfo) {
+            result += this.recPoints(bonusCardIndex);
+          }
         }
       }
       return result;
     }
 
-    public getSumOfCardPointsWithBonus() : number {
-      console.log(this.cardsInfo);
+    public getSumOfWinningCards() : number {
       let result = 0;
       for (const cardNumber of Object.keys(this.cardsInfo)) {
         result += this.recPoints(parseInt(cardNumber));
@@ -66,8 +67,11 @@ if (import.meta.main) {
         engineSchema.addCard(line);
     }
     
-    const result = engineSchema.getSumOfCardPoints(); 
+    let result = engineSchema.getSumOfCardPoints(); 
     console.log(`Step 1: ${result}`);
+
+    result = engineSchema.getSumOfWinningCards(); 
+    console.log(`Step 2: ${result}`);
 
   } catch (error) {
     console.error("💥", error);
