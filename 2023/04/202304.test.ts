@@ -1,8 +1,8 @@
 import { assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
-import { ScrathCards } from './202304.ts';
+import { ScratchCards } from './202304.ts';
 
 Deno.test("step one", () => {
-  const scrathCards = new ScrathCards();
+  const scrathCards = new ScratchCards();
 
   scrathCards.addCard("Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53");
   scrathCards.addCard("Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19");
@@ -16,7 +16,7 @@ Deno.test("step one", () => {
 });
 
 Deno.test("step two", () => {
-  const scrathCards = new ScrathCards();
+  const scrathCards = new ScratchCards();
 
   scrathCards.addCard("Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53");
   scrathCards.addCard("Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19");
