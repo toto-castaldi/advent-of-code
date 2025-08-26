@@ -84,11 +84,11 @@ deno run --allow-read 2023/01/202301a.ts
 
 ![2016 Calendar](./2016.08.2-calendar.png?&raw=true "2016 Calendar")
 
-![2017 Calendar](./2017.07.1-calendar.png?&raw=true "2017 Calendar")
+![2017 Calendar](./2017-calendar.png?&raw=true "2017 Calendar")
 
-![2018 Calendar](./2018.03.2-calendar.png?&raw=true "2018 Calendar")
+![2018 Calendar](./2018-calendar.png?&raw=true "2018 Calendar")
 
-![2019 Calendar](./2019.06.1-calendar.png?&raw=true "2019 Calendar")
+![2019 Calendar](./2019-calendar.png?&raw=true "2019 Calendar")
 
 ![2020 Calendar](./2020.16.2-calendar.png?&raw=true "2020 Calendar")
 
