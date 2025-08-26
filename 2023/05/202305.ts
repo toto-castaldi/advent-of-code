@@ -4,27 +4,31 @@ type SeedId = number;
 type Range = {
   source : number,
   dest : number
-  lenght : number
+  length : number
 }
 
+export enum Mapping {
+    NONE,     
+    seedToSoil,      
+    soilToFertilizer,      
+    fertilizerToWater,
+    waterToLight,
+    lightToTemperature,
+    temperatureToHumidity,
+    humidityToLocation     
+}
 
-//type CardsInfo = Record<CardId, MatchCount>;
-//type Seeds = Array<SeedId>;
+type Mappings = Record<Mapping, Array<Range>>;
 
 export class Gardener {
 
-    private seeds : Array<SeedId>;
-    private seedToSoilMapping : Array<Range>;
-    private humidityToLocationMapping : Array<Range>;
-    private temperatureToHumidityMapping : Array<Range>;
-    private lightToTemperatureMapping : Array<Range>;
-    private waterToLightMapping : Array<Range>;
-    private fertilizerToWaterMapping : Array<Range>;
-    private soilToFertilizerMapping : Array<Range>;
+    private readonly seeds : Array<SeedId>;
+    private readonly mappings : Mappings;
+    public debug : boolean = false;
 
-    findMapping(move: number, mapping: Range[]) : number {
-      for (const range of mapping) {
-        if (move >= range.source && move <= range.source + range.lenght) {
+    findMapping(move: number, mappingKey: Mapping) : number {
+      for (const range of this.mappings[mappingKey]) {
+        if (move >= range.source && move <= range.source + range.length) {
           return range.dest + move - range.source;
         }
       }
@@ -34,21 +38,21 @@ export class Gardener {
     getLowestLocation(): number {
       let result = null;
       for (const seed of this.seeds) {
-        console.log(seed);
-        let move = this.findMapping(seed, this.seedToSoilMapping);
-        console.log(`${seed} seed to soil ${move}`);
-        move = this.findMapping(move, this.soilToFertilizerMapping);
-        console.log(`to fertilizer ${move}`);
-        move = this.findMapping(move, this.fertilizerToWaterMapping);
-        console.log(`to water ${move}`);
-        move = this.findMapping(move, this.waterToLightMapping);
-        console.log(`to light ${move}`);
-        move = this.findMapping(move, this.lightToTemperatureMapping);
-        console.log(`to temp ${move}`);
-        move = this.findMapping(move, this.temperatureToHumidityMapping);
-        console.log(`to humidity ${move}`);
-        move = this.findMapping(move, this.humidityToLocationMapping);
-        console.log(`to location ${move}`);
+        if (this.debug) console.log(seed);
+        let move = this.findMapping(seed, Mapping.seedToSoil);
+        if (this.debug) console.log(`${seed} seed to soil ${move}`);
+        move = this.findMapping(move, Mapping.soilToFertilizer);
+        if (this.debug) console.log(`to fertilizer ${move}`);
+        move = this.findMapping(move, Mapping.fertilizerToWater);
+        if (this.debug) console.log(`to water ${move}`);
+        move = this.findMapping(move, Mapping.waterToLight);
+        if (this.debug) console.log(`to light ${move}`);
+        move = this.findMapping(move, Mapping.lightToTemperature);
+        if (this.debug) console.log(`to temp ${move}`);
+        move = this.findMapping(move, Mapping.temperatureToHumidity);
+        if (this.debug) console.log(`to humidity ${move}`);
+        move = this.findMapping(move, Mapping.humidityToLocation);
+        if (this.debug) console.log(`to location ${move}`);
 
         if (result === null || move < result) {
           result = move;
@@ -58,40 +62,10 @@ export class Gardener {
       return result;
     }
 
-    humidityToLocation(line: string) : void {
-      const [dest, source, lenght] = line.split(" ").filter( s => s.trim().length > 0).map( s => s.trim()).map( s => parseInt(s));
-      this.humidityToLocationMapping.push({ source, dest, lenght});
-    }
-
-    tempeatureToHumidity(line: string) : void {
-      const [dest, source, lenght] = line.split(" ").filter( s => s.trim().length > 0).map( s => s.trim()).map( s => parseInt(s));
-      this.temperatureToHumidityMapping.push({ source, dest, lenght});
-    }
-
-    lightToTemperature(line: string) : void  {
-      const [dest, source, lenght] = line.split(" ").filter( s => s.trim().length > 0).map( s => s.trim()).map( s => parseInt(s));
-      this.lightToTemperatureMapping.push({ source, dest, lenght});
-    }
-
-    waterToLight(line: string) : void  {
-      const [dest, source, lenght] = line.split(" ").filter( s => s.trim().length > 0).map( s => s.trim()).map( s => parseInt(s));
-      this.waterToLightMapping.push({ source, dest, lenght});
-    }
-
-    fertilizerToWater(line: string) : void  {
-      const [dest, source, lenght] = line.split(" ").filter( s => s.trim().length > 0).map( s => s.trim()).map( s => parseInt(s));
-      this.fertilizerToWaterMapping.push({ source, dest, lenght});
-    }
-
-    soilToFertilizer(line: string) : void  {
-     const [dest, source, lenght] = line.split(" ").filter( s => s.trim().length > 0).map( s => s.trim()).map( s => parseInt(s));
-      this.soilToFertilizerMapping.push({ source, dest, lenght});
-    }
-
     //50 98 2 -> source 98 len 2, dest 50 len 2
-    seedToSoil(line: string) : void {
-      const [dest, source, lenght] = line.split(" ").filter( s => s.trim().length > 0).map( s => s.trim()).map( s => parseInt(s));
-      this.seedToSoilMapping.push({ source, dest, lenght});
+    map(line: string, mapping: Mapping) : void {
+      const [dest, source, length] = line.split(" ").filter( s => s.trim().length > 0).map( s => s.trim()).map( s => parseInt(s));
+      this.mappings[mapping].push({ source, dest, length});
     }
 
     seedIds(line: string) : void  {
@@ -100,29 +74,23 @@ export class Gardener {
 
     constructor() {
       this.seeds = new Array<SeedId>();
-      this.seedToSoilMapping = new Array<Range>();
-      this.humidityToLocationMapping = new Array<Range>();
-      this.temperatureToHumidityMapping = new Array<Range>();
-      this.lightToTemperatureMapping = new Array<Range>();
-      this.waterToLightMapping = new Array<Range>();
-      this.fertilizerToWaterMapping = new Array<Range>();
-      this.soilToFertilizerMapping = new Array<Range>();
+      this.mappings = {
+        [Mapping.NONE]: new Array<Range>(),
+        [Mapping.seedToSoil]: new Array<Range>(),
+        [Mapping.soilToFertilizer]: new Array<Range>(),
+        [Mapping.fertilizerToWater]: new Array<Range>(),
+        [Mapping.waterToLight]: new Array<Range>(),
+        [Mapping.lightToTemperature]: new Array<Range>(),
+        [Mapping.temperatureToHumidity]: new Array<Range>(),
+        [Mapping.humidityToLocation]: new Array<Range>(),
+      };
     }
 
     
 }
 
 if (import.meta.main) {
-  enum Mapping {
-    NONE,     
-    seedToSoil,      
-    soilToFertilizer,      
-    fertilizerToWater,
-    waterToLight,
-    lightToTemperature,
-    tempeatureToHumidity,
-    humidityToLocation     
-  }
+  
 
   let currentMapping = Mapping.NONE;
 
@@ -146,21 +114,11 @@ if (import.meta.main) {
           } else if (line.trim().startsWith("light-to-temperature map:")) {
             currentMapping = Mapping.lightToTemperature;
           } else if (line.trim().startsWith("temperature-to-humidity map:")) {
-            currentMapping = Mapping.tempeatureToHumidity;
+            currentMapping = Mapping.temperatureToHumidity;
           } else if (line.trim().startsWith("humidity-to-location map:")) {
             currentMapping = Mapping.humidityToLocation;
           } else {
-            switch (currentMapping) {
-              case Mapping.NONE: console.warn("strnge to be here..."); break;
-              case Mapping.seedToSoil: gardener.seedToSoil(line); break;
-              case Mapping.soilToFertilizer: gardener.soilToFertilizer(line); break;
-              case Mapping.fertilizerToWater: gardener.fertilizerToWater(line); break;
-              case Mapping.waterToLight: gardener.waterToLight(line); break;
-              case Mapping.lightToTemperature: gardener.lightToTemperature(line); break;
-              case Mapping.tempeatureToHumidity: gardener.tempeatureToHumidity(line); break;
-              case Mapping.humidityToLocation: gardener.humidityToLocation(line); break;
-              default: break;
-            }
+            if (currentMapping !== Mapping.NONE) gardener.map(line, currentMapping);
           }
         }
       }
