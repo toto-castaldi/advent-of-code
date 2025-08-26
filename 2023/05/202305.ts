@@ -98,9 +98,6 @@ export class Gardener {
       line.split(" ").filter( s => s.trim().length > 0).map( s => s.trim() ).forEach( s => this.seeds.push(parseInt(s)));
     }
 
-    //private readonly cardsInfo: CardsInfo;
-    //private readonly cache: Cache;
-
     constructor() {
       this.seeds = new Array<SeedId>();
       this.seedToSoilMapping = new Array<Range>();
@@ -116,12 +113,58 @@ export class Gardener {
 }
 
 if (import.meta.main) {
+  enum Mapping {
+    NONE,     
+    seedToSoil,      
+    soilToFertilizer,      
+    fertilizerToWater,
+    waterToLight,
+    lightToTemperature,
+    tempeatureToHumidity,
+    humidityToLocation     
+  }
+
+  let currentMapping = Mapping.NONE;
+
   try {
     const currentDir = new URL('.', import.meta.url).pathname;
 
     const gardener = new Gardener();
     for await (const line of readInputLines(`${currentDir}input.txt`)) {
-        //scratchCards.addCard(line);
+      if (line.trim().length > 0) {
+        if (line.trim().startsWith("seeds: ")) {
+          gardener.seedIds(line.split("seeds: ")[1]);
+        } else {
+          if (line.trim().startsWith("seed-to-soil map:")) {
+            currentMapping = Mapping.seedToSoil;
+          } else if (line.trim().startsWith("soil-to-fertilizer map:")) {
+            currentMapping = Mapping.soilToFertilizer;
+          } else if (line.trim().startsWith("fertilizer-to-water map:")) {
+            currentMapping = Mapping.fertilizerToWater;
+          } else if (line.trim().startsWith("water-to-light map")) {
+            currentMapping = Mapping.waterToLight;
+          } else if (line.trim().startsWith("light-to-temperature map:")) {
+            currentMapping = Mapping.lightToTemperature;
+          } else if (line.trim().startsWith("temperature-to-humidity map:")) {
+            currentMapping = Mapping.tempeatureToHumidity;
+          } else if (line.trim().startsWith("humidity-to-location map:")) {
+            currentMapping = Mapping.humidityToLocation;
+          } else {
+            switch (currentMapping) {
+              case Mapping.NONE: console.warn("strnge to be here..."); break;
+              case Mapping.seedToSoil: gardener.seedToSoil(line); break;
+              case Mapping.soilToFertilizer: gardener.soilToFertilizer(line); break;
+              case Mapping.fertilizerToWater: gardener.fertilizerToWater(line); break;
+              case Mapping.waterToLight: gardener.waterToLight(line); break;
+              case Mapping.lightToTemperature: gardener.lightToTemperature(line); break;
+              case Mapping.tempeatureToHumidity: gardener.tempeatureToHumidity(line); break;
+              case Mapping.humidityToLocation: gardener.humidityToLocation(line); break;
+              default: break;
+            }
+          }
+        }
+      }
+       
     }
     
     const part1Result = gardener.getLowestLocation();
