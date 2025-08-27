@@ -52,6 +52,9 @@ export class Gardener {
     }
 
     mapRangesThroughMapping(inputRanges: Array<{start: number, end: number}>, mappingKey: Mapping): Array<{start: number, end: number}> {
+      if (this.debug) console.log(`mapRangesThroughMapping ${mappingKey}`);
+      if (this.debug) console.log(inputRanges);
+
       const outputRanges: Array<{start: number, end: number}> = [];
       const mappingRanges = this.mappings[mappingKey];
       
@@ -129,8 +132,6 @@ export class Gardener {
         start: r.start,
         end: r.start + r.length - 1
       }));
-      
-      if (this.debug) console.log(`Starting with ${ranges.length} seed ranges`);
       
       const mappingOrder = [
         Mapping.seedToSoil,
