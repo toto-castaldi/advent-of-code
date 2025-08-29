@@ -9,8 +9,8 @@ Deno.test("step one", () => {
   boatRace.addRace(15,40);
   boatRace.addRace(30,200);
   
+  assertEquals(boatRace.winningWayCount(2), 9);
   assertEquals(boatRace.winningWayCount(0), 4);
   assertEquals(boatRace.winningWayCount(1), 8);
-  assertEquals(boatRace.winningWayCount(2), 9);
 
 });

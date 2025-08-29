@@ -10,10 +10,11 @@ export class BoatRace {
 
     winningWayCount(index: number): number {
       const race : Race = this.races[index];
-      const minimum = this.searchForMinimumHoldTimeWinning(0, race.time, race.distance);
-      const maximum = this.searchForMaximumHoldTimeWinning(race);
-      if (this.debug) console.log(`for race ${race} . ${minimum} -> ${maximum}`);
-      return maximum - minimum;
+      const minimum = this.searchForMinimumHoldTimeWinning(race.time, race.distance);
+      if (this.debug) console.log(`for race [${race.time} ${race.distance}] MIN ${minimum}}`);
+      const maximum = this.searchForMaximumHoldTimeWinning(race.time, race.distance);
+      if (this.debug) console.log(`for race [${race.time} ${race.distance}] MAX ${maximum}}`);
+      return maximum - minimum + 1;
     }
 
     addRace(time: number, distance: number) {
@@ -25,21 +26,26 @@ export class BoatRace {
       this.races = new Array<Race>();
     }
 
-    private searchForMinimumHoldTimeWinning(min : number, time: number, distance: number) : number{
-      const middle = Math.floor((time - min) / 2);
-      const distanceReach = middle * (time - middle);
-      if (distanceReach >= distance) {
-        const next = this.searchForMinimumHoldTimeWinning(0, middle, distance);
-        if (next >= distance) {
-          return next;
-        } else {
-          return middle;
-        }
-      } else return this.searchForMinimumHoldTimeWinning(0, middle, distance);
+    private validHoldTime(t : number, time : number, distance : number) : boolean {
+      const result = t * (time - t) > distance;
+      if (this.debug) console.log(`testing ${t} ${time} ${distance} -> ${result}`)
+      return result;
     }
 
-    private searchForMaximumHoldTimeWinning(race: Race) : number{
-      throw new Error("Function not implemented.");
+    private searchForMinimumHoldTimeWinning(time: number, distance: number) : number{
+      let min = 0;
+      while (!this.validHoldTime(min, time, distance) && min < time ) {
+        min ++;
+      }
+      return min;
+    }
+
+    private searchForMaximumHoldTimeWinning(time: number, distance: number) : number{
+      let max = time;
+      while (!this.validHoldTime(max, time, distance) && max > 0 ) {
+        max --;
+      }
+      return max;
     }
     
 }
