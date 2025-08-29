@@ -56,18 +56,21 @@ if (import.meta.main) {
   
   try {
     
-    const boatRace = new BoatRace();
+    let boatRace = new BoatRace();
 
     boatRace.addRace(55,246);
     boatRace.addRace(82,1441);
     boatRace.addRace(64,1012);
     boatRace.addRace(90,1111);
 
-    
     const part1Result = boatRace.winningWayCount(0) * boatRace.winningWayCount(1) * boatRace.winningWayCount(2) * boatRace.winningWayCount(3);
     console.log(`Step 1: ${part1Result}`);
 
+    boatRace = new BoatRace();
+    boatRace.addRace(55826490,246144110121111);
 
+    const part2Result = boatRace.winningWayCount(0);
+    console.log(`Step 2: ${part2Result}`);
   } catch (error) {
     console.error("💥", error);
   }
