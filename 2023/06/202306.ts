@@ -1,77 +1,102 @@
-type Race = {
-  time : number,
-  distance : number
+interface Race {
+  readonly time: number;
+  readonly distance: number;
 }
 
 export class BoatRace {
- 
-    public debug : boolean = false;
-    private races : Array<Race>;
+    public debug = false;
+    private readonly races: Race[] = [];
 
     winningWayCount(index: number): number {
-      const race : Race = this.races[index];
-      const minimum = this.searchForMinimumHoldTimeWinning(race.time, race.distance);
-      if (this.debug) console.log(`for race [${race.time} ${race.distance}] MIN ${minimum}}`);
-      const maximum = this.searchForMaximumHoldTimeWinning(race.time, race.distance);
-      if (this.debug) console.log(`for race [${race.time} ${race.distance}] MAX ${maximum}}`);
-      return maximum - minimum + 1;
+        const race = this.races[index];
+        if (!race) throw new Error(`Race at index ${index} not found`);
+        
+        const minimum = this.findMinimumWinningHoldTime(race.time, race.distance);
+        const maximum = this.findMaximumWinningHoldTime(race.time, race.distance);
+        
+        if (this.debug) {
+            console.log(`Race [time: ${race.time}, distance: ${race.distance}]`);
+            console.log(`  Min hold time: ${minimum}, Max hold time: ${maximum}`);
+        }
+        
+        return maximum - minimum + 1;
     }
 
-    addRace(time: number, distance: number) {
-      this.races.push({ time, distance});
+    addRace(time: number, distance: number): void {
+        this.races.push({ time, distance });
     }
 
+
+    private isWinningHoldTime(holdTime: number, raceTime: number, recordDistance: number): boolean {
+        const travelDistance = holdTime * (raceTime - holdTime);
+        return travelDistance > recordDistance;
+    }
+
+    private findMinimumWinningHoldTime(raceTime: number, recordDistance: number): number {
+        let left = 0;
+        let right = Math.floor(raceTime / 2);
+        
+        while (left < right) {
+            const mid = Math.floor((left + right) / 2);
+            if (this.isWinningHoldTime(mid, raceTime, recordDistance)) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        
+        return left;
+    }
+
+    private findMaximumWinningHoldTime(raceTime: number, recordDistance: number): number {
+        let left = Math.ceil(raceTime / 2);
+        let right = raceTime;
+        
+        while (left < right) {
+            const mid = Math.ceil((left + right + 1) / 2);
+            if (this.isWinningHoldTime(mid, raceTime, recordDistance)) {
+                left = mid;
+            } else {
+                right = mid - 1;
+            }
+        }
+        
+        return left;
+    }
     
-    constructor() {
-      this.races = new Array<Race>();
-    }
-
-    private validHoldTime(t : number, time : number, distance : number) : boolean {
-      const result = t * (time - t) > distance;
-      if (this.debug) console.log(`testing ${t} ${time} ${distance} -> ${result}`)
-      return result;
-    }
-
-    private searchForMinimumHoldTimeWinning(time: number, distance: number) : number{
-      let min = 0;
-      while (!this.validHoldTime(min, time, distance) && min < time ) {
-        min ++;
-      }
-      return min;
-    }
-
-    private searchForMaximumHoldTimeWinning(time: number, distance: number) : number{
-      let max = time;
-      while (!this.validHoldTime(max, time, distance) && max > 0 ) {
-        max --;
-      }
-      return max;
+    calculateProductOfWinningWays(...indices: number[]): number {
+        return indices.reduce((product, index) => product * this.winningWayCount(index), 1);
     }
     
+    getRaceCount(): number {
+        return this.races.length;
+    }
 }
 
 
 
-if (import.meta.main) {
-  
-  try {
+function solvePart1(): number {
+    const boatRace = new BoatRace();
+    boatRace.addRace(55, 246);
+    boatRace.addRace(82, 1441);
+    boatRace.addRace(64, 1012);
+    boatRace.addRace(90, 1111);
     
-    let boatRace = new BoatRace();
+    return boatRace.calculateProductOfWinningWays(0, 1, 2, 3);
+}
 
-    boatRace.addRace(55,246);
-    boatRace.addRace(82,1441);
-    boatRace.addRace(64,1012);
-    boatRace.addRace(90,1111);
+function solvePart2(): number {
+    const boatRace = new BoatRace();
+    boatRace.addRace(55826490, 246144110121111);
+    
+    return boatRace.winningWayCount(0);
+}
 
-    const part1Result = boatRace.winningWayCount(0) * boatRace.winningWayCount(1) * boatRace.winningWayCount(2) * boatRace.winningWayCount(3);
-    console.log(`Step 1: ${part1Result}`);
-
-    boatRace = new BoatRace();
-    boatRace.addRace(55826490,246144110121111);
-
-    const part2Result = boatRace.winningWayCount(0);
-    console.log(`Step 2: ${part2Result}`);
-  } catch (error) {
-    console.error("💥", error);
-  }
+if (import.meta.main) {
+    try {
+        console.log(`Step 1: ${solvePart1()}`);
+        console.log(`Step 2: ${solvePart2()}`);
+    } catch (error) {
+        console.error("💥", error);
+    }
 }
