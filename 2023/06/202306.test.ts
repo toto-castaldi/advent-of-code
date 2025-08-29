@@ -14,3 +14,14 @@ Deno.test("step one", () => {
   assertEquals(boatRace.winningWayCount(1), 8);
 
 });
+
+Deno.test("step two", () => {
+  const boatRace = new BoatRace();
+  boatRace.debug = true;
+  
+  boatRace.addRace(71530,940200);
+  
+  assertEquals(boatRace.winningWayCount(0), 71503);
+
+});
+
