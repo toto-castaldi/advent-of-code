@@ -15,11 +15,13 @@ Deno.test("step one", () => {
 
   assertEquals(orderedHands.length, 5);
 
-  assertEquals(orderedHands[0], "32T3K");
-  assertEquals(orderedHands[1], "KTJJT");
-  assertEquals(orderedHands[2], "KK677");
-  assertEquals(orderedHands[3], "T55J5");
-  assertEquals(orderedHands[4], "QQQJA");
+  console.log(orderedHands);
+
+  assertEquals(orderedHands[0].cards, "32T3K");
+  assertEquals(orderedHands[1].cards, "KTJJT");
+  assertEquals(orderedHands[2].cards, "KK677");
+  assertEquals(orderedHands[3].cards, "T55J5");
+  assertEquals(orderedHands[4].cards, "QQQJA");
 
 });
 

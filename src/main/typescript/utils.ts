@@ -1,5 +1,9 @@
 import { TextLineStream } from 'https://deno.land/std/streams/mod.ts'
 
+export const numbers = [...'0123456789'];
+export const letters = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
+          
+
 // input = "467..*..114.."
 // Output: [
 //   { value: '467', position: 0 },
@@ -89,5 +93,24 @@ export function reverseEnumIteration<T extends object>(enumObj: T): Array<[strin
     .reverse();
   
   return entries as Array<[string, T[keyof T]]>;
+}
+
+export function coupleCount(str: string): number {
+    
+    const count = new Map<string, number>();
+    
+    for (const char of str) {
+        count.set(char, (count.get(char) || 0) + 1);
+    }
+    
+    let coupleCount = 0;
+    
+    for (const c of count.values()) {
+        if (c === 2) {
+            coupleCount++;
+        }
+    }
+    
+    return coupleCount;
 }
 
