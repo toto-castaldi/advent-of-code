@@ -36,11 +36,12 @@ export class CamelPoker {
     getOrderdHands() : Array<Hand> {
       this.hands.sort((a, b) => {
         if (a.handType === b.handType) {
-          const cardOrder = [...numbers, ...letters];
+          //const cardOrder = [...numbers, ...letters];
+          const cardOrder = [...letters, ...(numbers).reverse()];
           let index : number = 0;
           while (a.cards[index] === b.cards[index] && index < a.cards.length && index < b.cards.length ) index ++;
           if (index < a.cards.length && index < b.cards.length)  {
-            if (this.debug) console.log(`${index} ${a.cards} vs ${b.cards} `);
+            if (this.debug) console.log(`${index} ${a.cards} vs ${b.cards} -> ${a.cards[index]} vs ${b.cards[index]} -> ${cardOrder.indexOf(a.cards[index])} vs ${cardOrder.indexOf(b.cards[index])} -> ${cardOrder.indexOf(b.cards[index]) - cardOrder.indexOf(a.cards[index])}`);
             return cardOrder.indexOf(b.cards[index]) - cardOrder.indexOf(a.cards[index]);
           }
           else
@@ -106,9 +107,20 @@ if (import.meta.main) {
     const currentDir = new URL('.', import.meta.url).pathname;
 
     const camelPoker = new CamelPoker();
+
+    camelPoker.debug = true;
+
     for await (const line of readInputLines(`${currentDir}input.txt`)) {
         camelPoker.addHand(line);
     }
+
+    if (camelPoker.debug) {
+      camelPoker.getOrderdHands().forEach(h => {
+        console.log(`${h.cards} ${HandType[h.handType]}`);
+      });
+    }
+
+    camelPoker.debug = false;
     
     const part1Result = camelPoker.getSumOfPoints();
     console.log(`Step 1: ${part1Result}`);
