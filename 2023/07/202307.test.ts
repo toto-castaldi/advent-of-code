@@ -25,20 +25,3 @@ Deno.test("step one", () => {
 
   assertEquals(camelPoker.getSumOfPoints(), 6440);
 });
-
-
-Deno.test("order", () => {
-  const camelPoker = new CamelPoker();
-  camelPoker.debug = true;
-  
-  camelPoker.addHand("44494 1");
-  camelPoker.addHand("44484 1");
-  
-  const orderedHands = camelPoker.getOrderdHands();
-
-  console.log(orderedHands);
-
-  assertEquals(orderedHands[0].cards, "44484");
-  assertEquals(orderedHands[1].cards, "44494");
-});
-

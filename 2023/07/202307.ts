@@ -1,4 +1,4 @@
-import { readInputLines, reverseEnumIteration, coupleCount, numbers, letters } from '../../src/main/typescript/utils.ts';
+import { readInputLines, reverseEnumIteration, coupleCount } from '../../src/main/typescript/utils.ts';
 
 enum HandType {
     HIGH_CARD,     
@@ -15,6 +15,8 @@ type Hand = {
     bid : number,
     handType : HandType
 }
+
+const cardOrder = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
 
 export class CamelPoker {
     public debug : boolean = false;
@@ -36,13 +38,13 @@ export class CamelPoker {
     getOrderdHands() : Array<Hand> {
       this.hands.sort((a, b) => {
         if (a.handType === b.handType) {
-          //const cardOrder = [...numbers, ...letters];
-          const cardOrder = [...letters, ...(numbers).reverse()];
           let index : number = 0;
           while (a.cards[index] === b.cards[index] && index < a.cards.length && index < b.cards.length ) index ++;
           if (index < a.cards.length && index < b.cards.length)  {
-            if (this.debug) console.log(`${index} ${a.cards} vs ${b.cards} -> ${a.cards[index]} vs ${b.cards[index]} -> ${cardOrder.indexOf(a.cards[index])} vs ${cardOrder.indexOf(b.cards[index])} -> ${cardOrder.indexOf(b.cards[index]) - cardOrder.indexOf(a.cards[index])}`);
-            return cardOrder.indexOf(b.cards[index]) - cardOrder.indexOf(a.cards[index]);
+            const charA = a.cards[index];
+            const charB = b.cards[index];
+            if (this.debug) console.log(`${index} ${a.cards} vs ${b.cards} -> ${charA} vs ${charB} -> ${cardOrder.indexOf(charA)} vs ${cardOrder.indexOf(charB)}`);
+            return cardOrder.indexOf(charA) - cardOrder.indexOf(charB);
           }
           else
             return 0;
@@ -108,19 +110,9 @@ if (import.meta.main) {
 
     const camelPoker = new CamelPoker();
 
-    camelPoker.debug = true;
-
     for await (const line of readInputLines(`${currentDir}input.txt`)) {
         camelPoker.addHand(line);
     }
-
-    if (camelPoker.debug) {
-      camelPoker.getOrderdHands().forEach(h => {
-        console.log(`${h.cards} ${HandType[h.handType]}`);
-      });
-    }
-
-    camelPoker.debug = false;
     
     const part1Result = camelPoker.getSumOfPoints();
     console.log(`Step 1: ${part1Result}`);
