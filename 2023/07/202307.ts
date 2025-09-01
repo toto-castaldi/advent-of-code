@@ -1,6 +1,6 @@
 import { readInputLines, reverseEnumIteration, coupleCount } from '../../src/main/typescript/utils.ts';
 
-enum HandType {
+export enum HandType {
     HIGH_CARD,     
     ONE_PAIR,      
     TWO_PAIR,      
@@ -63,6 +63,11 @@ export class CamelPoker {
           return aHT - bHT;
         }
       });
+      if (this.debug) {
+        this.hands.forEach(h => {
+          console.log(`${h.cards} | original ${HandType[h.originalHT]} | best ${HandType[h.bestVersionHT]}`);
+        });
+      }
       return this.hands;
     }
 
@@ -77,8 +82,9 @@ export class CamelPoker {
         let bestHT : HandType = originalHT;
         for (const card of cards.split('')) {
           if (card !== 'J') {
-            const newCard = card.replaceAll('J', card);
+            const newCard = cards.replaceAll('J', card);
             const opponentHT = this.computeHandType(newCard);
+            if (this.debug) console.log(`${cards} -> ${newCard} . From ${bestHT} to ${opponentHT}`);
             if (opponentHT > bestHT) {
               bestHT = opponentHT;
             }
@@ -138,8 +144,7 @@ if (import.meta.main) {
   try {
     const currentDir = new URL('.', import.meta.url).pathname;
 
-    const camelPoker = new CamelPoker();
-
+    let camelPoker = new CamelPoker();
     for await (const line of readInputLines(`${currentDir}input.txt`)) {
         camelPoker.addHand(line);
     }
@@ -147,6 +152,11 @@ if (import.meta.main) {
     const part1Result = camelPoker.getSumOfOriginalPoints();
     console.log(`Step 1: ${part1Result}`);
 
+    camelPoker = new CamelPoker();
+    camelPoker.debug = true;
+    for await (const line of readInputLines(`${currentDir}input.txt`)) {
+        camelPoker.addHand(line);
+    }
     const part2Result = camelPoker.getSumOfBestVersionPoints();
     console.log(`Step 2: ${part2Result}`);
   } catch (error) {

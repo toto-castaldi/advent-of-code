@@ -1,5 +1,5 @@
 import { assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
-import { CamelPoker } from './202307.ts';
+import { CamelPoker, HandType } from './202307.ts';
 
 Deno.test("step one", () => {
   const camelPoker = new CamelPoker();
@@ -25,4 +25,11 @@ Deno.test("step two", () => {
   camelPoker.addHand("QQQJA 483");
 
   assertEquals(camelPoker.getSumOfBestVersionPoints(), 5905);
+});
+
+Deno.test("bestversion", () => {
+  const camelPoker = new CamelPoker();
+  camelPoker.debug = true;
+  
+  assertEquals(camelPoker.computeBestVersion('KKJ2K', HandType.THREE_OF_A_KIND), HandType.FOUR_OR_A_KIND);
 });
