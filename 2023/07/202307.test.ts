@@ -10,18 +10,19 @@ Deno.test("step one", () => {
   camelPoker.addHand("KK677 28");
   camelPoker.addHand("KTJJT 220");
   camelPoker.addHand("QQQJA 483");
+
+  assertEquals(camelPoker.getSumOfOriginalPoints(), 6440);
+});
+
+Deno.test("step two", () => {
+  const camelPoker = new CamelPoker();
+  camelPoker.debug = true;
   
-  const orderedHands = camelPoker.getOrderdHands();
+  camelPoker.addHand("32T3K 765");
+  camelPoker.addHand("T55J5 684");
+  camelPoker.addHand("KK677 28");
+  camelPoker.addHand("KTJJT 220");
+  camelPoker.addHand("QQQJA 483");
 
-  assertEquals(orderedHands.length, 5);
-
-  console.log(orderedHands);
-
-  assertEquals(orderedHands[0].cards, "32T3K");
-  assertEquals(orderedHands[1].cards, "KTJJT");
-  assertEquals(orderedHands[2].cards, "KK677");
-  assertEquals(orderedHands[3].cards, "T55J5");
-  assertEquals(orderedHands[4].cards, "QQQJA");
-
-  assertEquals(camelPoker.getSumOfPoints(), 6440);
+  assertEquals(camelPoker.getSumOfBestVersionPoints(), 5905);
 });

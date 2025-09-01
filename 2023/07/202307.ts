@@ -13,12 +13,12 @@ enum HandType {
 type Hand = {
     cards : string,
     bid : number,
-    handType : HandType
+    originalHT : HandType
+    bestVersionHT : HandType,
 }
 
-const cardOrder = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
-
 export class CamelPoker {
+    
     public debug : boolean = false;
     private readonly hands : Array<Hand>;
 
@@ -26,18 +26,29 @@ export class CamelPoker {
         this.hands = new Array<Hand>();
     }
 
-    getSumOfPoints() : number {
+    getSumOfOriginalPoints() : number {
       let result : number = 0;
-      const arr = this.getOrderdHands();
+      const arr = this.getOrderdHands((hand : Hand) => hand.originalHT, ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A']);
       for (const index in arr) {
         result += (parseInt(index) + 1) * arr[index].bid;
       }
       return result;
     }
 
-    getOrderdHands() : Array<Hand> {
+    getSumOfBestVersionPoints(): number {
+      let result : number = 0;
+      const arr = this.getOrderdHands((hand : Hand) => hand.bestVersionHT, ['J', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'Q', 'K', 'A']);
+      for (const index in arr) {
+        result += (parseInt(index) + 1) * arr[index].bid;
+      }
+      return result;
+    }
+
+    getOrderdHands(extractHT: (hand: Hand) => HandType, cardOrder: string[]) : Array<Hand> {
       this.hands.sort((a, b) => {
-        if (a.handType === b.handType) {
+        const aHT : HandType = extractHT(a);
+        const bHT : HandType = extractHT(b);
+        if (aHT === bHT) {
           let index : number = 0;
           while (a.cards[index] === b.cards[index] && index < a.cards.length && index < b.cards.length ) index ++;
           if (index < a.cards.length && index < b.cards.length)  {
@@ -49,15 +60,34 @@ export class CamelPoker {
           else
             return 0;
         } else {
-          return a.handType - b.handType;
+          return aHT - bHT;
         }
       });
       return this.hands;
     }
 
     addHand(line: string) : void {
-      const [cards, bidStr] = line.trim().split(" ").map( s => s.trim());
-      this.hands.push({ cards, bid : parseInt(bidStr), handType :this.computeHandType(cards)});
+      const [original, bidStr] = line.trim().split(" ").map( s => s.trim());
+      const originalHT : HandType = this.computeHandType(original);
+      this.hands.push({ cards: original, bid : parseInt(bidStr), originalHT , bestVersionHT : this.computeBestVersion(original, originalHT)});
+    }
+
+    computeBestVersion(cards: string, originalHT : HandType) : HandType  {
+      if (cards.includes('J')) {
+        let bestHT : HandType = originalHT;
+        for (const card of cards.split('')) {
+          if (card !== 'J') {
+            const newCard = card.replaceAll('J', card);
+            const opponentHT = this.computeHandType(newCard);
+            if (opponentHT > bestHT) {
+              bestHT = opponentHT;
+            }
+          }
+        }
+        return bestHT;
+      } else {
+        return originalHT;
+      }
     }
 
     computeHandType(cards:string) : HandType {
@@ -114,10 +144,11 @@ if (import.meta.main) {
         camelPoker.addHand(line);
     }
     
-    const part1Result = camelPoker.getSumOfPoints();
+    const part1Result = camelPoker.getSumOfOriginalPoints();
     console.log(`Step 1: ${part1Result}`);
 
-
+    const part2Result = camelPoker.getSumOfBestVersionPoints();
+    console.log(`Step 2: ${part2Result}`);
   } catch (error) {
     console.error("💥", error);
   }
