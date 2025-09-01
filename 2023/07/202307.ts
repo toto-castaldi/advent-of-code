@@ -153,7 +153,6 @@ if (import.meta.main) {
     console.log(`Step 1: ${part1Result}`);
 
     camelPoker = new CamelPoker();
-    camelPoker.debug = true;
     for await (const line of readInputLines(`${currentDir}input.txt`)) {
         camelPoker.addHand(line);
     }
