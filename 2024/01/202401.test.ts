@@ -14,3 +14,17 @@ Deno.test("step one", () => {
 
   assertEquals(locationIdList.getSumOfDistances(), 11);
 });
+
+Deno.test("step two", () => {
+  const locationIdList = new LocationIdList();
+  locationIdList.debug = true;
+  
+  locationIdList.add(3,4);
+  locationIdList.add(4,3);
+  locationIdList.add(2,5);
+  locationIdList.add(1,3);
+  locationIdList.add(3,9);
+  locationIdList.add(3,3);
+
+  assertEquals(locationIdList.getSumOfSimilarities(), 31);
+});
