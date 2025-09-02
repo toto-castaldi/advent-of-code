@@ -38,8 +38,9 @@ if (import.meta.main) {
         const inputPath = `${currentDir}input.txt`;
 
         const locationIdList = new LocationIdList();
+
         for await (const line of readInputLines(inputPath)) {
-            const [l, r] = line.trim().split(" ").map(s => parseInt(s.trim()));
+            const [l, r] = line.trim().split("   ").map(s => parseInt(s.trim()));
             locationIdList.add(l, r);
         }
         console.log(`Step 1: ${locationIdList.getSumOfDistances()}`);
