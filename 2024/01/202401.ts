@@ -1,51 +1,48 @@
-import { numbers, readInputLines } from '../../src/main/typescript/utils.ts';
-
+import { readInputLines } from '../../src/main/typescript/utils.ts';
 
 export class LocationIdList {
     public debug = false;
-    private readonly left: number[] = [];
-    private readonly rigth: number[] = [];
-
-    constructor() {}
+    private readonly leftList: number[] = [];
+    private readonly rightList: number[] = [];
 
     getSumOfDistances(): number {
-        let result = 0;
-        const lo = [...this.left].sort();
-        const ro = [...this.rigth].sort();
+        const sortedLeft = [...this.leftList].sort((a, b) => a - b);
+        const sortedRight = [...this.rightList].sort((a, b) => a - b);
+        
         if (this.debug) {
-            console.log(lo);
-            console.log(ro);
+            console.log('Sorted left:', sortedLeft);
+            console.log('Sorted right:', sortedRight);
         }
-        for (const index in lo) {
-            const l = lo[index];
-            const r = ro[index];
-            result += Math.abs(l-r);
-        }
-        return result;
+        
+        return sortedLeft.reduce((sum, leftValue, index) => sum + Math.abs(leftValue - sortedRight[index]), 0);
     }
 
     getSumOfSimilarities(): number {
-        const similarities : Record<number, number> = {};
-        this.rigth.forEach(r => {
-            if (r in similarities) {
-                similarities[r] += 1;
-            } else {
-                similarities[r] = 1;
+        const frequencyMap = new Map<number, number>();
+        
+        for (const value of this.rightList) {
+            frequencyMap.set(value, (frequencyMap.get(value) ?? 0) + 1);
+        }
+        
+        if (this.debug) {
+            console.log('Frequency map:', Object.fromEntries(frequencyMap));
+        }
+        
+        return this.leftList.reduce((sum, value) => {
+            const frequency = frequencyMap.get(value) ?? 0;
+            const similarity = value * frequency;
+            
+            if (this.debug) {
+                console.log(`Value ${value}: frequency ${frequency}, similarity ${similarity}`);
             }
-        });
-        if (this.debug) console.log(similarities);
-        let result = 0;
-        this.left.forEach(l => {
-            if (this.debug) console.log(l in similarities ? l * similarities[l] : 0);
-            result += l in similarities ? l * similarities[l] : 0;
-        });
-        return result;
+            
+            return sum + similarity;
+        }, 0);
     }
 
-
-    add(l: number, r: number) : void {
-        this.left.push(l);
-        this.rigth.push(r);
+    add(left: number, right: number): void {
+        this.leftList.push(left);
+        this.rightList.push(right);
     }
 }
 
@@ -57,8 +54,8 @@ if (import.meta.main) {
         const locationIdList = new LocationIdList();
 
         for await (const line of readInputLines(inputPath)) {
-            const [l, r] = line.trim().split("   ").map(s => parseInt(s.trim()));
-            locationIdList.add(l, r);
+            const [left, right] = line.trim().split(/\s+/).map(Number);
+            locationIdList.add(left, right);
         }
         console.log(`Step 1: ${locationIdList.getSumOfDistances()}`);
 
