@@ -5,6 +5,27 @@ type Report = {
 }
 
 export class LevelReports {
+    countSafeTolerate(): number {
+      let count = 0;
+        
+        this.reports.forEach(report => {
+            let valid = this.reportValid(report);
+            if (!valid && report.levels.length > 1) {
+                for (let i = 0; i < report.levels.length && !valid; i++) {
+                    const newReport = { levels : [] as number[] };    
+                    for (let j = 0; j < report.levels.length; j++) {
+                        if (i !== j) {
+                            newReport.levels.push(report.levels[j]);
+                        }
+                    }
+                    valid = this.reportValid(newReport);
+                }
+            }
+            if (valid) count ++;
+        });
+
+        return count;
+    }
     
     public debug = false;
     private readonly reports: Report[] = [];
@@ -14,35 +35,34 @@ export class LevelReports {
         let count = 0;
         
         this.reports.forEach(report => {
-            let result = true;
-            const direction = report.levels[0] - report.levels[1];
-            if (direction === 0) {
-                result = false;
-            } else {
-                for (let index = 0; index < report.levels.length - 1; index ++) {
-                    const diff = report.levels[index] - report.levels[index + 1];
-                    if (Math.sign(diff) !== Math.sign(direction)) {
-                        result = false;
-                    } else {
-                        if (Math.abs(diff) === 0 || Math.abs(diff) > 3) {
-                            result = false;
-                        }
-                    }
-                }    
-            }
-
-            if (result) count ++;
+            if (this.reportValid(report)) count ++;
         });
 
         return count;
     }
 
-    add(line: string) : void {
-        this.reports.push({levels : line.trim().split(/\s+/).map(Number)});
+    private reportValid(report: Report) {
+      let result = true;
+      const direction = report.levels[0] - report.levels[1];
+      if (direction === 0) {
+        result = false;
+      } else {
+        for (let index = 0; index < report.levels.length - 1; index++) {
+          const diff = report.levels[index] - report.levels[index + 1];
+          if (Math.sign(diff) !== Math.sign(direction)) {
+            result = false;
+          } else {
+            if (Math.abs(diff) === 0 || Math.abs(diff) > 3) {
+              result = false;
+            }
+          }
+        }
+      }
+      return result;
     }
 
-    constructor() {
-
+    add(line: string) : void {
+        this.reports.push({levels : line.trim().split(/\s+/).map(Number)});
     }
     
 }
@@ -61,7 +81,7 @@ if (import.meta.main) {
         
         console.log(`Step 1: ${locationIdList.countSafe()}`);
 
-
+        console.log(`Step 2: ${locationIdList.countSafeTolerate()}`);
     } catch (error) {
         console.error("💥", error);
     }
