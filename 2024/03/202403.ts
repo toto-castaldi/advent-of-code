@@ -16,9 +16,12 @@ interface Match {
 }
 
 export class MulComputer {
+    sumOfEnabledMultiplication() : number {
+      throw new Error("Method not implemented.");
+    }
 
     public debug = false;
-    private multiplications : Array<{a: number, b: number, result: number}> = []; 
+    private multiplications : Match[]  = []; 
     
     add(line: string) : void {
       const matches: Match[] = [];
@@ -65,17 +68,12 @@ export class MulComputer {
       
       matches.sort((a, b) => a.position - b.position);
 
-      this.multiplications.push(...matches.filter(m => m.matchType === MatchType.mul).map(m => ({
-        a: m.x!,
-        b: m.y!,
-        result: m.x! * m.y!
-      })));
-
+      this.multiplications.push(...matches);
       
     }
 
-    sumOfMultiplication(): number {
-      return this.multiplications.map(m => m.result).reduce((prev, current) => prev + current, 0);
+    sumOfAllMultiplication(): number {
+      return this.multiplications.filter(m => m.matchType === MatchType.mul).map(m => m.x! * m.y!).reduce((prev, current) => prev + current, 0);
     }
     
 }
@@ -92,7 +90,9 @@ if (import.meta.main) {
             mulComputer.add(line);
         }
         
-        console.log(`Step 1: ${mulComputer.sumOfMultiplication()}`);
+        console.log(`Step 1: ${mulComputer.sumOfAllMultiplication()}`);
+
+        console.log(`Step 2: ${mulComputer.sumOfEnabledMultiplication()}`);
     } catch (error) {
         console.error("💥", error);
     }
