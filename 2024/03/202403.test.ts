@@ -9,3 +9,12 @@ Deno.test("step one", () => {
 
   assertEquals(mulComputer.sumOfAllMultiplication(), 161);
 });
+
+Deno.test("step two", () => {
+  const mulComputer = new MulComputer();
+  mulComputer.debug = true;
+  
+  mulComputer.add("xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))");
+
+  assertEquals(mulComputer.sumOfEnabledMultiplication(), 48);
+});

@@ -16,12 +16,10 @@ interface Match {
 }
 
 export class MulComputer {
-    sumOfEnabledMultiplication() : number {
-      throw new Error("Method not implemented.");
-    }
+    
 
     public debug = false;
-    private multiplications : Match[]  = []; 
+    private matches : Match[]  = []; 
     
     add(line: string) : void {
       const matches: Match[] = [];
@@ -68,12 +66,34 @@ export class MulComputer {
       
       matches.sort((a, b) => a.position - b.position);
 
-      this.multiplications.push(...matches);
+      this.matches.push(...matches);
       
     }
 
     sumOfAllMultiplication(): number {
-      return this.multiplications.filter(m => m.matchType === MatchType.mul).map(m => m.x! * m.y!).reduce((prev, current) => prev + current, 0);
+      return this.matches.filter(m => m.matchType === MatchType.mul).map(m => m.x! * m.y!).reduce((prev, current) => prev + current, 0);
+    }
+
+    sumOfEnabledMultiplication() : number {
+      let result : number= 0;
+      let enabled : boolean = true;
+
+      this.matches.forEach(m => {
+        if (this.debug) {
+          console.log(`enabled ${enabled} : X = ${m.x} * Y = ${m.y}`);
+        }
+        if (m.matchType === MatchType.do) {
+          enabled = true;
+        } else if (m.matchType === MatchType.dont) {
+          enabled = false;
+        } else {
+          if (enabled) {
+            result += m.x! * m.y!;
+          }
+        }
+      });
+
+      return result;
     }
     
 }
