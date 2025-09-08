@@ -22,6 +22,7 @@ Deno.test("step one", () => {
   guardLog.add("[1518-11-05 00:03] Guard #99 begins shift");
   guardLog.add("[1518-11-05 00:45] falls asleep");
   guardLog.add("[1518-11-05 00:55] wakes up");
+  guardLog.end();
 
   assertEquals(guardLog.guardIdWithMostSleepOnMinute(), 10);
   assertEquals(guardLog.guardMostSleepedMinuteOfGuard(10), 24);
