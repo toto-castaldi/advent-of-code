@@ -2,8 +2,8 @@ import { readInputLines } from '../../src/main/typescript/utils.ts';
 
 enum EntryType {
   shift,
+  wakeup,
   falls,
-  wakeup
 }
 
 type GuardLogEntry = {
@@ -15,22 +15,65 @@ type GuardLogEntry = {
 export class GuardLog {
   private entries : Array<GuardLogEntry> = [];
   public debug : boolean = false;
+  private compact : Record<number, Record<number, number>> = {};
 
   end() {
     this.entries.sort((a,b) => a.date.getDate() - b.date.getDate());
-    if (this.debug) {
-      this.entries.forEach(e => {
-        console.log(`${e.date} : ${e.action} -> ${e.guardId}`);
-      });
-    }
+    let guardId : number | null = null;
+    let wakeMinutes : number | null = 0;
+    this.entries.forEach(e => {
+      if (e.action === EntryType.shift) {
+        guardId = e.guardId;
+        if (this.debug) console.log(`${e.date} : SHIFT ${e.guardId}`);
+      } else if (e.action === EntryType.falls) {
+        wakeMinutes = e.date.getMinutes();
+        if (this.debug) console.log(`${e.date} : FALL -> ${wakeMinutes}`);
+      } else if (e.action === EntryType.wakeup) {
+        const fm = e.date.getMinutes();
+        if (this.debug) console.log(`${e.date} : WAKE -> ${fm}`);
+        for (let m = wakeMinutes!; m < fm; m++) {
+          if (this.debug) console.log(`Guard ${guardId} . Add minute ${m}`);
+          let guardMinutes : Record<number, number> = {};
+          if (this.compact[guardId!]) guardMinutes = this.compact[guardId!];
+          guardMinutes[m] = (guardMinutes[m] ?? 0) + 1;
+          this.compact[guardId!] = guardMinutes;
+        }
+      }
+    });
   }
     
   guardMostSleepedMinuteOfGuard(guardId: number): number {
-    throw new Error("Method not implemented.");
+    const minutes : Record<number, number> = this.compact[guardId];
+    let count = 0;
+    let result = 0;
+    for (const mStr in minutes) {
+      const m = Number(mStr);
+      const c = minutes[m];
+      if (this.debug) console.log(`guard ${guardId} . Minute ${mStr} Count ${c}`);
+      if (c > count) {
+        result = m;
+        count = c;
+      }
+    }
+    return result;
   }
 
   guardIdWithMostSleepOnMinute(): number {
-    throw new Error("Method not implemented.");
+    let maxGuardId : number | null = null;
+    let maxMinutes : number = 0;
+    for (const gStr in this.compact) {
+      const m = this.compact[gStr];
+      const guardId = Number(gStr);
+      const sum = Object.values(m).reduce((prev, current) => {
+        return prev + current;
+      }, 0);
+      if (this.debug) console.log(`Guard ${gStr} with ${sum} minutes`);
+      if (sum > maxMinutes) {
+        maxMinutes = sum;
+        maxGuardId = guardId;
+      }
+    };
+    return maxGuardId!;
   }
 
   add(line: string): void {
