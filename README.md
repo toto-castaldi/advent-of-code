@@ -60,7 +60,7 @@ deno run --allow-read 2023/01/202301a.ts
 [Chinese remainder theorem](https://en.wikipedia.org/wiki/Chinese_remainder_theorem)
 
 
-## 2022.11.2
+### 2022.11.2
 
 [Chinese remainder theorem](https://en.wikipedia.org/wiki/Chinese_remainder_theorem)
 
