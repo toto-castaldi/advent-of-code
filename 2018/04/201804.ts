@@ -112,10 +112,12 @@ if (import.meta.main) {
         for await (const line of readInputLines(inputPath)) {
             aoc.add(line);
         }
+        aoc.end();
 
         const guardId : number = aoc.guardIdWithMostSleepOnMinute();
+        const maxMinutes : number = aoc.guardMostSleepedMinuteOfGuard(guardId);
         
-        console.log(`Step 1: ${guardId * aoc.guardMostSleepedMinuteOfGuard(guardId)}`);
+        console.log(`Step 1: guard ${guardId} minues ${maxMinutes} -> ${guardId*maxMinutes}`);
   
     } catch (error) {
         console.error("💥", error);
