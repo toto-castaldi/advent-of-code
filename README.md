@@ -57,13 +57,10 @@ deno run --allow-read 2023/01/202301a.ts
 
 [Euclidean algorithm](https://en.wikipedia.org/wiki/Euclidean_algorithm)
 
-[Cryptography Euclidean algorithm](https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm)
-
 [Chinese remainder theorem](https://en.wikipedia.org/wiki/Chinese_remainder_theorem)
 
-[Congruence](https://en.wikipedia.org/wiki/Modular_arithmetic#Congruence)
 
-## 2022.11.2
+### 2022.11.2
 
 [Chinese remainder theorem](https://en.wikipedia.org/wiki/Chinese_remainder_theorem)
 
