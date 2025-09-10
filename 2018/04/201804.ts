@@ -13,6 +13,7 @@ type GuardLogEntry = {
 }
 
 export class GuardLog {
+  
   private entries : Array<GuardLogEntry> = [];
   public debug : boolean = false;
   private compact : Record<number, Record<number, number>> = {};
@@ -76,6 +77,21 @@ export class GuardLog {
     return maxGuardId!;
   }
 
+  guardIdWithMostSleepOnSingleMinute(): number {
+    let result : number = 0;
+    let max : number = 0;
+    for (const gStr in this.compact) {
+      const m = this.compact[gStr];
+      const guardId = Number(gStr);
+      const minute = this.guardMostSleepedMinuteOfGuard(guardId);
+      if (m[minute] > max) {
+        max = m[minute];
+        result = guardId;
+      }
+    }
+    return result;
+  }
+
   add(line: string): void {
     const regex = /\[(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})\]/;
     const match = line.match(regex);
@@ -115,10 +131,15 @@ if (import.meta.main) {
         }
         aoc.end();
 
-        const guardId : number = aoc.guardIdWithMostSleepOnMinute();
-        const maxMinutes : number = aoc.guardMostSleepedMinuteOfGuard(guardId);
+        let guardId : number = aoc.guardIdWithMostSleepOnMinute();
+        let maxMinutes : number = aoc.guardMostSleepedMinuteOfGuard(guardId);
         
         console.log(`Step 1: guard ${guardId} minues ${maxMinutes} -> ${guardId*maxMinutes}`);
+
+        guardId = aoc.guardIdWithMostSleepOnSingleMinute();
+        maxMinutes = aoc.guardMostSleepedMinuteOfGuard(guardId);
+        
+        console.log(`Step 2: guard ${guardId} minues ${maxMinutes} -> ${guardId*maxMinutes}`);
   
     } catch (error) {
         console.error("💥", error);
