@@ -18,7 +18,7 @@ export class GuardLog {
   private compact : Record<number, Record<number, number>> = {};
 
   end() {
-    this.entries.sort((a,b) => a.date.getDate() - b.date.getDate());
+    this.entries.sort((a,b) => a.date.getTime() - b.date.getTime());
     let guardId : number | null = null;
     let wakeMinutes : number | null = 0;
     this.entries.forEach(e => {
@@ -108,6 +108,7 @@ if (import.meta.main) {
         const inputPath = `${currentDir}input.txt`;
 
         const aoc = new GuardLog();
+        aoc.debug = true;
 
         for await (const line of readInputLines(inputPath)) {
             aoc.add(line);
