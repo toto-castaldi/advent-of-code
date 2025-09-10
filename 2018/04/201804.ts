@@ -59,7 +59,7 @@ export class GuardLog {
     return result;
   }
 
-  guardIdWithMostSleepOnMinute(): number {
+  guardIdWithMostSleep(): number {
     let maxGuardId : number | null = null;
     let maxMinutes : number = 0;
     for (const gStr in this.compact) {
@@ -124,22 +124,22 @@ if (import.meta.main) {
         const inputPath = `${currentDir}input.txt`;
 
         const aoc = new GuardLog();
-        aoc.debug = true;
+        //aoc.debug = true;
 
         for await (const line of readInputLines(inputPath)) {
             aoc.add(line);
         }
         aoc.end();
 
-        let guardId : number = aoc.guardIdWithMostSleepOnMinute();
+        let guardId : number = aoc.guardIdWithMostSleep();
         let maxMinutes : number = aoc.guardMostSleepedMinuteOfGuard(guardId);
         
-        console.log(`Step 1: guard ${guardId} minues ${maxMinutes} -> ${guardId*maxMinutes}`);
+        console.log(`Step 1: most sleeping guard ${guardId} . Most sleeped minute ${maxMinutes} -> ${guardId*maxMinutes}`);
 
         guardId = aoc.guardIdWithMostSleepOnSingleMinute();
         maxMinutes = aoc.guardMostSleepedMinuteOfGuard(guardId);
         
-        console.log(`Step 2: guard ${guardId} minues ${maxMinutes} -> ${guardId*maxMinutes}`);
+        console.log(`Step 2: most sleeping guard on a particular minute ${guardId}, the minute is ${maxMinutes} -> ${guardId*maxMinutes}`);
   
     } catch (error) {
         console.error("💥", error);
