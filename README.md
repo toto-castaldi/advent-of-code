@@ -100,3 +100,5 @@ deno run --allow-read 2023/01/202301.ts
 ![2023 Calendar](./2023.07.2-calendar.png?&raw=true "2023 Calendar")
 
 ![2024 Calendar](./2024.03.2-calendar.png?&raw=true "2024 Calendar")
+
+![2025 Calendar](./2025.01-calendar.png?&raw=true "20 Calendar")
