@@ -4,18 +4,18 @@ export class Dial {
     public debug = false;
     zeroPassesCount : number = 0;
     index : number = 50;
+    len : number = 100;
 
     move(instruction : string): number {
-        const step = parseInt(instruction.substring(1));
+        let step = parseInt(instruction.substring(1));
 
-        if (this.debug) console.log(step);
+        if (instruction[0] === 'L') step = - step;
 
-        if (instruction[0] === 'L') this.index -= step; else this.index += step;
+        const next = ((this.index + step) % this.len + this.len) % this.len;
 
-        if (this.debug) console.log(this.index);
+        if (this.debug) console.log(`${this.index} , ${step} -> ${next}`);
 
-        if (this.index < 0) this.index = 100 + this.index;
-        else if (this.index > 99) this.index =  this.index - 100;
+        this.index = next;
 
         if (this.index == 0) this.zeroPassesCount ++;
 
