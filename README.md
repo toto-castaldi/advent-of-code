@@ -36,15 +36,17 @@ Tested with Kotlin version 1.7.21 and Java openjdk 17.0.3 2022-04-19
 ## Typescript solutions
 
 Tested with :
-```
-deno 2.4.3 (stable, release, x86_64-unknown-linux-gnu)
-v8 13.7.152.14-rusty
-typescript 5.8.3
+
+```bash
+deno --version
+deno 2.9.3 (stable, release, x86_64-unknown-linux-gnu)
+v8 14.9.207.2-rusty
+typescript 6.0.3
 ```
 
-
-```console
-deno run --allow-read 2023/01/202301a.ts
+```bash
+deno test --allow-read 2025/01/
+deno run --allow-read 2023/01/202301.ts
 ```
 
 ## To be optimized
